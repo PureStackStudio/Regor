@@ -3,8 +3,9 @@
  *
  * Why this exists:
  * HTML parsers enforce strict table content models. Custom component tags such as
- * <TableRow />, <TableCell />, or alias hosts like <trx is="r-tr"> can be dropped,
- * re-parented, or parsed unexpectedly when they appear in table-related positions.
+ * <TableRow />, <TableCell />, or alias hosts like <trx is="r-tr"> can be
+ * dropped, re-parented, or parsed unexpectedly when they appear in
+ * table-related positions.
  * This preprocessor rewrites raw template text before DOM parsing so table structures
  * remain valid and binders can reliably mount components.
  *
@@ -19,11 +20,18 @@
  * 3) Apply table-focused rewrites based on current context.
  *
  * Context model:
- * - `tableScopeDepth > 0` means we are inside one of: table, thead, tbody, tfoot.
+ * - `tableScopeDepth > 0` means we are inside a native table scope: table,
+ *   thead, tbody, or tfoot.
  * - Outside table scope (tableScopeDepth === 0):
+ *   - `<caption> -> <captionx is="r-caption">`
+ *   - `<thead> -> <theadx is="r-thead">`
+ *   - `<tbody> -> <tbodyx is="r-tbody">`
+ *   - `<tfoot> -> <tfootx is="r-tfoot">`
  *   - `<tr> -> <trx is="r-tr">`
  *   - `<td> -> <tdx is="r-td">`
  *   - `<th> -> <thx is="r-th">`
+ *   - `<colgroup> -> <colgroupx is="r-colgroup">`
+ *   - `<col> -> <colx is="r-col">`
  *   This aliasing avoids invalid native table nodes in non-table contexts while still
  *   enabling later runtime conversion through DynamicBinder.
  *
@@ -41,6 +49,11 @@
  *   - <td> and <th> stay as-is.
  *   - Any other direct child is rewritten to:
  *     <td is="regor:OriginalTag">
+ *
+ * - Inside <colgroup> direct children:
+ *   - <col> stays as-is.
+ *   - Any other direct child is rewritten to:
+ *     <col is="regor:OriginalTag">
  *
  * Self-closing normalization under <tr>:
  * - For self-closing tags directly under effective <tr>, we emit explicit closing tags:
@@ -86,25 +99,59 @@ const findTagEnd = (text: string, start: number): number => {
 const parseTagNameRange = (
   tagText: string,
   isClosing: boolean,
-): { start: number; end: number } | null => {
+): { start: number; end: number; hasUppercase: boolean } | null => {
   let i = isClosing ? 2 : 1
   while (i < tagText.length && (tagText[i] === ' ' || tagText[i] === '\n')) ++i
   if (i >= tagText.length || !isNameChar(tagText[i])) return null
   const start = i
-  while (i < tagText.length && isNameChar(tagText[i])) ++i
-  return { start, end: i }
+  let hasUppercase = false
+  while (i < tagText.length && isNameChar(tagText[i])) {
+    const c = tagText.charCodeAt(i)
+    if (c >= 65 && c <= 90) {
+      hasUppercase = true
+    }
+    ++i
+  }
+  return { start, end: i, hasUppercase }
 }
 
-const tableScopeTags = new Set(['table', 'thead', 'tbody', 'tfoot'])
-const rowParentTags = new Set(['thead', 'tbody', 'tfoot'])
-const tableDirectAllowed = new Set([
-  'caption',
-  'colgroup',
-  'thead',
-  'tbody',
-  'tfoot',
-  'tr',
-])
+const isTableScopeTag = (tagName: string): boolean => {
+  switch (tagName) {
+    case 'table':
+    case 'thead':
+    case 'tbody':
+    case 'tfoot':
+      return true
+    default:
+      return false
+  }
+}
+
+const isRowParentTag = (tagName: string): boolean => {
+  switch (tagName) {
+    case 'thead':
+    case 'tbody':
+    case 'tfoot':
+      return true
+    default:
+      return false
+  }
+}
+
+const isTableDirectAllowed = (tagName: string): boolean => {
+  switch (tagName) {
+    case 'caption':
+    case 'colgroup':
+    case 'thead':
+    case 'tbody':
+    case 'tfoot':
+    case 'tr':
+      return true
+    default:
+      return false
+  }
+}
+
 const voidElements = new Set([
   'area',
   'base',
@@ -122,14 +169,71 @@ const voidElements = new Set([
   'wbr',
 ])
 
+const getTableAliasHost = (tagName: string): string | null => {
+  switch (tagName) {
+    case 'caption':
+      return 'captionx'
+    case 'thead':
+      return 'theadx'
+    case 'tbody':
+      return 'tbodyx'
+    case 'tfoot':
+      return 'tfootx'
+    case 'tr':
+      return 'trx'
+    case 'td':
+      return 'tdx'
+    case 'th':
+      return 'thx'
+    case 'colgroup':
+      return 'colgroupx'
+    case 'col':
+      return 'colx'
+    default:
+      return null
+  }
+}
+
+const getTableAliasTag = (host: string | null): string | undefined => {
+  switch (host) {
+    case 'captionx':
+      return 'caption'
+    case 'theadx':
+      return 'thead'
+    case 'tbodyx':
+      return 'tbody'
+    case 'tfootx':
+      return 'tfoot'
+    case 'trx':
+      return 'tr'
+    case 'tdx':
+      return 'td'
+    case 'thx':
+      return 'th'
+    case 'colgroupx':
+      return 'colgroup'
+    case 'colx':
+      return 'col'
+    default:
+      return undefined
+  }
+}
+
+const closeTag = (tagText: string, tagName: string): string =>
+  `${tagText}</${tagName}>`
+
 const expandSelfClosingTag = (tagText: string, tagName: string): string =>
   `${tagText.slice(0, tagText.length - 2)}></${tagName}>`
 
 export const preprocess = (template: string): string => {
   let i = 0
   const out: string[] = []
-  const stack: Array<{ replacementHost: string | null; effectiveTag: string }> =
-    []
+  const stack: Array<{
+    replacementHost: string | null
+    effectiveTag: string
+    isTableAlias: boolean
+  }> = []
+  const ignoredClosingTags: Array<{ tagName: string; emit: boolean }> = []
   let tableScopeDepth = 0
 
   while (i < template.length) {
@@ -176,13 +280,22 @@ export const preprocess = (template: string): string => {
     }
 
     const tagName = rawTag.slice(range.start, range.end)
+    const nativeTagName = range.hasUppercase ? '' : tagName
 
     if (isClosing) {
+      const ignoredClosing = ignoredClosingTags[ignoredClosingTags.length - 1]
+      if (ignoredClosing?.tagName === tagName) {
+        ignoredClosingTags.pop()
+        if (ignoredClosing.emit) out.push(rawTag)
+        i = tagEnd + 1
+        continue
+      }
       const top = stack[stack.length - 1]
       if (top) {
         stack.pop()
         out.push(top.replacementHost ? `</${top.replacementHost}>` : rawTag)
-        if (tableScopeTags.has(top.effectiveTag)) --tableScopeDepth
+        if (!top.isTableAlias && isTableScopeTag(top.effectiveTag))
+          --tableScopeDepth
       } else {
         out.push(rawTag)
       }
@@ -194,30 +307,42 @@ export const preprocess = (template: string): string => {
     const parent = stack[stack.length - 1]
     let replacementHost: string | null = null
     if (tableScopeDepth === 0) {
-      if (tagName === 'tr') replacementHost = 'trx'
-      else if (tagName === 'td') replacementHost = 'tdx'
-      else if (tagName === 'th') replacementHost = 'thx'
-    } else if (rowParentTags.has(parent?.effectiveTag ?? '')) {
-      replacementHost = tagName === 'tr' ? null : 'tr'
+      replacementHost = getTableAliasHost(nativeTagName)
+    } else if (isRowParentTag(parent?.effectiveTag ?? '')) {
+      replacementHost = nativeTagName === 'tr' ? null : 'tr'
     } else if (parent?.effectiveTag === 'table') {
-      replacementHost = tableDirectAllowed.has(tagName) ? null : 'tr'
+      replacementHost = isTableDirectAllowed(nativeTagName) ? null : 'tr'
     } else if (parent?.effectiveTag === 'tr') {
-      replacementHost = tagName === 'td' || tagName === 'th' ? null : 'td'
+      replacementHost =
+        nativeTagName === 'td' || nativeTagName === 'th' ? null : 'td'
+    } else if (parent?.effectiveTag === 'colgroup') {
+      replacementHost = nativeTagName === 'col' ? null : 'col'
     }
+    const aliasTag = getTableAliasTag(replacementHost)
+    const isTableAlias = aliasTag !== undefined
 
     const shouldExpandSelfClosing =
-      selfClosing && !voidElements.has(replacementHost || tagName)
+      selfClosing && !voidElements.has(replacementHost || nativeTagName)
+    const shouldCloseVoidAlias =
+      !!replacementHost &&
+      aliasTag === nativeTagName &&
+      voidElements.has(nativeTagName)
+    const shouldIgnoreClosingTag =
+      !selfClosing &&
+      !!replacementHost &&
+      voidElements.has(replacementHost) &&
+      !shouldCloseVoidAlias
+    const shouldIgnoreNativeVoidClosingTag =
+      !selfClosing && !replacementHost && voidElements.has(nativeTagName)
 
     if (replacementHost) {
-      const isAlias =
-        replacementHost === 'trx' ||
-        replacementHost === 'tdx' ||
-        replacementHost === 'thx'
-      const rewrittenTag = `${rawTag.slice(0, range.start)}${replacementHost} is="${isAlias ? `r-${tagName}` : `regor:${tagName}`}"${rawTag.slice(range.end)}`
+      const rewrittenTag = `${rawTag.slice(0, range.start)}${replacementHost} is="${aliasTag ? `r-${aliasTag}` : `regor:${tagName}`}"${rawTag.slice(range.end)}`
       out.push(
         shouldExpandSelfClosing
           ? expandSelfClosingTag(rewrittenTag, replacementHost)
-          : rewrittenTag,
+          : shouldCloseVoidAlias
+            ? closeTag(rewrittenTag, replacementHost)
+            : rewrittenTag,
       )
     } else {
       out.push(
@@ -227,20 +352,29 @@ export const preprocess = (template: string): string => {
       )
     }
 
-    if (!selfClosing) {
+    if (shouldIgnoreClosingTag) {
+      ignoredClosingTags.push({ tagName, emit: false })
+    } else if (shouldCloseVoidAlias && !selfClosing) {
+      ignoredClosingTags.push({ tagName, emit: false })
+    } else if (shouldIgnoreNativeVoidClosingTag) {
+      ignoredClosingTags.push({ tagName, emit: true })
+    }
+
+    if (
+      !selfClosing &&
+      !shouldCloseVoidAlias &&
+      !shouldIgnoreClosingTag &&
+      !shouldIgnoreNativeVoidClosingTag &&
+      !voidElements.has(replacementHost ?? nativeTagName)
+    ) {
       const effectiveTag =
-        replacementHost === 'trx'
-          ? 'tr'
-          : replacementHost === 'tdx'
-            ? 'td'
-            : replacementHost === 'thx'
-              ? 'th'
-              : replacementHost || tagName
+        aliasTag ?? replacementHost ?? (nativeTagName || tagName)
       stack.push({
         replacementHost,
         effectiveTag,
+        isTableAlias,
       })
-      if (tableScopeTags.has(effectiveTag)) ++tableScopeDepth
+      if (!isTableAlias && isTableScopeTag(effectiveTag)) ++tableScopeDepth
     }
 
     i = tagEnd + 1

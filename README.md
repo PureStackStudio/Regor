@@ -262,12 +262,15 @@ createApp(appContext, template, config)
 Regor preprocesses table-related templates to keep markup valid when using
 components in table structures.
 
-- Supported table containers: `table`, `thead`, `tbody`, `tfoot`.
+- Supported table containers: `table`, `caption`, `colgroup`, `thead`,
+  `tbody`, `tfoot`.
 - Component tags directly under row containers are normalized to valid hosts.
 - Component tags directly under `<tr>` are normalized to `<td>` hosts (except
   native `<td>` / `<th>`).
+- Component tags directly under `<colgroup>` are normalized to `<col>` hosts
+  (except native `<col>`).
 - Regor preserves valid table markup while supporting component-based rows and
-  cells in table templates.
+  cells, captions, sections, column groups, and columns in table templates.
 
 Example:
 

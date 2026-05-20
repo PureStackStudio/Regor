@@ -152,9 +152,11 @@ The `defineComponent` function returns a component object with the following pro
 
 - The `template` parameter specifies how the component's UI is rendered. You can select an existing element in the DOM, provide HTML content, or use a JSON structure to define the component's structure.
 
-- For table-centric components (row/cell components), component templates work
-  with Regor's table preprocessing. Table containers (`table`, `thead`, `tbody`,
-  `tfoot`) and row/cell placement are normalized to valid structure at runtime.
+- For table-centric components (caption/section/row/cell/column components),
+  component templates work with Regor's table preprocessing. Table containers
+  (`table`, `caption`, `colgroup`, `thead`, `tbody`, `tfoot`) and
+  caption/section/row/cell/column placement are normalized to valid structure at
+  runtime.
 
 - Component tags can be used in PascalCase, camelCase, or kebab-case (for example, `<MyComponent>`, `<myComponent>`, or `<my-component>`).
 

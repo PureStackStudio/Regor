@@ -76,7 +76,8 @@ The `createApp` function returns an object with the following properties:
 - The `template` parameter allows you to specify how the initial content or structure of the application should be rendered.
 
 - When using table templates, Regor preprocesses template markup to preserve
-  valid table structure for component-based rows and cells in `table`, `thead`,
+  valid table structure for component-based captions, sections, rows, cells,
+  column groups, and columns in `table`, `caption`, `colgroup`, `thead`,
   `tbody`, and `tfoot`.
 
 - The `config` parameter lets you customize Regor's behavior to suit your application's requirements.

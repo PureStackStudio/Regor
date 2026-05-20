@@ -68,7 +68,7 @@ If keys are unstable, DOM reuse quality degrades and updates become less predict
 
 ## Table Templates
 
-`r-for` supports native table structures and component-based rows/cells.
+`r-for` supports native table structures and component-based captions, sections, rows, cells, column groups, and columns.
 
 ```html
 <table>
@@ -90,6 +90,14 @@ const tableRow = defineComponent(
   </tr>`,
   { props: ['row'] },
 )
+```
+
+```html
+<table>
+  <colgroup r-for="group in columnGroups">
+    <col r-for="col in group.cols" :data-width="col.width" />
+  </colgroup>
+</table>
 ```
 
 ## Best Practices

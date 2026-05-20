@@ -21,6 +21,84 @@ test('rewrites th outside tbody into alias host', () => {
   )
 })
 
+test('rewrites caption outside table into alias host', () => {
+  const template = '<caption>People</caption>'
+  expect(preprocess(template)).toBe(
+    '<captionx is="r-caption">People</captionx>',
+  )
+})
+
+test('rewrites colgroup and col outside table into alias hosts', () => {
+  const template = '<colgroup><col span="2"><col /></colgroup>'
+  expect(preprocess(template)).toBe(
+    '<colgroupx is="r-colgroup"><colx is="r-col" span="2"></colx><colx is="r-col" ></colx></colgroupx>',
+  )
+})
+
+test('rewrites colgroup root with explicit native col close without corrupting following columns', () => {
+  const template = '<colgroup><col></col><col /></colgroup>'
+  expect(preprocess(template)).toBe(
+    '<colgroupx is="r-colgroup"><colx is="r-col"></colx><colx is="r-col" ></colx></colgroupx>',
+  )
+})
+
+test('rewrites table section roots outside table into alias hosts', () => {
+  const template =
+    '<thead><tr><th>H</th></tr></thead><tbody><tr><td>B</td></tr></tbody><tfoot><tr><td>F</td></tr></tfoot>'
+  expect(preprocess(template)).toBe(
+    '<theadx is="r-thead"><trx is="r-tr"><thx is="r-th">H</thx></trx></theadx><tbodyx is="r-tbody"><trx is="r-tr"><tdx is="r-td">B</tdx></trx></tbodyx><tfootx is="r-tfoot"><trx is="r-tr"><tdx is="r-td">F</tdx></trx></tfootx>',
+  )
+})
+
+test('does not treat PascalCase table-like component names as native aliases', () => {
+  expect(
+    preprocess(
+      '<Caption></Caption><Thead><Tr><Td>A</Td><Th>B</Th></Tr></Thead><Tbody></Tbody><Tfoot></Tfoot>',
+    ),
+  ).toBe(
+    '<Caption></Caption><Thead><Tr><Td>A</Td><Th>B</Th></Tr></Thead><Tbody></Tbody><Tfoot></Tfoot>',
+  )
+  expect(preprocess('<Col />')).toBe('<Col ></Col>')
+  expect(preprocess('<Table><Col /></Table>')).toBe(
+    '<Table><Col ></Col></Table>',
+  )
+})
+
+test('keeps valid colgroup and col table children unchanged', () => {
+  const template =
+    '<table><caption>People</caption><colgroup><col span="2"></colgroup><tbody><tr><td>A</td></tr></tbody></table>'
+  expect(preprocess(template)).toBe(template)
+})
+
+test('rewrites direct table child col to row host because col belongs in colgroup', () => {
+  const template =
+    '<table><col span="2" /><tbody><tr><td>A</td></tr></tbody></table>'
+  expect(preprocess(template)).toBe(
+    '<table><tr is="regor:col" span="2" ></tr><tbody><tr><td>A</td></tr></tbody></table>',
+  )
+})
+
+test('rewrites direct colgroup child components to col hosts', () => {
+  const template = '<table><colgroup><TableCol span="2" /></colgroup></table>'
+  expect(preprocess(template)).toBe(
+    '<table><colgroup><col is="regor:TableCol" span="2" /></colgroup></table>',
+  )
+})
+
+test('rewrites direct colgroup child component with explicit close without corrupting following table scope', () => {
+  const template =
+    '<table><colgroup><TableCol span="2"></TableCol></colgroup><tbody><tr><td>A</td></tr></tbody></table>'
+  expect(preprocess(template)).toBe(
+    '<table><colgroup><col is="regor:TableCol" span="2"></colgroup><tbody><tr><td>A</td></tr></tbody></table>',
+  )
+})
+
+test('keeps explicit native col close from corrupting following table scope', () => {
+  const template =
+    '<table><colgroup><col></col></colgroup><tbody><tr><td>A</td></tr></tbody></table>'
+  expect(preprocess(template)).toBe(template)
+})
+
 test('replaces direct tbody child non-tr self-closing tag', () => {
   const template = '<table><tbody>  <TableRow a="1" /> </tbody></table>'
   expect(preprocess(template)).toBe(

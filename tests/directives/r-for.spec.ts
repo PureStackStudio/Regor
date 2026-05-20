@@ -447,6 +447,140 @@ test('should support native thead and tfoot with r-for', () => {
   expect(getFoot()).toStrictEqual(['Total', '77'])
 })
 
+test('should support native colgroup and col with r-for', () => {
+  const root = document.createElement('div')
+  const app = createApp(
+    {
+      groups: ref([
+        { name: 'primary', cols: [{ width: '120' }, { width: '80' }] },
+        { name: 'secondary', cols: [{ width: '40' }] },
+      ]),
+    },
+    {
+      element: root,
+      template: html`<table>
+        <colgroup r-for="group in groups" :data-name="group.name">
+          <col r-for="col in group.cols" :data-width="col.width" />
+        </colgroup>
+        <tbody>
+          <tr>
+            <td>Alice</td>
+            <td>25</td>
+            <td>Admin</td>
+          </tr>
+        </tbody>
+      </table>`,
+    },
+  )
+
+  const getGroups = () =>
+    [...root.querySelectorAll('colgroup')].map((x) =>
+      x.getAttribute('data-name'),
+    )
+  const getCols = () =>
+    [...root.querySelectorAll('col')].map((x) => x.getAttribute('data-width'))
+
+  expect(getGroups()).toStrictEqual(['primary', 'secondary'])
+  expect(getCols()).toStrictEqual(['120', '80', '40'])
+
+  app.context.groups(
+    [
+      { name: 'compact', cols: [{ width: '50' }] },
+      { name: 'wide', cols: [{ width: '200' }, { width: '160' }] },
+    ].map((x) => ref(x)),
+  )
+
+  expect(getGroups()).toStrictEqual(['compact', 'wide'])
+  expect(getCols()).toStrictEqual(['50', '200', '160'])
+})
+
+test('should support caption component template roots', () => {
+  const root = document.createElement('div')
+
+  const tableCaption = defineComponent(
+    html`<caption>
+      {{ title }}
+    </caption>`,
+    {
+      props: ['title'],
+    },
+  )
+
+  const app = createApp(
+    {
+      title: ref('People'),
+      components: {
+        tableCaption,
+      },
+    },
+    {
+      element: root,
+      template: html`<table>
+        <TableCaption :title="title" />
+        <tbody>
+          <tr>
+            <td>Alice</td>
+          </tr>
+        </tbody>
+      </table>`,
+    },
+  )
+
+  const getCaption = () => root.querySelector('caption')?.textContent?.trim()
+
+  expect(root.querySelectorAll('caption').length).toBe(1)
+  expect(getCaption()).toBe('People')
+
+  app.context.title('Team')
+
+  expect(root.querySelectorAll('caption').length).toBe(1)
+  expect(getCaption()).toBe('Team')
+})
+
+test('should support colgroup component templates with col r-for', () => {
+  const root = document.createElement('div')
+
+  const tableColumns = defineComponent(
+    html`<colgroup>
+      <col r-for="col in cols" :data-width="col.width" />
+    </colgroup>`,
+    { props: ['cols'] },
+  )
+
+  const app = createApp(
+    {
+      columnComponent: 'tableColumns',
+      cols: ref([{ width: '120' }, { width: '80' }]),
+      components: {
+        tableColumns,
+      },
+    },
+    {
+      element: root,
+      template: html`<table>
+        <colgroup :is="columnComponent" :cols="cols"></colgroup>
+        <tbody>
+          <tr>
+            <td>Alice</td>
+            <td>25</td>
+          </tr>
+        </tbody>
+      </table>`,
+    },
+  )
+
+  const getCols = () =>
+    [...root.querySelectorAll('col')].map((x) => x.getAttribute('data-width'))
+
+  expect(root.querySelectorAll('colgroup').length).toBe(1)
+  expect(getCols()).toStrictEqual(['120', '80'])
+
+  app.context.cols(ref([{ width: '60' }, { width: '40' }, { width: '20' }]))
+
+  expect(root.querySelectorAll('colgroup').length).toBe(1)
+  expect(getCols()).toStrictEqual(['60', '40', '20'])
+})
+
 test('should support r-for on table custom row and cell components', () => {
   const root = document.createElement('div')
 
@@ -827,6 +961,82 @@ test('should support table usage with tfoot and component cells', () => {
     [...root.querySelectorAll('tfoot td')].map((x) => x.textContent?.trim())
 
   expect(getCellText()).toStrictEqual(['Total', '55'])
+})
+
+test('should support thead tbody and tfoot as component template roots', () => {
+  const root = document.createElement('div')
+
+  const tableHead = defineComponent(
+    html`<thead>
+      <tr>
+        <th r-for="header in headers">{{ header }}</th>
+      </tr>
+    </thead>`,
+    { props: ['headers'] },
+  )
+  const tableBody = defineComponent(
+    html`<tbody>
+      <tr r-for="row in rows">
+        <td>{{ row.name }}</td>
+        <td>{{ row.age }}</td>
+      </tr>
+    </tbody>`,
+    { props: ['rows'] },
+  )
+  const tableFoot = defineComponent(
+    html`<tfoot>
+      <tr>
+        <td r-for="total in totals">{{ total }}</td>
+      </tr>
+    </tfoot>`,
+    { props: ['totals'] },
+  )
+
+  const app = createApp(
+    {
+      headers: ref(['Name', 'Age']),
+      rows: ref([
+        { name: 'Alice', age: 25 },
+        { name: 'Bob', age: 30 },
+      ]),
+      totals: ref(['Total', '55']),
+      components: {
+        tableHead,
+        tableBody,
+        tableFoot,
+      },
+    },
+    {
+      element: root,
+      template: html`<table>
+        <TableHead :headers="headers" />
+        <TableBody :rows="rows" />
+        <TableFoot :totals="totals" />
+      </table>`,
+    },
+  )
+
+  const getHead = () =>
+    [...root.querySelectorAll('thead th')].map((x) => x.textContent?.trim())
+  const getBody = () =>
+    [...root.querySelectorAll('tbody td')].map((x) => x.textContent?.trim())
+  const getFoot = () =>
+    [...root.querySelectorAll('tfoot td')].map((x) => x.textContent?.trim())
+
+  expect(root.querySelectorAll('thead').length).toBe(1)
+  expect(root.querySelectorAll('tbody').length).toBe(1)
+  expect(root.querySelectorAll('tfoot').length).toBe(1)
+  expect(getHead()).toStrictEqual(['Name', 'Age'])
+  expect(getBody()).toStrictEqual(['Alice', '25', 'Bob', '30'])
+  expect(getFoot()).toStrictEqual(['Total', '55'])
+
+  app.context.headers(ref(['Full Name', 'Years']))
+  app.context.rows(ref([{ name: 'Trinity', age: 39 }]))
+  app.context.totals(ref(['Total', '39']))
+
+  expect(getHead()).toStrictEqual(['Full Name', 'Years'])
+  expect(getBody()).toStrictEqual(['Trinity', '39'])
+  expect(getFoot()).toStrictEqual(['Total', '39'])
 })
 
 test('should not throw when adding first tenant after selectedHost replacement', () => {

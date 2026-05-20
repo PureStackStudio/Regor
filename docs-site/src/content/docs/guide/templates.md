@@ -45,7 +45,7 @@ If `useInterpolation = false`, `{{ ... }}` and `[[ ... ]]` stay as plain text.
 For string templates, Regor preprocesses markup to keep table structures valid:
 
 1. Outside table scope:
-   - `<tr>` / `<td>` / `<th>` may be rewritten to alias hosts (`trx` / `tdx` / `thx`) with `is="r-*"` markers.
+   - `<caption>` / `<thead>` / `<tbody>` / `<tfoot>` / `<tr>` / `<td>` / `<th>` / `<colgroup>` / `<col>` may be rewritten to alias hosts (`captionx` / `theadx` / `tbodyx` / `tfootx` / `trx` / `tdx` / `thx` / `colgroupx` / `colx`) with `is="r-*"` markers.
 2. In table-sensitive positions:
    - non-native direct children may be rewritten to safe hosts with `is="regor:OriginalTag"`.
 3. Self-closing custom tags under row context are normalized to explicit open/close tags.
