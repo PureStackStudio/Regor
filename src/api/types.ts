@@ -5,7 +5,7 @@ export type IsNull<T> = [T] extends [null] ? true : false
 
 export type Equals<T, U> = T extends U ? (U extends T ? true : false) : false
 
-type RawTypes =
+export type RawTypes =
   | string
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   | Function
@@ -112,6 +112,27 @@ export type MakeRefParam<TValueType> = TValueType extends undefined
                   ? MakeRefParam<V5>
                   : MakeRefParam<TValueType[Key]>
             }
+
+export type RefInit<TValueType> = TValueType extends RawTypes
+  ? never
+  : RefInitField<TValueType>
+
+export type RefInitField<TValueType> =
+  | Ref<RefParam<TValueType>>
+  | SRef<RefContent<TValueType>>
+  | (TValueType extends undefined
+      ? never
+      : TValueType extends Ref<infer V1>
+        ? Ref<RefParam<V1>> | RefInitField<V1>
+        : TValueType extends SRef<infer V2>
+          ? SRef<V2> | RefInitField<V2>
+          : TValueType extends Array<infer V3>
+            ? Array<RefInitField<V3>>
+            : TValueType extends RawTypes
+              ? TValueType
+              : {
+                  [Key in keyof TValueType]: RefInitField<TValueType[Key]>
+                })
 
 export type SRefContent<TValueType> =
   Equals<TValueType, MakeSRefContent<TValueType>> extends true

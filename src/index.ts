@@ -17,6 +17,7 @@ export type {
   ParseResult,
   Ref,
   RefContent,
+  RefInit,
   RefOrValue,
   SRef,
   StopObserving,

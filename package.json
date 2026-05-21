@@ -1,6 +1,6 @@
 {
   "name": "regor",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A modern UI framework for web and desktop applications, inspired by Vue's concepts and powered by simplicity and flexibility.",
   "author": "Ahmed Yasin Koculu",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "perf:record": "yarn tsx benchmarks/minidom/perf.ts record",
     "perf:check": "yarn tsx benchmarks/minidom/perf.ts check",
     "perf:profile": "yarn tsx benchmarks/minidom/profile.ts",
-    "dts": "yarn dts-bundle-generator src/index.ts -o dist/regor.d.ts",
+    "dts": "yarn dts-bundle-generator src/index.ts -o dist/regor.d.ts && yarn tsx scripts/append-overloads.ts",
     "lint": "yarn eslint src/**/*.ts tests/**/*.ts",
     "watch": "yarn tsx scripts/bundle.ts --watch",
     "format": "yarn prettier --write \"**/*.ts\"",

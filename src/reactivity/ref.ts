@@ -32,7 +32,7 @@ import { sref } from './sref'
  * @param value - Any value to be converted into a ref object.
  * @returns A ref object representing the input value and its nested properties.
  */
-export const ref = <TValueType>(
+export function ref<TValueType>(
   value?:
     | TValueType
     | RefContent<TValueType>
@@ -41,9 +41,7 @@ export const ref = <TValueType>(
     | RefParam<TValueType>
     | (TValueType extends Array<infer V1> ? V1[] : never)
     | null,
-): IsNull<TValueType> extends true
-  ? Ref<unknown>
-  : Ref<RefParam<TValueType>> => {
+): IsNull<TValueType> extends true ? Ref<unknown> : Ref<RefParam<TValueType>> {
   if (isRaw(value)) return value as any
   let result: any
   if (isRef(value)) {
