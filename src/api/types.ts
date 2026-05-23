@@ -48,6 +48,11 @@ export type RefSetterValue<TValueType> =
   | Ref<RefParam<TValueType>>
   | SRef<RefContent<TValueType>>
 
+export type RefValueSetterValue<TValueType> =
+  TValueType extends readonly unknown[]
+    ? Ref<RefParam<TValueType>> | SRef<RefContent<TValueType>>
+    : RefSetterValue<TValueType>
+
 export type RejectBareEmptyArray<TValueType> =
   TValueType extends readonly never[] ? never : TValueType
 
@@ -57,7 +62,8 @@ export type Ref<TValueType> = {
     newValue: RejectBareEmptyArray<TNewValue>,
     eventSource?: unknown,
   ): RefContent<TValueType>
-  value: RefContent<TValueType>
+  get value(): RefContent<TValueType>
+  set value(newValue: RefValueSetterValue<TValueType>)
 }
 
 export type SRef<TValueType> = ((

@@ -37,7 +37,7 @@ test('ComponentHead.unmount removes child nodes', () => {
   span.textContent = 'hi'
   container.appendChild(span)
   container.appendChild(end)
-  const head = new ComponentHead({}, container, [], start, end)
+  const head = new ComponentHead({}, container, [], start, end, 'throw')
   head.unmount()
   expect(container.contains(span)).toBe(false)
 })
