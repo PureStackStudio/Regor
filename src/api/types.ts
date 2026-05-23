@@ -43,13 +43,20 @@ export type RefOrValue<TValueType> =
   | SRef<TValueType>
   | TValueType
 
-export type Ref<TValueType> = ((
-  newValue?:
-    | RefContent<TValueType>
-    | Ref<RefParam<TValueType>>
-    | SRef<RefContent<TValueType>>,
-  eventSource?: unknown,
-) => RefContent<TValueType>) & {
+export type RefSetterValue<TValueType> =
+  | RefContent<TValueType>
+  | Ref<RefParam<TValueType>>
+  | SRef<RefContent<TValueType>>
+
+export type RejectBareEmptyArray<TValueType> =
+  TValueType extends readonly never[] ? never : TValueType
+
+export type Ref<TValueType> = {
+  (): RefContent<TValueType>
+  <TNewValue extends RefSetterValue<TValueType>>(
+    newValue: RejectBareEmptyArray<TNewValue>,
+    eventSource?: unknown,
+  ): RefContent<TValueType>
   value: RefContent<TValueType>
 }
 
