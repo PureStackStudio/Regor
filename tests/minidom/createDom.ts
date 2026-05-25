@@ -12,6 +12,7 @@ type GlobalKey =
   | 'CustomEvent'
   | 'Event'
   | 'MouseEvent'
+  | 'MutationObserver'
   | 'Comment'
   | 'Text'
   | 'HTMLTemplateElement'
@@ -34,6 +35,7 @@ export function createDom(html: string): () => void {
     'CustomEvent',
     'Event',
     'MouseEvent',
+    'MutationObserver',
     'Comment',
     'Text',
     'HTMLTemplateElement',
@@ -55,6 +57,7 @@ export function createDom(html: string): () => void {
   assignGlobal(globals, 'CustomEvent', win.CustomEvent)
   assignGlobal(globals, 'Event', win.Event)
   assignGlobal(globals, 'MouseEvent', win.MouseEvent)
+  assignGlobal(globals, 'MutationObserver', win.MutationObserver)
   assignGlobal(globals, 'Comment', win.Comment)
   assignGlobal(globals, 'Text', win.Text)
   assignGlobal(globals, 'HTMLTemplateElement', win.HTMLTemplateElement)
