@@ -39,6 +39,7 @@ export type MiniWindow = {
   CustomEvent: typeof MiniCustomEvent
   Event: typeof MiniEvent
   MouseEvent: typeof MiniMouseEvent
+  MutationObserver: typeof MiniMutationObserver
   Comment: typeof MiniComment
   Text: typeof MiniText
   CSS: { escape: (value: string) => string }
@@ -86,6 +87,7 @@ function createWindow(document: MiniDocument): MiniWindow {
     CustomEvent: MiniCustomEvent,
     Event: MiniEvent,
     MouseEvent: MiniMouseEvent,
+    MutationObserver: MiniMutationObserver,
     Comment: MiniComment,
     Text: MiniText,
     CSS: { escape: cssEscape },
@@ -179,6 +181,7 @@ class MiniNode {
     if (index === -1) return node
     this.childNodes.splice(index, 1)
     node.parentNode = null
+    notifyMutation(this, { type: 'childList', target: this })
     return node
   }
 
@@ -254,7 +257,7 @@ class MiniNode {
   }
 
   dispatchEvent(event: MiniEvent): boolean {
-    if (!event || !event.type) return true
+    if (!event?.type) return true
     if (!event.target) event.target = this
     const normalizedType = event.type.toLowerCase()
     this.dispatchToListeners(normalizedType, event)
@@ -305,7 +308,123 @@ class MiniNode {
   }
 }
 
+type MiniMutationObserverInit = {
+  attributes?: boolean
+  attributeFilter?: string[]
+  childList?: boolean
+  subtree?: boolean
+}
+
+type MiniMutationRecord = {
+  type: 'attributes' | 'childList'
+  target: MiniNode
+  attributeName?: string | null
+}
+
+const mutationObservers = new WeakMap<MiniNode, Set<MiniMutationObserver>>()
+
+class MiniMutationObserver {
+  private observations: Array<{
+    target: MiniNode
+    options: MiniMutationObserverInit
+  }> = []
+
+  constructor(
+    private readonly callback: (
+      records: MiniMutationRecord[],
+      observer: MiniMutationObserver,
+    ) => void,
+  ) {}
+
+  observe(target: MiniNode, options: MiniMutationObserverInit) {
+    this.disconnectTarget(target)
+    let observers = mutationObservers.get(target)
+    if (!observers) {
+      observers = new Set()
+      mutationObservers.set(target, observers)
+    }
+
+    observers.add(this)
+    this.observations.push({
+      target,
+      options: {
+        ...options,
+        attributeFilter: options.attributeFilter?.map((item) =>
+          item.toLowerCase(),
+        ),
+      },
+    })
+  }
+
+  disconnect() {
+    for (const observation of this.observations) {
+      mutationObservers.get(observation.target)?.delete(this)
+    }
+
+    this.observations = []
+  }
+
+  takeRecords(): MiniMutationRecord[] {
+    return []
+  }
+
+  notify(record: MiniMutationRecord, observedTarget: MiniNode) {
+    const observation = this.observations.find(
+      (item) => item.target === observedTarget,
+    )
+    if (!observation || !observesMutation(observation, record)) return
+    this.callback([record], this)
+  }
+
+  observesSubtreeOf(target: MiniNode) {
+    return this.observations.some(
+      (item) => item.target === target && item.options.subtree,
+    )
+  }
+
+  private disconnectTarget(target: MiniNode) {
+    mutationObservers.get(target)?.delete(this)
+    this.observations = this.observations.filter(
+      (item) => item.target !== target,
+    )
+  }
+}
+
+function observesMutation(
+  observation: { target: MiniNode; options: MiniMutationObserverInit },
+  record: MiniMutationRecord,
+) {
+  if (record.type === 'attributes') {
+    if (!observation.options.attributes) return false
+    const filter = observation.options.attributeFilter
+    return (
+      !filter ||
+      !record.attributeName ||
+      filter.includes(record.attributeName.toLowerCase())
+    )
+  }
+
+  return record.type === 'childList' && !!observation.options.childList
+}
+
+function notifyMutation(target: MiniNode, record: MiniMutationRecord) {
+  let current: MiniNode | null = target
+  while (current) {
+    const observers = mutationObservers.get(current)
+    if (observers) {
+      for (const observer of observers) {
+        if (current === target || observer.observesSubtreeOf(current)) {
+          observer.notify(record, current)
+        }
+      }
+    }
+
+    current = current.parentNode
+  }
+}
+
 class MiniDocument extends MiniNode {
+  readonly isMinidom = true
   documentElement: MiniElement | null = null
   head: MiniElement | null = null
   body: MiniElement | null = null
@@ -580,6 +699,11 @@ class MiniElement extends MiniNode {
     if (key === 'value') this.internalValue = normalized
     if (key === 'checked') this.internalChecked = true
     if (key === 'selected') this.internalSelected = true
+    notifyMutation(this, {
+      type: 'attributes',
+      target: this,
+      attributeName: key,
+    })
   }
 
   removeAttribute(name: string) {
@@ -595,7 +719,14 @@ class MiniElement extends MiniNode {
       if (this.attributeMap.delete('style')) this.invalidateAttributes()
       return
     }
-    if (this.attributeMap.delete(key)) this.invalidateAttributes()
+    if (this.attributeMap.delete(key)) {
+      this.invalidateAttributes()
+      notifyMutation(this, {
+        type: 'attributes',
+        target: this,
+        attributeName: key,
+      })
+    }
     if (key === 'checked') this.internalChecked = false
     if (key === 'selected') this.internalSelected = false
   }
@@ -1319,6 +1450,7 @@ function insertNode(
   } else if (!node._ownerDocument && parent._ownerDocument) {
     node._ownerDocument = parent._ownerDocument
   }
+  notifyMutation(parent, { type: 'childList', target: parent })
   return node
 }
 
@@ -2104,6 +2236,7 @@ export {
   MiniElement,
   MiniHTMLElement,
   MiniHTMLTemplateElement,
+  MiniMutationObserver,
   MiniNode,
   MiniText,
 }

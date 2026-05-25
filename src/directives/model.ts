@@ -338,8 +338,10 @@ const handleSelect = (
   parsedValue: () => unknown[],
 ): Unbinder => {
   const eventType = 'change'
+  const stopObservingOptions = observeSelectOptions(el, parsedValue)
   const unbinder = (): void => {
     el.removeEventListener(eventType, listener)
+    stopObservingOptions()
   }
   const listener = (): void => {
     const modelRef = getModelRef()
@@ -374,4 +376,39 @@ const handleSelect = (
   }
   el.addEventListener(eventType, listener)
   return unbinder
+}
+
+const observeSelectOptions = (
+  el: HTMLSelectElement,
+  parsedValue: () => unknown[],
+): Unbinder => {
+  const MutationObserverCtor =
+    globalThis.MutationObserver ?? globalThis.window?.MutationObserver
+  if (!MutationObserverCtor) return () => {}
+
+  let pending = false
+  let stopped = false
+  const flush = (): void => {
+    pending = false
+    if (stopped) return
+    updateDomElementValue(el, parsedValue()[0])
+  }
+  const scheduleFlush = (): void => {
+    if (pending) return
+    pending = true
+    if (typeof queueMicrotask === 'function') queueMicrotask(flush)
+    else Promise.resolve().then(flush)
+  }
+  const observer = new MutationObserverCtor(scheduleFlush)
+  observer.observe(el, {
+    attributes: true,
+    attributeFilter: ['value'],
+    childList: true,
+    subtree: true,
+  })
+
+  return () => {
+    stopped = true
+    observer.disconnect()
+  }
 }

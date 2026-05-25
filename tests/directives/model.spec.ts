@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
-import { createApp, defineComponent, html, ref } from '../../src'
+import { createApp, defineComponent, html, ref, sref } from '../../src'
 import { modelDirective } from '../../src/directives/model'
 import { warningHandler } from '../../src/log/warnings'
 import { bindDirective, updateDirective } from '../directive-test-utils'
@@ -229,6 +229,52 @@ test('r-model with select multiple populates set', () => {
   optionX.selected = false
   select.dispatchEvent(new Event('change'))
   expect(Array.from(opts())).toStrictEqual(['y'])
+})
+
+test('r-model single select preserves selected option when r-for options are replaced', async () => {
+  const root = document.createElement('div')
+  const selectedId = ref('1')
+  const authOptions = sref([
+    { label: 'Auth 2', value: '2' },
+    { label: 'Auth 1', value: '1' },
+  ])
+
+  const app = createApp(
+    {
+      authOptions,
+      selectedId,
+    },
+    {
+      element: root,
+      template: html`<select r-model="selectedId">
+        <option r-for="authOption in authOptions" :value="authOption.value">
+          {{ authOption.label }}
+        </option>
+      </select>`,
+    },
+  )
+
+  const select = root.querySelector('select') as HTMLSelectElement | null
+  if (!select) throw new Error('missing select')
+
+  const selectedOption = () =>
+    [...select.querySelectorAll('option')].find((option) => option.selected)
+
+  expect(selectedId()).toBe('1')
+  expect(select.selectedIndex).toBe(1)
+  expect(selectedOption()?.value).toBe('1')
+
+  authOptions([
+    { label: 'Auth 2', value: '2' },
+    { label: 'Auth 1', value: '1' },
+  ])
+  await Promise.resolve()
+
+  expect(selectedId()).toBe('1')
+  expect(select.selectedIndex).toBe(1)
+  expect(selectedOption()?.value).toBe('1')
+
+  app.unbind()
 })
 
 test('demonstrates stale model target through component prop after selected ref replacement', () => {
