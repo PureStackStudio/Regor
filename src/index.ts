@@ -2,6 +2,7 @@ export type {
   AnyRef,
   BindData,
   Component,
+  CompProp,
   ComputedRef,
   Directive,
   Emits,

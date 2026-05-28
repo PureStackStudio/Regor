@@ -38,6 +38,8 @@ type BivariantAnyRefCall = {
 
 export type AnyRef = BivariantAnyRefCall
 
+export type CompProp<TValueType> = Ref<TValueType> | SRef<TValueType>
+
 export type RefOrValue<TValueType> =
   | Ref<TValueType>
   | SRef<TValueType>

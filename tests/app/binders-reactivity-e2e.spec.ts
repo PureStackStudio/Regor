@@ -90,6 +90,11 @@ const withApp = async (
   }
 }
 
+const expectDisabled = (button: HTMLButtonElement, expected: boolean): void => {
+  expect(button.hasAttribute('disabled')).toBe(expected)
+  expect(button.getAttribute('disabled')).toBe(expected ? '' : null)
+}
+
 test('e2e: dynamic r-bind option reacts to source replacement and detaches old source', async () => {
   const dynamicKey = ref('title')
   const source = ref<KeyedLabelSource>({
@@ -145,6 +150,312 @@ test('e2e: dynamic r-bind option reacts to source replacement and detaches old s
       dynamicKey('data-id')
       expect(btn.getAttribute('data-id')).toBe('43')
       expect(btn.textContent).toBe('delta')
+    },
+  )
+})
+
+test('e2e: disabled attr patching coerces boolean-like managed values', async () => {
+  const disabledValue = ref<unknown>(false)
+
+  await withApp(
+    { disabledValue },
+    `<button id="btn" :disabled="disabledValue">Save</button>`,
+    (root) => {
+      const button = root.querySelector('#btn') as HTMLButtonElement | null
+      if (!button) throw new Error('missing #btn')
+
+      expectDisabled(button, false)
+
+      disabledValue(true)
+      expectDisabled(button, true)
+
+      disabledValue(false)
+      expectDisabled(button, false)
+
+      disabledValue('')
+      expectDisabled(button, false)
+
+      disabledValue(0)
+      expectDisabled(button, false)
+
+      disabledValue(1)
+      expectDisabled(button, true)
+
+      disabledValue('false')
+      expectDisabled(button, false)
+
+      disabledValue('0')
+      expectDisabled(button, false)
+
+      disabledValue('true')
+      expectDisabled(button, true)
+
+      disabledValue('test')
+      expectDisabled(button, true)
+
+      disabledValue(Number.NaN)
+      expectDisabled(button, false)
+
+      disabledValue(null as any)
+      expectDisabled(button, false)
+
+      disabledValue(undefined as any)
+      expectDisabled(button, false)
+    },
+  )
+})
+
+test('e2e: disabled attr patching works through r-bind object updates', async () => {
+  const attrs = ref<Record<string, any>>({
+    disabled: true,
+  })
+
+  await withApp(
+    { attrs },
+    `<button id="btn" r-bind="attrs">Save</button>`,
+    (root) => {
+      const button = root.querySelector('#btn') as HTMLButtonElement | null
+      if (!button) throw new Error('missing #btn')
+
+      expectDisabled(button, true)
+
+      attrs({ disabled: false })
+      expectDisabled(button, false)
+
+      attrs({ disabled: '' })
+      expectDisabled(button, false)
+
+      attrs({ disabled: null })
+      expectDisabled(button, false)
+
+      attrs(
+        ref<Record<string, unknown>>({
+          disabled: 'false',
+        }),
+      )
+      expectDisabled(button, false)
+
+      attrs({ disabled: '0' })
+      expectDisabled(button, false)
+
+      attrs({ disabled: 'true' })
+      expectDisabled(button, true)
+
+      attrs({ disabled: 0 })
+      expectDisabled(button, false)
+    },
+  )
+})
+
+test('e2e: disabled attr is removed when dynamic attr key changes', async () => {
+  const attrName = ref('disabled')
+  const attrValue = ref<unknown>(true)
+
+  await withApp(
+    { attrName, attrValue },
+    `<button id="btn" r-bind:_d_attr-name_d_="attrValue">Save</button>`,
+    (root) => {
+      const button = root.querySelector('#btn') as HTMLButtonElement | null
+      if (!button) throw new Error('missing #btn')
+
+      expectDisabled(button, true)
+
+      attrName('aria-disabled')
+      expectDisabled(button, false)
+      expect(button.getAttribute('aria-disabled')).toBe('true')
+
+      attrValue(false)
+      expect(button.getAttribute('aria-disabled')).toBe('false')
+      expectDisabled(button, false)
+
+      attrName('disabled')
+      expect(button.getAttribute('aria-disabled')).toBeNull()
+      expectDisabled(button, false)
+
+      attrValue('')
+      expectDisabled(button, false)
+
+      attrName('data-disabled')
+      expectDisabled(button, false)
+      expect(button.getAttribute('data-disabled')).toBe('')
+    },
+  )
+})
+
+test('e2e: component literal disabled prop values flow into child attr binding', async () => {
+  const disabledButton = defineComponent(
+    html`<button class="btn" :disabled="disabled">Save</button>`,
+    {
+      props: ['disabled'],
+      context: (head) => ({
+        disabled: head.props.disabled,
+      }),
+    },
+  )
+
+  await withApp(
+    {
+      components: { disabledButton },
+    },
+    `<section>
+      <DisabledButton disabled="disabled"></DisabledButton>
+      <DisabledButton disabled="true"></DisabledButton>
+    </section>`,
+    (root) => {
+      const buttons = [
+        ...root.querySelectorAll<HTMLButtonElement>('.btn'),
+      ] as HTMLButtonElement[]
+
+      expect(buttons.length).toBe(2)
+      expectDisabled(buttons[0], true)
+      expectDisabled(buttons[1], true)
+    },
+  )
+})
+
+test('e2e: component literal disabled falsey props do not disable child attr binding', async () => {
+  const disabledButton = defineComponent(
+    html`<button class="btn" :disabled="disabled">Save</button>`,
+    {
+      props: ['disabled'],
+      context: (head) => ({
+        disabled: head.props.disabled,
+      }),
+    },
+  )
+
+  await withApp(
+    {
+      components: { disabledButton },
+    },
+    `<section>
+      <DisabledButton disabled="false"></DisabledButton>
+      <DisabledButton disabled="0"></DisabledButton>
+      <DisabledButton disabled=""></DisabledButton>
+    </section>`,
+    (root) => {
+      const buttons = [
+        ...root.querySelectorAll<HTMLButtonElement>('.btn'),
+      ] as HTMLButtonElement[]
+
+      expect(buttons.length).toBe(3)
+      expectDisabled(buttons[0], false)
+      expectDisabled(buttons[1], false)
+      expectDisabled(buttons[2], false)
+    },
+  )
+})
+
+test('e2e: component bound disabled prop forwards boolean updates to child attr binding', async () => {
+  const disabledValue = ref(false)
+  const disabledButton = defineComponent(
+    html`<button id="btn" :disabled="disabled">Save</button>`,
+    {
+      props: ['disabled'],
+      context: (head) => ({
+        disabled: head.props.disabled,
+      }),
+    },
+  )
+
+  await withApp(
+    {
+      disabledValue,
+      components: { disabledButton },
+    },
+    `<DisabledButton :disabled="disabledValue"></DisabledButton>`,
+    (root) => {
+      const button = root.querySelector('#btn') as HTMLButtonElement | null
+      if (!button) throw new Error('missing #btn')
+
+      expectDisabled(button, false)
+
+      disabledValue(true)
+      expectDisabled(button, true)
+
+      disabledValue(false)
+      expectDisabled(button, false)
+    },
+  )
+})
+
+test('e2e: component fallthrough disabled falsey values remove inherited native attr', async () => {
+  const inheritedButton = defineComponent(
+    html`<span><button class="btn" r-inherit>Save</button></span>`,
+  )
+
+  await withApp(
+    {
+      components: { inheritedButton },
+    },
+    `<section>
+      <InheritedButton disabled="false"></InheritedButton>
+      <InheritedButton disabled="0"></InheritedButton>
+      <InheritedButton disabled=""></InheritedButton>
+    </section>`,
+    (root) => {
+      const buttons = [
+        ...root.querySelectorAll<HTMLButtonElement>('.btn'),
+      ] as HTMLButtonElement[]
+
+      expect(buttons.length).toBe(3)
+      expectDisabled(buttons[0], false)
+      expectDisabled(buttons[1], false)
+      expectDisabled(buttons[2], false)
+    },
+  )
+})
+
+test('e2e: component fallthrough truthy disabled values normalize inherited native attr', async () => {
+  const inheritedButton = defineComponent(
+    html`<span><button class="btn" r-inherit>Save</button></span>`,
+  )
+
+  await withApp(
+    {
+      components: { inheritedButton },
+    },
+    `<section>
+      <InheritedButton disabled="disabled"></InheritedButton>
+      <InheritedButton disabled="true"></InheritedButton>
+      <InheritedButton disabled="test"></InheritedButton>
+    </section>`,
+    (root) => {
+      const buttons = [
+        ...root.querySelectorAll<HTMLButtonElement>('.btn'),
+      ] as HTMLButtonElement[]
+
+      expect(buttons.length).toBe(3)
+      expectDisabled(buttons[0], true)
+      expectDisabled(buttons[1], true)
+      expectDisabled(buttons[2], true)
+    },
+  )
+})
+
+test('e2e: component fallthrough bound disabled updates inherited native attr', async () => {
+  const disabledValue = ref(false)
+  const inheritedButton = defineComponent(
+    html`<span><button id="btn" r-inherit>Save</button></span>`,
+  )
+
+  await withApp(
+    {
+      disabledValue,
+      components: { inheritedButton },
+    },
+    `<InheritedButton :disabled="disabledValue"></InheritedButton>`,
+    (root) => {
+      const button = root.querySelector('#btn') as HTMLButtonElement | null
+      if (!button) throw new Error('missing #btn')
+
+      expectDisabled(button, false)
+
+      disabledValue(true)
+      expectDisabled(button, true)
+
+      disabledValue(false)
+      expectDisabled(button, false)
     },
   )
 })

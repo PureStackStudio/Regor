@@ -17,6 +17,7 @@ import { isNullOrWhitespace } from '../common/is-what'
 import { callMounted } from '../composition/callMounted'
 import { callUnmounted } from '../composition/callUnmounted'
 import { useScope } from '../composition/useScope'
+import { patchAttr } from '../directives/attr'
 import { contextDirective } from '../directives/context'
 import { singlePropDirective } from '../directives/single-prop'
 import { entangle } from '../reactivity/entangle'
@@ -427,10 +428,11 @@ export class ComponentBinder {
           } else if (attrName === ':style' || attrName === bindStyleName) {
             mergeBinding(':style', bindStyleName, value)
           } else {
-            inheritor.setAttribute(
-              normalizeAttributeName(attrName, binder.__config),
-              value,
+            const normalizedName = normalizeAttributeName(
+              attrName,
+              binder.__config,
             )
+            patchAttr(inheritor, normalizedName, value)
           }
         }
 

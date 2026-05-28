@@ -6,7 +6,9 @@ import {
   isObject,
   isString,
 } from '../common/is-what'
+import { toBoolean } from '../common/toBoolean'
 import { warning, WarningType } from '../log/warnings'
+import { unref } from '../reactivity/unref'
 
 const xlinkNS = 'http://www.w3.org/1999/xlink'
 
@@ -39,10 +41,6 @@ const booleanAttributes: any = {
   selected: 1,
 }
 
-function includeBooleanAttr(value: unknown): boolean {
-  return !!value || value === ''
-}
-
 /**
  * @internal
  */
@@ -55,8 +53,14 @@ const updateAttr = (
   flags?: string[],
 ): void => {
   if (option) {
+    option = unref(option)
     if (flags && flags.includes('camel')) option = camelize(option as string)
-    patchAttribute(el, option as string, values[0], previousOption as string)
+    patchAttr(
+      el,
+      option as string,
+      unref(values[0]),
+      unref(previousOption) as string,
+    )
     return
   }
   // supports
@@ -67,23 +71,23 @@ const updateAttr = (
   for (let i = 0; i < len; ++i) {
     const next = values[i]
     if (isArray(next)) {
-      const previousKey = previousValues?.[i]?.[0]
-      const key = next[0]
-      const value = next[1]
-      patchAttribute(el, key, value, previousKey)
+      const previousKey = unref(previousValues?.[i]?.[0])
+      const key = unref(next[0])
+      const value = unref(next[1])
+      patchAttr(el, key, value, previousKey)
     } else if (isObject(next)) {
       for (const item of Object.entries(next)) {
         const key = item[0]
-        const value = item[1]
-        const p = previousValues?.[i]
+        const value = unref(item[1])
+        const p = unref(previousValues?.[i])
         const previousKey = p && key in p ? key : undefined
-        patchAttribute(el, key, value, previousKey)
+        patchAttr(el, key, value, previousKey)
       }
     } else {
-      const previousKey = previousValues?.[i]
-      const key = values[i++]
-      const value = values[i]
-      patchAttribute(el, key, value, previousKey)
+      const previousKey = unref(previousValues?.[i])
+      const key = unref(values[i++])
+      const value = unref(values[i])
+      patchAttr(el, key, value, previousKey)
     }
   }
 }
@@ -103,7 +107,7 @@ export const attrDirective: Directive = {
   }),
 }
 
-const patchAttribute = (
+export const patchAttr = (
   el: HTMLElement,
   key: string,
   value: any,
@@ -136,10 +140,19 @@ const patchAttribute = (
     return
   }
 
-  const isBoolean = key in booleanAttributes
-  if (isNullOrUndefined(value) || (isBoolean && !includeBooleanAttr(value))) {
+  if (isNullOrUndefined(value)) {
     el.removeAttribute(key)
-  } else {
-    el.setAttribute(key, isBoolean ? '' : value)
+    return
   }
+
+  if (key in booleanAttributes) {
+    if (toBoolean(value)) {
+      el.setAttribute(key, '')
+    } else {
+      el.removeAttribute(key)
+    }
+    return
+  }
+
+  el.setAttribute(key, value)
 }

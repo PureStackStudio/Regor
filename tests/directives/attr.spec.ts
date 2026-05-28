@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
+import { ref } from '../../src'
 import { attrDirective } from '../../src/directives/attr'
 import { warningHandler } from '../../src/log/warnings'
 import { updateDirective } from '../directive-test-utils'
@@ -54,6 +55,28 @@ test('attr directive handles boolean attributes', () => {
   expect(el.getAttribute('disabled')).toBe(null)
 
   updateDirective(attrDirective, el, [['disabled', '']])
+  expect(el.getAttribute('disabled')).toBe(null)
+
+  updateDirective(attrDirective, el, [['disabled', 'false']])
+  expect(el.getAttribute('disabled')).toBe(null)
+
+  updateDirective(attrDirective, el, [['disabled', '0']])
+  expect(el.getAttribute('disabled')).toBe(null)
+
+  updateDirective(attrDirective, el, [['disabled', 'true']])
+  expect(el.getAttribute('disabled')).toBe('')
+
+  updateDirective(attrDirective, el, [['disabled', 'disabled']])
+  expect(el.getAttribute('disabled')).toBe('')
+})
+
+test('attr directive unwraps object-form ref values before patching', () => {
+  const el = document.createElement('input')
+
+  updateDirective(attrDirective, el, [{ disabled: ref('false') }])
+  expect(el.getAttribute('disabled')).toBe(null)
+
+  updateDirective(attrDirective, el, [{ disabled: ref('true') }])
   expect(el.getAttribute('disabled')).toBe('')
 })
 
