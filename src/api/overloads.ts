@@ -12,3 +12,16 @@ export declare function ref<TValueType>(
     object,
 ): IsNull<TValueType> extends true ? Ref<unknown> : Ref<RefParam<TValueType>>
 export declare function ref(value: string, eventSource?: unknown): Ref<string>
+
+export declare function cref(value: string): Ref<string>
+export declare function cref(value: number): Ref<number>
+export declare function cref(value: boolean): Ref<boolean>
+export declare function cref(value: bigint): Ref<bigint>
+export declare function cref(value: symbol): Ref<symbol>
+export declare function cref<TValueType>(
+  value: (TValueType extends RawTypes | readonly unknown[]
+    ? never
+    : RefInit<TValueType>) &
+    object,
+): IsNull<TValueType> extends true ? Ref<unknown> : Ref<RefParam<TValueType>>
+export declare function cref(value: string, eventSource?: unknown): Ref<string>

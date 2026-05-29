@@ -24,7 +24,7 @@ Its template syntax is familiar to Vue users (`r-if`, `r-model`, `r-for`, `r-bin
 />
 ```
 
-- **Flexible Reactivity:** Combine `ref`, `sref`, `batch`, `pause`, `resume`, and `entangle` for explicit state orchestration.
+- **Flexible Reactivity:** Combine `ref`, `cref`, `sref`, `batch`, `pause`, `resume`, and `entangle` for explicit state orchestration.
 - **Static-First + Islands:** Bind to existing DOM without removing server-rendered HTML, ideal for progressive enhancement.
 - **Reentrance:** Mount multiple times in already-mounted regions with same or different app contexts.
 - **Compatibility:** Rendered pages are designed for seamless integration with other libraries manipulating the DOM.
@@ -340,7 +340,7 @@ Regor is openly inspired by Vue’s concepts (even adopting a similar directive 
 ### Reactivity control model
 
 - **Vue:** Uses ES6 Proxies for a highly automated, "magical" reactivity system. You update an object, and Vue figures out what to re-render. However, this magic can sometimes abstract away performance bottlenecks, leading to over-rendering if you aren't careful with deep reactivity.
-- **Regor:** Provides fine-tuned, manual control. It offers `ref` (deep reactivity) and `sref` (simple/shallow reactivity without nested observation). Furthermore, Regor provides advanced control APIs like `pause()` and `resume()` to stop a ref's auto-triggers, `entangle()` to sync two refs effortlessly, and `batch()` for precise state grouping.
+- **Regor:** Provides fine-tuned, manual control. It offers `ref` (deep in-place reactivity), `cref` (copy-first deep reactivity), and `sref` (simple/shallow reactivity without nested observation). Furthermore, Regor provides advanced control APIs like `pause()` and `resume()` to stop a ref's auto-triggers, `entangle()` to sync two refs effortlessly, and `batch()` for precise state grouping.
 - **Verdict:** Vue's reactivity is easier for beginners.. Regor’s reactivity is more flexible and transparent, giving engineers exact tools to orchestrate update semantics and prevent unwanted DOM paints.
 
 ### TypeScript ergonomics
@@ -428,6 +428,7 @@ These directives empower you to create dynamic and interactive user interfaces, 
 **Reactivity Functions**
 
 - **`ref`** Creates a deep ref object recursively, modifying the source object in place.
+- **`cref`** Creates a deep ref object recursively from a flattened copy of the source object.
 - **`sref`** Creates a simple ref object from a given value, without nested ref creation.
 - **`isDeepRef`** Returns true if a given ref is created with `ref()` function.
 - **`isRef`** Returns true for any ref, false for non-refs.

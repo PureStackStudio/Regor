@@ -83,6 +83,7 @@ console.log(mySRef().age) // Outputs 35
 ## See Also
 
 - [`ref`](/api/ref)
+- [`cref`](/api/cref)
 - [`isDeepRef`](/api/isDeepRef)
 - [`isRef`](/api/isRef)
 - [`unref`](/api/unref)

@@ -4,7 +4,7 @@ title: isDeepRef
 
 ## Overview
 
-The `isDeepRef` function determines whether a given value is a deep ref object, indicating that it has been deeply converted into a ref object using the `ref` function.
+The `isDeepRef` function determines whether a given value is a deep ref object, indicating that it has been deeply converted into a ref object using `ref` or `cref`.
 
 ## Usage
 
@@ -37,7 +37,7 @@ if (isDeepRef(myValue)) {
 ```ts
 import { isDeepRef } from 'regor'
 
-const deepRefValue = /* A deep ref value created using the ref function */
+const deepRefValue = /* A deep ref value created using ref or cref */
 
 if (isDeepRef(deepRefValue)) {
   console.log('This value is a deep ref object.')
@@ -49,7 +49,7 @@ if (isDeepRef(deepRefValue)) {
 ## See Also
 
 - [`ref`](/api/ref)
-- [`sref`](/api/ref)
+- [`cref`](/api/cref)
 - [`isRef`](/api/isRef)
 - [`unref`](/api/unref)
 - [`observe`](/api/observe)

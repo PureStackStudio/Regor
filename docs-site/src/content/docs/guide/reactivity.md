@@ -9,11 +9,12 @@ This page describes Regor reactivity based on actual runtime behavior.
 ## Core model
 
 1. A ref is a callable value container (`r()`, `r(newValue)`) with `.value` alias.
-2. `ref()` and `sref()` are both refs (`isRef(...) === true`).
+2. `ref()`, `cref()`, and `sref()` are all refs (`isRef(...) === true`).
 3. `ref()` is deep-conversion oriented.
-4. `sref()` is shallow-conversion oriented.
+4. `cref()` is copy-first deep-conversion oriented.
+5. `sref()` is shallow-conversion oriented.
 
-## `ref` vs `sref` (important)
+## `ref` vs `cref` vs `sref` (important)
 
 ### `ref(value)`
 
@@ -31,6 +32,24 @@ Key behavior:
 2. Source objects are mutated in place during conversion.
 3. Existing refs are reused.
 4. `Node`, `Date`, `RegExp`, `Promise`, `Error` are not recursively converted.
+
+### `cref(value)`
+
+`cref` first flattens the value into a plain copied structure, then recursively converts that copy to refs.
+
+```ts
+const source = { user: { name: 'Ada' } }
+const user = cref(source)
+user().user().name('Grace')
+source.user.name // Ada
+```
+
+Key behavior:
+
+1. Equivalent to `ref(flatten(value))`.
+2. Source objects are not mutated during initial conversion.
+3. Nested refs are unwrapped into the copied structure before deep conversion.
+4. It costs more than `ref`, so prefer `ref` where in-place conversion is acceptable.
 
 ### `sref(value)`
 
@@ -50,7 +69,7 @@ Key behavior:
 
 ## Access and update forms
 
-For both `ref` and `sref`:
+For `ref`, `cref`, and `sref`:
 
 ```ts
 const r = ref(1)
@@ -134,7 +153,7 @@ Manual `trigger(ref)` still works while paused.
 ## Other important helpers
 
 1. `unref(x)` unwraps one ref level.
-2. `isRef(x)` checks any ref (`ref` or `sref`).
+2. `isRef(x)` checks any ref (`ref`, `cref`, or `sref`).
 3. `isDeepRef(x)` checks whether value was created as deep `ref`.
 4. `flatten(x)` recursively unwraps refs in objects/arrays/Map/Set into plain data.
 5. `entangle(a, b)` creates two-way sync and initializes `b` with `a`.
@@ -163,7 +182,7 @@ const plain = flatten(state)
 
 1. `Map` and `Set` are reactive through Regor’s proxy prototypes.
 2. `WeakMap` and `WeakSet` are not auto-reactive; use `trigger(...)` manually when needed.
-3. For very large nested structures, pick `ref` vs `sref` intentionally based on update style and cost.
+3. For very large nested structures, pick `ref`, `cref`, or `sref` intentionally based on mutation policy, update style, and cost.
 
 ## See Also
 

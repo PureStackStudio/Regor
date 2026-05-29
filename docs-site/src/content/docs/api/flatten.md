@@ -62,7 +62,8 @@ console.log(flattenedData)
 
 ## See Also
 
-- [`ref`](/api/sref)
+- [`ref`](/api/ref)
+- [`cref`](/api/cref)
 - [`sref`](/api/sref)
 - [`isDeepRef`](/api/isDeepRef)
 - [`isRef`](/api/isRef)

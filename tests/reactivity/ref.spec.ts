@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { isRef, Ref, ref, trigger, unref, watchEffect } from '../../src'
+import { cref, isRef, Ref, ref, trigger, unref, watchEffect } from '../../src'
 
 test('should hold a value', () => {
   const a = ref(1)
@@ -44,6 +44,46 @@ test('should make nested properties reactive', () => {
   expect(dummy).toBe(1)
   a().count.value = 2
   expect(dummy).toBe(2)
+})
+
+test('cref should make nested properties reactive without mutating source', () => {
+  const source = {
+    count: 1,
+    child: {
+      name: 'Ada',
+    },
+  }
+  const sourceChild = source.child
+  const a = cref(source)
+
+  expect(source.count).toBe(1)
+  expect(source.child).toBe(sourceChild)
+  expect(source.child.name).toBe('Ada')
+  expect(typeof a().count).toBe('function')
+  expect(typeof a().child().name).toBe('function')
+
+  a().count(2)
+  a().child().name('Grace')
+
+  expect(source.count).toBe(1)
+  expect(source.child.name).toBe('Ada')
+  expect(a().count()).toBe(2)
+  expect(a().child().name()).toBe('Grace')
+})
+
+test('cref should flatten existing refs before creating the copied ref', () => {
+  const source = {
+    count: ref(1),
+  }
+  const a = cref(source)
+
+  expect(source.count()).toBe(1)
+  expect(a().count()).toBe(1)
+
+  a().count(2)
+
+  expect(source.count()).toBe(1)
+  expect(a().count()).toBe(2)
 })
 
 test('should work without initial value', () => {

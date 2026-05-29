@@ -14,6 +14,9 @@ import { refSymbol } from './refSymbols'
 import { sref } from './sref'
 
 /**
+ * The ref function mutates given value in place. Use it with caution. 
+ * If you need to create ref without mutating use cref (which is slower).
+ * 
  * Converts the given value and its nested properties into ref objects recursively and returns the ref.
  * The returned object's type reflects its nested properties as well.
  *

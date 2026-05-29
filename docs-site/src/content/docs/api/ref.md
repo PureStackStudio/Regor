@@ -42,6 +42,7 @@ The `ref` function returns a ref object representing the input value and its nes
 
 - Certain types such as Node, Date, RegExp, Promise, and Error are not recursively converted into ref objects. They are treated as-is and returned as the value of the ref object.
 - Arrays and objects are recursively traversed to convert their nested properties into ref objects.
+- Arrays and objects are converted in place. Use [`cref`](/api/cref) when you need a copied deep ref without mutating the original object graph during initial conversion.
 - Symbols are not converted into ref objects, and the original symbols are preserved in the resulting ref object.
 - Observers can be attached to the ref object to be notified of changes to its value.
 - Every `ref` is an `sref`, but not every `sref` is a `ref`.
@@ -100,6 +101,7 @@ console.log(myRef().age()) // Outputs 35
 
 ## See Also
 
+- [`cref`](/api/cref)
 - [`sref`](/api/sref)
 - [`isDeepRef`](/api/isDeepRef)
 - [`isRef`](/api/isRef)

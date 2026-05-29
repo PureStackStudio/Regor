@@ -20,14 +20,15 @@ Use this page as an index, then open each API page for signature details and exa
 ## Reactivity
 
 1. [`ref`](/api/ref)
-2. [`sref`](/api/sref)
-3. [`isRef`](/api/isRef)
-4. [`isDeepRef`](/api/isDeepRef)
-5. [`unref`](/api/unref)
-6. [`pause`](/api/pause)
-7. [`resume`](/api/resume)
-8. [`trigger`](/api/trigger)
-9. [`entangle`](/api/entangle)
+2. [`cref`](/api/cref)
+3. [`sref`](/api/sref)
+4. [`isRef`](/api/isRef)
+5. [`isDeepRef`](/api/isDeepRef)
+6. [`unref`](/api/unref)
+7. [`pause`](/api/pause)
+8. [`resume`](/api/resume)
+9. [`trigger`](/api/trigger)
+10. [`entangle`](/api/entangle)
 
 ## Computed and Effects
 
@@ -82,6 +83,7 @@ Start with:
 
 1. [`createApp`](/api/createApp)
 2. [`ref`](/api/ref)
-3. [`sref`](/api/sref)
-4. [`computed`](/api/computed)
-5. [`watchEffect`](/api/watchEffect)
+3. [`cref`](/api/cref)
+4. [`sref`](/api/sref)
+5. [`computed`](/api/computed)
+6. [`watchEffect`](/api/watchEffect)

@@ -18,6 +18,14 @@ const flattenContent = (
 ): any => {
   if (!value) return value
   if (!isObject(value)) return value
+  if (
+    value instanceof Node ||
+    value instanceof Date ||
+    value instanceof RegExp ||
+    value instanceof Promise ||
+    value instanceof Error
+  )
+    return value
 
   if (isArray(value)) {
     return value.map(flatten)

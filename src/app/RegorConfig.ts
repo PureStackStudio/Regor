@@ -14,6 +14,7 @@ import { teleportDirective } from '../directives/teleport'
 import { textDirective } from '../directives/text'
 import { valueDirective } from '../directives/value'
 import { flatten } from '../misc/flatten'
+import { cref } from '../reactivity/cref'
 import { ref } from '../reactivity/ref'
 import { sref } from '../reactivity/sref'
 
@@ -105,6 +106,7 @@ export class RegorConfig {
       obj[key] = global[key]
     }
     obj.ref = ref
+    obj.cref = cref
     obj.sref = sref
     obj.flatten = flatten
     return obj
