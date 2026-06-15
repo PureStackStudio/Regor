@@ -12,7 +12,7 @@ The Guide explains how Regor behaves in real runtime usage, with patterns that m
    Core primitives (`ref`, `sref`, computed, observers), update semantics, and state design.
 
 2. [Templates and Expressions](/guide/templates)  
-   Interpolation transform, parser/evaluator capabilities, and template authoring patterns.
+   Interpolation behavior, parser/evaluator capabilities, and template authoring patterns.
 
 3. [Components](/guide/components)  
    Component creation, input channels (`:x`, `r-bind:x`, `:context`, `r-context`), slots, and inherit behavior.

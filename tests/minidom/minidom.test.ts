@@ -175,16 +175,22 @@ describe('minidom parsing and serialization', () => {
       },
     ))
 
-  it('supports replaceWith and replaceChildren', () =>
+  it('supports replaceChild, replaceWith and replaceChildren', () =>
     withDom(
       '<html><body><div><i id="old"></i></div></body></html>',
       ({ document }) => {
         const old = document.querySelector('#old')
+        const replacement = document.createElement('strong')
+        replacement.setAttribute('id', 'replacement')
+        old?.parentNode?.replaceChild(replacement, old)
+        expect(document.querySelector('div')?.firstChild).toBe(replacement)
+        expect(old?.parentNode).toBeNull()
+
         const first = document.createElement('b')
         first.setAttribute('id', 'new-a')
         const second = document.createElement('b')
         second.setAttribute('id', 'new-b')
-        old?.replaceWith(first, second)
+        replacement.replaceWith(first, second)
         const div = document.querySelector('div')
         expect(
           [...(div?.querySelectorAll('b') ?? [])].map((el) =>

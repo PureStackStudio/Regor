@@ -28,17 +28,17 @@ test('should mount the people into reactive divs.', () => {
   )
   const people = app.context.people()
   const testContent = () => {
-    expect(
-      [...root.querySelectorAll('[class]')].map((x) => x.className),
-    ).toStrictEqual(people.map((x) => x().name()))
-
-    expect(
-      [...root.querySelectorAll('span')].map((x) => x.textContent),
-    ).toStrictEqual(
-      people
-        .map((x) => x())
-        .flatMap((x, i) => [i.toString(), x.name(), x.age().toString()]),
+    const rows = [...root.querySelectorAll('[class]')]
+    expect(rows.map((x) => x.className)).toStrictEqual(
+      people.map((x) => x().name()),
     )
+    expect(rows.map((x) => x.textContent?.replace(/\s+/g, ' ').trim()))
+      .toStrictEqual(
+        people.map((x, i) => {
+          const person = x()
+          return `${i} - name: ${person.name()} age: ${person.age()}`
+        }),
+      )
   }
   testContent()
   people[0]().name.value = 'Ali'
@@ -120,23 +120,22 @@ test('should mount nested r-for.', () => {
   const people = app.context.people()
   const duplicate = app.context.duplicate
   const testContent = () => {
-    expect(
-      [...root.querySelectorAll('[class]')].map((x) => x.className),
-    ).toStrictEqual(
+    const rows = [...root.querySelectorAll('[class]')]
+    expect(rows.map((x) => x.className)).toStrictEqual(
       duplicateArray(
         duplicate(),
         people.map((x) => x().name()),
       ),
     )
 
-    expect(
-      [...root.querySelectorAll('span')].map((x) => x.textContent),
-    ).toStrictEqual(
+    expect(rows.map((x) => x.textContent?.replace(/\s+/g, ' ').trim()))
+      .toStrictEqual(
       duplicateArray(
         duplicate(),
-        people
-          .map((x) => x())
-          .flatMap((x, i) => [i.toString(), x.name(), x.age().toString()]),
+        people.map((x, i) => {
+          const person = x()
+          return `${i} - name: ${person.name()} age: ${person.age()}`
+        }),
       ),
     )
   }
@@ -262,8 +261,10 @@ test('should support index variable with parentheses', () => {
     },
   )
   expect(
-    [...root.querySelectorAll('span')].map((x) => x.textContent),
-  ).toStrictEqual(['0', 'Apple', '1', 'Banana'])
+    [...root.querySelectorAll('div')].map((x) =>
+      x.textContent?.replace(/\s+/g, ' ').trim(),
+    ),
+  ).toStrictEqual(['0 - Apple', '1 - Banana'])
 })
 
 test('should iterate object properties', () => {
@@ -280,8 +281,10 @@ test('should iterate object properties', () => {
     },
   )
   expect(
-    [...root.querySelectorAll('span')].map((x) => x.textContent),
-  ).toStrictEqual(['name', 'Alice', 'age', '25'])
+    [...root.querySelectorAll('div')].map((x) =>
+      x.textContent?.replace(/\s+/g, ' ').trim(),
+    ),
+  ).toStrictEqual(['name: Alice', 'age: 25'])
 })
 
 test('should support object destructuring with index', () => {
@@ -301,8 +304,10 @@ test('should support object destructuring with index', () => {
     },
   )
   expect(
-    [...root.querySelectorAll('span')].map((x) => x.textContent),
-  ).toStrictEqual(['0', 'Alice', '25', '1', 'Bob', '30'])
+    [...root.querySelectorAll('div')].map((x) =>
+      x.textContent?.replace(/\s+/g, ' ').trim(),
+    ),
+  ).toStrictEqual(['0 - Alice - 25', '1 - Bob - 30'])
 })
 
 test('should handle expressions with spaces', () => {

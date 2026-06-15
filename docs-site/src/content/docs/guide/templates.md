@@ -29,14 +29,13 @@ Regor supports two interpolation delimiters:
 <p>[[ user.name ]]</p>
 ```
 
-## Interpolation Transform Rules
+## Interpolation Behavior
 
 When interpolation is enabled (`RegorConfig.useInterpolation = true`):
 
-1. Interpolation in text nodes is converted to directive bindings before normal bind phase.
-2. If an element contains exactly one interpolation token with only surrounding whitespace, Regor rewrites that element to use `r-text`.
-3. Mixed text + interpolation is split into text nodes and generated `<span r-text="...">` nodes.
-4. Subtrees marked with `r-pre` are skipped.
+1. Interpolation expressions in text nodes become reactive text.
+2. Interpolation works as the whole text content or mixed with surrounding text.
+3. Subtrees marked with `r-pre` are skipped.
 
 If `useInterpolation = false`, `{{ ... }}` and `[[ ... ]]` stay as plain text.
 
