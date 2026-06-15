@@ -32,13 +32,14 @@ test('should mount the people into reactive divs.', () => {
     expect(rows.map((x) => x.className)).toStrictEqual(
       people.map((x) => x().name()),
     )
-    expect(rows.map((x) => x.textContent?.replace(/\s+/g, ' ').trim()))
-      .toStrictEqual(
-        people.map((x, i) => {
-          const person = x()
-          return `${i} - name: ${person.name()} age: ${person.age()}`
-        }),
-      )
+    expect(
+      rows.map((x) => x.textContent?.replace(/\s+/g, ' ').trim()),
+    ).toStrictEqual(
+      people.map((x, i) => {
+        const person = x()
+        return `${i} - name: ${person.name()} age: ${person.age()}`
+      }),
+    )
   }
   testContent()
   people[0]().name.value = 'Ali'
@@ -128,8 +129,9 @@ test('should mount nested r-for.', () => {
       ),
     )
 
-    expect(rows.map((x) => x.textContent?.replace(/\s+/g, ' ').trim()))
-      .toStrictEqual(
+    expect(
+      rows.map((x) => x.textContent?.replace(/\s+/g, ' ').trim()),
+    ).toStrictEqual(
       duplicateArray(
         duplicate(),
         people.map((x, i) => {
