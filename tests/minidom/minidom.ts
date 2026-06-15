@@ -176,6 +176,17 @@ class MiniNode {
     return insertNode(this, node, ref)
   }
 
+  replaceChild(node: MiniNode, oldNode: MiniNode): MiniNode {
+    if (node === oldNode) return oldNode
+    const index = this.childNodes.indexOf(oldNode)
+    if (index === -1) {
+      throw new Error('Reference node is not a child of this parent')
+    }
+    insertNode(this, node, oldNode)
+    this.removeChild(oldNode)
+    return oldNode
+  }
+
   removeChild(node: MiniNode) {
     const index = this.childNodes.indexOf(node)
     if (index === -1) return node

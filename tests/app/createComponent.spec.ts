@@ -586,20 +586,20 @@ test('should render nested component with reactive properties', () => {
     root.innerHTML,
     html`<!-- begin component: MYCOMPONENT-->
       <div>
-        name: <span>root</span>
+        name: root
         <!--__begin__ r-for => child in item.children--><!-- begin component: MYCOMPONENT-->
         <div>
-          name: <span>child 1</span>
+          name: child 1
           <!--__begin__ r-for => child in item.children--><!--__end__ r-for => child in item.children-->
         </div>
         <!-- end component: MYCOMPONENT--><!-- begin component: MYCOMPONENT-->
         <div>
-          name: <span>child 2</span>
+          name: child 2
           <!--__begin__ r-for => child in item.children--><!--__end__ r-for => child in item.children-->
         </div>
         <!-- end component: MYCOMPONENT--><!-- begin component: MYCOMPONENT-->
         <div>
-          name: <span>child 3</span>
+          name: child 3
           <!--__begin__ r-for => child in item.children--><!--__end__ r-for => child in item.children-->
         </div>
         <!-- end component: MYCOMPONENT--><!--__end__ r-for => child in item.children-->
@@ -616,20 +616,20 @@ test('should render nested component with reactive properties', () => {
     root.innerHTML,
     html`<!-- begin component: MYCOMPONENT-->
       <div>
-        name: <span>new root</span>
+        name: new root
         <!--__begin__ r-for => child in item.children--><!-- begin component: MYCOMPONENT-->
         <div>
-          name: <span>new child 1</span>
+          name: new child 1
           <!--__begin__ r-for => child in item.children--><!--__end__ r-for => child in item.children-->
         </div>
         <!-- end component: MYCOMPONENT--><!-- begin component: MYCOMPONENT-->
         <div>
-          name: <span>new child 2</span>
+          name: new child 2
           <!--__begin__ r-for => child in item.children--><!--__end__ r-for => child in item.children-->
         </div>
         <!-- end component: MYCOMPONENT--><!-- begin component: MYCOMPONENT-->
         <div>
-          name: <span>new child 3</span>
+          name: new child 3
           <!--__begin__ r-for => child in item.children--><!--__end__ r-for => child in item.children-->
         </div>
         <!-- end component: MYCOMPONENT--><!--__end__ r-for => child in item.children-->
@@ -1486,6 +1486,38 @@ test('enableSwitch controls whether slot bindings use parent or component contex
   expect(root.querySelector('.with-switch')?.textContent?.trim()).toBe(
     'from-parent-next',
   )
+})
+
+test('slotted interpolation removes generated spans and stays reactive', () => {
+  const root = document.createElement('div')
+  const message = ref('hello')
+  const shell = defineComponent(html`<section><slot></slot></section>`, {
+    context: (head) => {
+      head.enableSwitch = true
+      return {}
+    },
+  })
+
+  createApp(
+    {
+      components: { shell },
+      message,
+    },
+    {
+      element: root,
+      template: html`<Shell>
+        <p class="slot-copy">slot says {{ message }}</p>
+      </Shell>`,
+    },
+  )
+
+  const copy = root.querySelector('.slot-copy') as HTMLParagraphElement
+  expect(copy.textContent).toBe('slot says hello')
+  expect(copy.querySelector('span')).toBeNull()
+
+  message('updated')
+  expect(copy.textContent).toBe('slot says updated')
+  expect(copy.querySelector('span')).toBeNull()
 })
 
 test('defineComponent supports disabling interpolation and direct element children scan', () => {

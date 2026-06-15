@@ -1,6 +1,7 @@
 import { RegorConfig } from '../app/RegorConfig'
 import { getChildNodes } from '../common/common'
 import { isNullOrWhitespace } from '../common/is-what'
+import { rgi } from './rgi'
 
 /**
  * @internal
@@ -62,6 +63,7 @@ const interpolateTextNode = (
     const delimiter = getInterpolationDelimiter(part, delimiters)
     if (delimiter) {
       const spanTag = document.createElement('span')
+      spanTag.setAttribute(rgi, '')
       spanTag.setAttribute(
         textDirective,
         part.substring(

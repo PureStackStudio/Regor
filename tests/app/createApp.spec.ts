@@ -31,15 +31,16 @@ test('click counter', () => {
         <button @click="count++">click me: {{ count }}</button>`,
     },
   )
-  expect(root.querySelector('div > span')?.textContent).toBe('0')
+  expect(root.querySelector('div')?.textContent).toBe('count: 0')
   for (let i = 0; i < 10; ++i) {
     root.querySelector('button')?.click()
-    expect(root.querySelector('div > span')?.textContent).toBe(`${i + 1}`)
+    expect(root.querySelector('div')?.textContent).toBe(`count: ${i + 1}`)
   }
   htmlEqual(
     root.innerHTML,
-    raw`<div>count: <span>10</span></div><button>click me: <span>10</span></button>`,
+    raw`<div>count: 10</div><button>click me: 10</button>`,
   )
+  expect(root.querySelector('div > span')).toBeNull()
 })
 
 test('interpolation supports bracket syntax', () => {
@@ -71,6 +72,44 @@ test('interpolation supports both syntaxes at once', () => {
   )
 
   expect(root.textContent).toBe('hello world')
+})
+
+test('interpolation removes only generated spans and keeps cleanup anchored', () => {
+  const root = document.createElement('div')
+  const message = ref('hello')
+  const title = ref('title')
+  const app = createApp(
+    {
+      message,
+      title,
+    },
+    {
+      element: root,
+      template: html`<section>
+        <p>Hello {{ message }}!</p>
+        <span id="manual" r-text="title"></span>
+      </section>`,
+    },
+  )
+
+  const paragraph = root.querySelector('p') as HTMLParagraphElement
+  const manual = root.querySelector('#manual') as HTMLSpanElement
+
+  expect(paragraph.textContent).toBe('Hello hello!')
+  expect(paragraph.querySelector('span')).toBeNull()
+  expect(manual.tagName).toBe('SPAN')
+  expect(manual.textContent).toBe('title')
+
+  message('world')
+  title('next')
+  expect(paragraph.textContent).toBe('Hello world!')
+  expect(manual.textContent).toBe('next')
+
+  app.unbind()
+  message('stopped')
+  title('stopped')
+  expect(paragraph.textContent).toBe('Hello world!')
+  expect(manual.textContent).toBe('next')
 })
 
 test('createApp mounts json template and supports unbind', () => {
