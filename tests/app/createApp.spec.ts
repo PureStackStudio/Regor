@@ -74,6 +74,41 @@ test('interpolation supports both syntaxes at once', () => {
   expect(root.textContent).toBe('hello world')
 })
 
+test('interpolation preserves authored text spacing', () => {
+  const root = document.createElement('div')
+  const first = ref('Ada')
+  const last = ref('Lovelace')
+  createApp(
+    {
+      first,
+      last,
+    },
+    {
+      element: root,
+      template: html`<section>
+        <p id="joined">{{ first }}{{ last }}</p>
+        <p id="spaced">{{ first }} {{ last }}</p>
+        <p id="mixed">Hello {{ first }}!</p>
+        <p id="whole">{{ first }}</p>
+      </section>`,
+    },
+  )
+
+  expect(root.querySelector('#joined')?.textContent).toBe('AdaLovelace')
+  expect(root.querySelector('#spaced')?.textContent).toBe('Ada Lovelace')
+  expect(root.querySelector('#mixed')?.textContent).toBe('Hello Ada!')
+  expect(root.querySelector('#whole')?.textContent).toBe('Ada')
+  expect(root.querySelector('p > span')).toBeNull()
+
+  first('Grace')
+  last('Hopper')
+  expect(root.querySelector('#joined')?.textContent).toBe('GraceHopper')
+  expect(root.querySelector('#spaced')?.textContent).toBe('Grace Hopper')
+  expect(root.querySelector('#mixed')?.textContent).toBe('Hello Grace!')
+  expect(root.querySelector('#whole')?.textContent).toBe('Grace')
+  expect(root.querySelector('p > span')).toBeNull()
+})
+
 test('interpolation removes only generated spans and keeps cleanup anchored', () => {
   const root = document.createElement('div')
   const message = ref('hello')

@@ -1,4 +1,11 @@
-import { IsNull, Ref, RefContent, RefParam, SRef, UnwrapRef } from '../api/types'
+import {
+  IsNull,
+  Ref,
+  RefContent,
+  RefParam,
+  SRef,
+  UnwrapRef,
+} from '../api/types'
 import { flatten } from '../misc/flatten'
 import { ref } from './ref'
 
