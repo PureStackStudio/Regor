@@ -8,7 +8,15 @@
     "release": "purestack publish --content ./content"
   },
   "dependencies": {
-    "purestack": "1.1.7"
+    "@purestack/ts-css": "1.1.7",
+    "@purestack/ts-html": "1.1.7",
+    "@purestack/ts-style": "1.1.7",
+    "@purestack/ts-util": "1.1.7",
+    "purestack": "1.1.7",
+    "regor": "1.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
   },
   "packageManager": "yarn@4.9.2"
 }

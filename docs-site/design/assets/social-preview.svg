@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs><radialGradient id="glow"><stop stop-color="#d2fa56" stop-opacity=".09"/><stop offset="1" stop-color="#d2fa56" stop-opacity="0"/></radialGradient><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d2fa56" stop-opacity=".16"/><stop offset="1" stop-color="#d2fa56" stop-opacity="0"/></linearGradient><clipPath id="chart"><rect x="800" y="170" width="400" height="300"/></clipPath></defs>
+<rect width="1200" height="630" fill="#101211"/>
+<ellipse cx="1060" cy="330" rx="480" ry="380" fill="url(#glow)"/>
+<rect x="62" y="50" width="62" height="62" rx="16" fill="#d2fa56"/><svg x="70" y="58" width="46" height="46" color="#18200e" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M20.341 6.484A10 10 0 0 1 10.266 21.85"/><path d="M3.659 17.516A10 10 0 0 1 13.74 2.152"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/></svg>
+<g font-family="Segoe UI,Arial,sans-serif"><text x="142" y="96" fill="#f2f3ed" font-size="44" font-weight="700" letter-spacing="-2">Regor<tspan fill="#d2fa56">.</tspan></text>
+<text x="64" y="252" fill="#f2f3ed" font-size="84" font-weight="700" letter-spacing="-4">Small signals.</text>
+<text x="64" y="349" fill="#d2fa56" font-size="84" font-weight="700" letter-spacing="-4">Big possibilities.</text>
+<text x="68" y="409" fill="#aeb3a9" font-size="26">Reactive UI for HTML and SVG.</text>
+<text x="68" y="449" fill="#aeb3a9" font-size="26">Built with TypeScript. Close to your DOM.</text></g>
+<g clip-path="url(#chart)"><g stroke="#3c423a" stroke-dasharray="3 8"><path d="M810 215H1200M810 285H1200M810 355H1200M810 425H1200"/></g>
+<path d="M810 402C855 400 866 374 906 365S954 234 1000 245 1050 350 1080 295 1148 186 1200 198V458H810Z" fill="url(#fill)"/>
+<path d="M810 402C855 400 866 374 906 365S954 234 1000 245 1050 350 1080 295 1148 186 1200 198" fill="none" stroke="#d2fa56" stroke-width="3"/>
+<path d="M810 420C862 410 865 340 915 330S980 310 1020 359 1085 379 1132 337 1168 258 1200 266" fill="none" stroke="#efb1df" stroke-width="2"/>
+<path d="M810 446C875 444 908 398 948 407S1000 421 1040 407 1082 370 1126 393 1170 421 1200 390" fill="none" stroke="#f2f3ed" stroke-width="2" opacity=".7"/>
+<circle cx="1000" cy="245" r="6" fill="#101211" stroke="#d2fa56" stroke-width="3"/></g>
+<path d="M64 532H1136" stroke="#2d322c"/>
+<g font-family="Cascadia Code,Consolas,monospace" font-size="17"><text x="68" y="580" fill="#d2fa56">DIRECT DOM  /  REACTIVE STATE  /  OPEN SOURCE</text><text x="1134" y="580" fill="#aeb3a9" text-anchor="end">regor.purestack.studio</text></g></svg>

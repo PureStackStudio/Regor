@@ -1,55 +1,132 @@
 ---
-title: Regor
-description: Direct DOM binding, precise reactivity, and TypeScript-native workflows for real applications.
-template: doc
+title: Reactive UI for HTML and SVG
+description: A reactive UI library for TypeScript. Connect state to HTML and SVG, compose components, and update the DOM directly.
+template: regor
 order: 1
+nav:
+  title: Home
 layout:
+  fullWidth: true
+  showNav: false
   showToc: false
 ---
 
-# Reactive UI without framework lock-in
+<section class="regor-hero" aria-labelledby="hero-title">
+  <div class="regor-container hero-layout">
+    <div>
+      <a class="eyebrow" href="https://github.com/koculu/regor"><span class="release-dot"></span>Regor · Open source UI library</a>
+      <h1 id="hero-title">Small signals.<br/><span>Big possibilities.</span></h1>
+      <p class="hero-copy">Regor is a reactive UI library for TypeScript. Connect state to HTML and SVG, compose components, and update the DOM directly.</p>
+      <Flex class="hero-actions">
+        <BtnLink href="/getting-started/" tone="accent" variant="solid" icon="tabler:arrow-right" iconPosition="end">Start building</BtnLink>
+        <BtnLink href="/guide/" tone="neutral" variant="outline">Explore the guide</BtnLink>
+      </Flex>
+      <div class="install-line"><code><span aria-hidden="true">$</span><span id="install-command">npm install regor</span></code><button class="install-copy" type="button" data-copy="install-command" aria-label="Copy install command">Copy</button></div>
+      <p class="hero-footnote">Start with existing markup. Add reactivity where you need it.</p>
+      <div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
+    </div>
+    <div class="workbench theme--dark tone--neutral">
+      <div class="workbench-bar"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Two files. One reactive counter.</span><span>REGOR</span></div>
+      <div class="source-code doc-content">
+      <Tabs group="regor-example" selectedTab="typescript" ariaLabel="Counter source code" tone="neutral" variant="none" tabVariant="none">
+        <TabPane id="typescript" label="counter.ts">
 
-Regor gives you direct DOM binding, precise reactivity primitives, and
-TypeScript-native workflows for real applications.
+```ts
+import { createApp, ref } from 'regor'
 
-<Flex wrap="true" class="my-6">
-  <BtnLink href="/getting-started/" tone="accent">Start building</BtnLink>
-  <BtnLink href="/guide/" tone="neutral">Read the guide</BtnLink>
-  <BtnLink href="https://github.com/koculu/regor" tone="ghost">GitHub</BtnLink>
-</Flex>
+const count = ref(0)
 
-Regor is a modern reactive UI library for teams that want **power and control**.
-Bind existing markup, build components in TypeScript, and adopt reactivity at
-your own pace.
+createApp({
+  count,
+  increment: () => count(count() + 1),
+  reset: () => count(0),
+}, { selector: '#counter' })
+```
 
-<Grid columns="1" columnsMd="2" class="gap-4 my-6">
-  <FeatureCard title="Runtime-first" summary="Bind dynamic behavior directly on existing DOM, without a Virtual DOM dependency." />
-  <FeatureCard title="Precise reactivity" summary="Model state with ref, sref, computed, watchEffect, observers, batch updates, and pause/resume controls." />
-  <FeatureCard title="Powerful directives" summary="Lists, conditionals, events, text and HTML binding, forms, dynamic components, and attributes." />
-  <FeatureCard title="Flexible components" summary="Build components in TypeScript with practical context behavior and dynamic composition." />
-  <FeatureCard title="Choose your workflow" summary="Use npm packages, CDN ESM, or a global build, including build-less and CSP-friendly workflows." />
-  <FeatureCard title="Performance by design" summary="Stay close to the DOM and optimize hot paths with full visibility." />
-  <FeatureCard title="Progressive enhancement" summary="Adopt Regor incrementally in existing applications and static pages with dynamic islands." />
-  <FeatureCard title="Library-friendly" summary="Integrate with external DOM logic and micro-frontend environments." />
-</Grid>
+        </TabPane>
+        <TabPane id="html" label="index.html">
 
-## Start here
+```html
+<div id="counter">
+  <output r-text="count">0</output>
+  <button @click="increment">+1</button>
+  <button @click="reset">Reset</button>
+</div>
+```
 
-- [Overview](/overview/) - Core philosophy, strengths, and tradeoffs.
-- [Getting started](/getting-started/) - Install and ship your first Regor app.
-- [Guide](/guide/) - Reactivity, templates, components, lifecycle, and troubleshooting.
-- [Directives](/directives/) - Syntax, behavior, and practical usage patterns.
-- [API reference](/api/) - Complete API index by category.
-- [Performance guide](/guide/performance/) - Benchmark and optimize with confidence.
+        </TabPane>
+      </Tabs>
+      </div>
+      <div class="live-preview">
+        <div class="preview-label"><span class="release-dot"></span>Live preview · try it</div>
+        <div id="counter" class="counter-row">
+          <div class="counter-readout"><output class="counter-value" aria-label="Counter value" aria-live="polite">0</output><span class="counter-caption">count</span></div>
+          <div class="counter-buttons"><button class="counter-increment" type="button" disabled>+1</button><button class="counter-reset" type="button" disabled>Reset</button></div>
+        </div>
+        <noscript><p>Enable JavaScript to try the live counter.</p></noscript>
+      </div>
+      <div class="workbench-caption"><span>State → DOM. Directly.</span><span>No Virtual DOM.</span></div>
+    </div>
+  </div>
+</section>
 
-## Regor and PureStack
+<div class="regor-container proof-strip">
+  <div><Icon name="tabler:code"/><div><strong>DOM-first</strong><small>Enhance the markup you already have.</small></div></div>
+  <div><Icon name="tabler:bolt"/><div><strong>Fine-grained reactivity</strong><small>Refs, computed values, and observers.</small></div></div>
+  <div><Icon name="tabler:braces"/><div><strong>TypeScript-native</strong><small>Typed props, contexts, and components.</small></div></div>
+</div>
 
-This documentation is built with [PureStack](https://purestack.studio/), which
-uses Regor for its components and browser behavior. Write Markdown for content
-and use Regor MDX when a page needs components or interactivity.
+<section id="framework" class="regor-section regor-container" aria-labelledby="framework-title">
+  <div class="section-heading"><div><span class="eyebrow">01 / Closer to the web</span><h2 id="framework-title">State to screen.<br/>With less ceremony.</h2></div><p>Bind a single element or compose an application. The same primitives connect your state, markup, and components.</p></div>
+  <div class="feature-grid">
+    <RegorFeature number="01" icon="tabler:bolt" title="Explicit reactivity" summary="Model state with refs, derive values with computed, and coordinate updates with observers and batching." href="/guide/reactivity/"/>
+    <RegorFeature number="02" icon="tabler:code" title="Expressive templates" summary="Render lists and conditions, handle events, and bind form values with directives in your HTML." href="/guide/templates/"/>
+    <RegorFeature number="03" icon="tabler:braces" title="Composable components" summary="Define components in TypeScript, pass typed props, and share context across your interface." href="/guide/components/"/>
+  </div>
+</section>
 
-## Community and contribution
+<section id="ecosystem" class="regor-section ecosystem theme--dark tone--neutral" aria-labelledby="ecosystem-title">
+  <div class="regor-container ecosystem-layout">
+    <div class="ecosystem-copy"><span class="eyebrow">02 / A beautiful full circle</span><h2 id="ecosystem-title">Better together.<br/>From UI to docs.</h2><p><strong>Regor powers PureStack's UI.</strong> It renders PureStack's components and powers its interactive browser applications.</p><p><strong>PureStack builds Regor's docs.</strong> It turns this site's Markdown, Regor components, and typed styles into HTML, CSS, and JavaScript.</p><p>This site puts both to work: PureStack generates the pages, and Regor runs the interactive examples.</p><div class="ecosystem-links"><a href="https://purestack.studio/">Explore PureStack <Icon name="tabler:arrow-up-right"/></a><a href="https://purestack.studio/guides/extending/regor/">Regor in PureStack <Icon name="tabler:arrow-up-right"/></a></div></div>
+    <div>
+      <div class="cycle-diagram" role="img" aria-label="Regor renders PureStack's components and powers its browser apps. PureStack generates Regor's documentation site.">
+        <span class="cycle-label">Reactive UI →</span>
+        <div class="cycle-path" aria-hidden="true"></div>
+        <div class="cycle-nodes"><div class="cycle-node"><span class="cycle-mark" aria-hidden="true"><Icon name="lucide:orbit"/></span><strong>Regor</strong><small>Reactive UI library</small></div><div class="cycle-node"><span class="cycle-mark" aria-hidden="true"><Icon name="tabler:stack-2"/></span><strong>PureStack</strong><small>Static site generator</small></div></div>
+        <span class="cycle-label">← This documentation</span>
+      </div>
+      <p class="cycle-note">Built with PureStack. Interactive with Regor.</p>
+    </div>
+  </div>
+</section>
 
-- [GitHub Discussions](https://github.com/koculu/regor/discussions)
-- [Contributing guide](https://github.com/koculu/regor/blob/main/.github/CONTRIBUTING.md)
-- [Issue tracker](https://github.com/koculu/regor/issues)
+<section id="learn" class="regor-section regor-container" aria-labelledby="learn-title">
+  <div class="section-heading"><div><span class="eyebrow">03 / Find your next step</span><h2 id="learn-title">Start here.<br/>Keep building.</h2></div><p>Follow the guide to your first app, then use the directive and API references as you build.</p></div>
+  <div class="resource-grid">
+    <RegorResource number="01" title="Getting started" summary="Install Regor and mount your first app." href="/getting-started/"/>
+    <RegorResource number="02" title="The guide" summary="Reactivity, templates, components, and lifecycle cleanup." href="/guide/"/>
+    <RegorResource number="03" title="Directives" summary="Syntax and examples for rendering, events, forms, and bindings." href="/directives/"/>
+    <RegorResource number="04" title="API reference" summary="Function signatures and usage examples." href="/api/"/>
+  </div>
+</section>
+
+<section id="signal-studio" class="regor-section regor-container signal-demo" aria-labelledby="signal-title">
+  <div class="section-heading"><div><span class="eyebrow">04 / State in motion</span><h2 id="signal-title">Reactive data.<br/>Live SVG.</h2></div><p>Change the workload, adjust intensity, or toggle streams. The chart and its metrics update from the same state.</p></div>
+  <div id="signal-chart"><SignalChart/></div>
+  <noscript><p class="signal-demo-note">This is a static preview. Enable JavaScript to animate the chart and try the controls.</p></noscript>
+  <details class="signal-source">
+    <summary>Explore the source<span>State · SVG template · animation lifecycle</span></summary>
+    <div class="doc-content">
+      <Tabs group="signal-source" selectedTab="chart-state" ariaLabel="Live chart implementation" tone="neutral" variant="none" tabVariant="underline">
+        <TabPane id="chart-state" label="chart-model.ts"><import-codeblock src="./examples/chart-model.ts"/></TabPane>
+        <TabPane id="chart-markup" label="chart-view.ts"><import-codeblock src="./examples/chart-view.ts"/></TabPane>
+        <TabPane id="chart-runtime" label="signal-chart.ts"><import-codeblock src="./examples/signal-chart.ts"/></TabPane>
+      </Tabs>
+    </div>
+  </details>
+  <p class="signal-demo-note">Refs hold the state. Computed values derive the curves and metrics. Keyed SVG elements update in place. Learn about <a href="/guide/reactivity/">reactivity</a> and <a href="/guide/lifecycle-and-cleanup/">lifecycle cleanup</a>.</p>
+</section>
+
+<section class="regor-container closing" aria-labelledby="closing-title"><h2 id="closing-title">Make your next idea reactive.</h2><p>Add Regor to your project and connect your first piece of state.</p><BtnLink href="/getting-started/" tone="accent" variant="solid" icon="tabler:arrow-right" iconPosition="end">Start building</BtnLink></section>
+
+<PageScript src="./home.ts"/>

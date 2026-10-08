@@ -338,7 +338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@purestack/ts-css@npm:^1.1.7":
+"@purestack/ts-css@npm:1.1.7, @purestack/ts-css@npm:^1.1.7":
   version: 1.1.7
   resolution: "@purestack/ts-css@npm:1.1.7"
   dependencies:
@@ -348,7 +348,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@purestack/ts-html@npm:^1.1.7":
+"@purestack/ts-html@npm:1.1.7, @purestack/ts-html@npm:^1.1.7":
   version: 1.1.7
   resolution: "@purestack/ts-html@npm:1.1.7"
   dependencies:
@@ -424,7 +424,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@purestack/ts-style@npm:^1.1.7":
+"@purestack/ts-style@npm:1.1.7, @purestack/ts-style@npm:^1.1.7":
   version: 1.1.7
   resolution: "@purestack/ts-style@npm:1.1.7"
   dependencies:
@@ -448,7 +448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@purestack/ts-util@npm:^1.1.7":
+"@purestack/ts-util@npm:1.1.7, @purestack/ts-util@npm:^1.1.7":
   version: 1.1.7
   resolution: "@purestack/ts-util@npm:1.1.7"
   checksum: 10c0/2a24f9f359af259850519b63337fc332e89ac575b09f30ff6fa85e7375922928c9a02b8a38d811116088d9a7fddedcf72823910cc635fd5a69f4adff54595b45
@@ -554,6 +554,15 @@ __metadata:
   version: 2.1.0
   resolution: "@types/ms@npm:2.1.0"
   checksum: 10c0/5ce692ffe1549e1b827d99ef8ff71187457e0eb44adbae38fdf7b9a74bae8d20642ee963c14516db1d35fa2652e65f47680fdf679dcbde52bbfadd021f497225
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.0.0":
+  version: 22.20.5
+  resolution: "@types/node@npm:22.20.5"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/0cf61a89c6a69917ab49f976a6bb11a29e3b348a6ae19f5827ceb91d3ade781faab58dcf3b8fa625f975f5d7536b9166ff94e8250c29272c667164f77c28fa88
   languageName: node
   linkType: hard
 
@@ -1913,11 +1922,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "regor-doc-site@workspace:."
   dependencies:
+    "@purestack/ts-css": "npm:1.1.7"
+    "@purestack/ts-html": "npm:1.1.7"
+    "@purestack/ts-style": "npm:1.1.7"
+    "@purestack/ts-util": "npm:1.1.7"
+    "@types/node": "npm:^22.0.0"
     purestack: "npm:1.1.7"
+    regor: "npm:1.7.3"
   languageName: unknown
   linkType: soft
 
-"regor@npm:^1.7.3":
+"regor@npm:1.7.3, regor@npm:^1.7.3":
   version: 1.7.3
   resolution: "regor@npm:1.7.3"
   checksum: 10c0/c6079f93905f042df5682b42a293ea1c6442c59e0b50819b0f6bb9727c40cb9411b3d755809a06ac5592cf37c1b3049d4fb883a73de3acf23d9cd848d645cc76
@@ -2116,6 +2131,13 @@ __metadata:
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 
