@@ -709,14 +709,13 @@ export function registerRegorStyles() {
     mobile
       .select('.footer-inner')
       .css({ alignItems: 'start', flexDirection: 'column' })
-    mobile.select('.regor-topbar .header-guide').css({ display: 'none' })
     mobile.select('.regor-topbar .header-nav').css({ gap: '12px' })
     mobile.select('.regor-topbar .topbar__controls').css({ gap: '12px' })
     mobile.select('.template-doc .doc-main').css({ paddingTop: '24px' })
     mobile.select('.template-doc .doc-content').css({ fontSize: '15px' })
     root
       .media('max-width: 380px')
-      .select('.regor-topbar .header-nav')
+      .select('.regor-topbar .header-api')
       .css({ display: 'none' })
     root
       .media('max-width: 380px')
