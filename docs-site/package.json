@@ -14,7 +14,7 @@
     "@purestack/ts-html": "1.1.7",
     "@purestack/ts-style": "1.1.7",
     "@purestack/ts-util": "1.1.7",
-    "purestack": "1.1.7",
+    "purestack": "^1.1.8",
     "regor": "1.7.3"
   },
   "devDependencies": {

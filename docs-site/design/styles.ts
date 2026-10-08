@@ -34,7 +34,6 @@ export function registerRegorStyles() {
     registerFooterStyles(context)
     registerCopyFeedbackStyles(context)
     registerTabletStyles(context)
-    registerMobileTabStyles(context)
     registerMobileLayoutStyles(context)
     registerNarrowScreenStyles(context)
     registerReducedMotionStyles(context)
@@ -762,63 +761,6 @@ function registerTabletStyles(context: RegorStyleContext) {
     .media('max-width: 1000px')
     .select('.regor-feature')
     .css({ padding: '24px' })
-}
-
-function registerMobileTabStyles(context: RegorStyleContext) {
-  const { root, ink, muted, edge, accent } = context
-  const mobile = root.media('max-width: 760px')
-  const mobileTabs = ':is(.regor-home, .template-doc) .tabs'
-  mobile
-    .select(mobileTabs)
-    .css({ padding: '12px', gap: '0', boxShadow: 'none' })
-  mobile
-    .select(`${mobileTabs} > .tabs__select-wrap, ${mobileTabs} .tabs__overflow`)
-    .css({ display: 'none' })
-  mobile
-    .select(`${mobileTabs}.tabs--enhanced > .tabs__tabs-row`)
-    .css({ display: 'flex' })
-  mobile
-    .select(`${mobileTabs} .tabs__tab-buttons`)
-    .css({ overflowX: 'auto', gap: '0', scrollbarWidth: 'thin' })
-  mobile.select(`${mobileTabs} > .tabs__list`).css({
-    gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
-    gap: '0',
-  })
-  mobile
-    .select(`${mobileTabs} .tabs__tab, ${mobileTabs} .tabs__tab-buttons > .btn`)
-    .css({
-      display: 'inline-flex',
-      minWidth: '0',
-      minHeight: '44px',
-      padding: '10px 8px',
-      font: `600 11px/1.4 ${mono}`,
-      border: '0',
-      borderBottom: '2px solid transparent !important',
-      borderRadius: '0',
-      background: 'transparent',
-      boxShadow: 'none !important',
-      color: `${muted} !important`,
-    })
-  mobile
-    .select(
-      `${mobileTabs} .tabs__control:checked + .tabs__tab, ${mobileTabs} .tabs__tab-buttons > .btn[aria-selected="true"]`,
-    )
-    .css({
-      color: `${accent} !important`,
-      borderBottomColor: `${accent} !important`,
-    })
-  mobile
-    .select(`${mobileTabs}.tabs--enhanced .tabs__tab`)
-    .css({ display: 'none' })
-  mobile
-    .select(`${mobileTabs} .tabs__tab-buttons > .btn[hidden]`)
-    .css({ display: 'inline-flex !important' })
-  mobile.select(`${mobileTabs} .tabs__tab:hover`).css({ color: ink })
-  mobile.select(`${mobileTabs} .tabs__panel`).css({
-    borderTop: `1px solid ${edge}`,
-  })
-  mobile.select('.workbench .tabs').css({ padding: '0' })
-  mobile.select('.workbench pre').css({ padding: '20px 16px' })
 }
 
 function registerMobileLayoutStyles(context: RegorStyleContext) {

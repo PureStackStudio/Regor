@@ -34,6 +34,7 @@ export const chartTemplate = html`<div
     <label class="signal-field"
       >Workload
       <select
+        name="workload"
         r-model="workload"
         :disabled="!interactive"
         aria-label="Simulated workload"
@@ -46,6 +47,7 @@ export const chartTemplate = html`<div
     <label class="signal-field signal-intensity"
       >Intensity <span r-text="intensity + '%'"></span>
       <input
+        name="intensity"
         type="range"
         min="40"
         max="140"
@@ -191,6 +193,7 @@ export const chartTemplate = html`<div
     </div>
     <label class="signal-scrubber"
       >Inspect<input
+        name="sample"
         type="range"
         min="0"
         max="59"
