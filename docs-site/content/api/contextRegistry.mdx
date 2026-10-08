@@ -1,0 +1,210 @@
+---
+title: contextRegistry
+description: "Register context instances and resolve them by their runtime class."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">contextRegistry</Badge><Badge tone="neutral" variant="surface">Lifecycle and Scope</Badge></Flex><p>Register context instances and resolve them by their runtime class.</p></Panel>
+
+## Overview
+
+`ContextRegistry` is a utility class for explicit context sharing across
+component trees.
+
+It stores context instances by constructor and lets you resolve them by type.
+Lookup uses `instanceof`, so querying by a base class can return a subclass
+instance.
+
+## Try it live
+
+<section class="guide-example" aria-label="contextRegistry example">
+  <div class="guide-example-heading"><strong>Resolve the instance you registered</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-registry" selectedTab="registry-preview" ariaLabel="contextRegistry implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="registry-preview" label="Live preview"><div id="api-demo" data-example="registry"><ApiRegistry/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="registry-source" label="registry.ts"><import-codeblock src="./demos/registry.ts"/></TabPane>
+    <TabPane id="registry-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Register a workspace, replace it, or unregister it. Lookup uses the class rather than the draft input.</p>
+</section>
+
+## Usage
+
+```ts
+import { ContextRegistry } from 'regor'
+
+class AppServices {
+  readonly apiBase = '/v1'
+}
+
+const registry = new ContextRegistry()
+registry.register(new AppServices())
+
+const services = registry.require(AppServices)
+```
+
+## API
+
+### `register(context)`
+
+Registers an instance under its runtime constructor.
+
+- If another instance of the same constructor is already registered, it is
+  replaced.
+
+### `unregisterByClass(ContextClass)`
+
+Removes the entry for a constructor.
+
+- No-op when that constructor is not registered.
+
+### `unregister(context)`
+
+Removes an instance only if it is currently the registered value for its
+constructor.
+
+- This prevents deleting a newer replacement instance registered later.
+
+### `find(ContextClass)`
+
+Returns the first registered instance matching `instanceof ContextClass`, or
+`undefined`.
+
+### `require(ContextClass)`
+
+Returns the same result as `find`, but throws when not found.
+
+- Error message format: `ClassName is not registered in ContextRegistry.`
+
+## Example: parent provides registry, child resolves from `head.requireContext`
+
+```ts
+import { ComponentHead, ContextRegistry, defineComponent } from 'regor'
+
+class AppServices {
+  readonly apiBase = '/v1'
+}
+
+class Parent {
+  readonly registry = new ContextRegistry()
+
+  constructor() {
+    this.registry.register(new AppServices())
+  }
+}
+
+class Child {
+  readonly apiBase: string
+
+  constructor(head: ComponentHead<object>) {
+    // Parent can provide registry from any component context shape.
+    const parent = head.requireContext(Parent)
+    const services = parent.registry.require(AppServices)
+    this.apiBase = services.apiBase
+  }
+}
+
+const parent = defineComponent<Parent>('<div><slot></slot></div>', {
+  context: () => new Parent(),
+})
+
+const child = defineComponent<Child>('<p r-text="apiBase"></p>', {
+  context: (head) => {
+    return new Child(head)
+  },
+})
+```
+
+## Example: component ctx <=> component ctx communication through parent registry
+
+```ts
+import {
+  ComponentHead,
+  ContextRegistry,
+  createApp,
+  defineComponent,
+  html,
+  ref,
+} from 'regor'
+
+class Parent {
+  components = { producer, consumer }
+  registry = new ContextRegistry()
+}
+
+class Consumer {
+  message = ref('idle')
+  private readonly parent: Parent
+
+  constructor(head: ComponentHead<object>) {
+    this.parent = head.requireContext(Parent)
+    this.parent.registry.register(this)
+  }
+
+  receive = (next: string): void => {
+    this.message(next)
+  }
+}
+
+class Producer {
+  private readonly parent: Parent
+
+  constructor(head: ComponentHead<object>) {
+    this.parent = head.requireContext(Parent)
+    this.parent.registry.register(this)
+  }
+
+  send = (): void => {
+    // direct component-ctx -> component-ctx call through registry
+    const consumer = this.parent.registry.require(Consumer)
+    consumer.receive('message-from-producer')
+  }
+}
+
+const producer = defineComponent<Producer>(
+  html`<button class="send" @click="send">send</button>`,
+  {
+    context: (head) => new Producer(head),
+  },
+)
+
+const consumer = defineComponent<Consumer>(
+  html`<p class="value">{{ message }}</p>`,
+  {
+    context: (head) => new Consumer(head),
+  },
+)
+
+const parent = defineComponent<Parent>(
+  html`<section>
+    <Producer></Producer>
+    <Consumer></Consumer>
+  </section>`,
+  {
+    context: () => new Parent(),
+  },
+)
+
+createApp(
+  { components: { parent } },
+  {
+    element: document.querySelector('#app')!,
+    template: '<Parent></Parent>',
+  },
+)
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Store instances with explicit identity"><p>Registering another instance of the same constructor replaces the earlier entry. find can check for absence without throwing.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to contextRegistry." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/defineComponent"><code>defineComponent</code></a></li>
+    <li><a href="/api/useScope"><code>useScope</code></a></li>
+    <li><a href="/guide/components">Components Guide</a></li>
+    <li><a href="/guide/typescript">TypeScript Guide</a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

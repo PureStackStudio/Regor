@@ -1,0 +1,101 @@
+---
+title: trigger
+description: "Notify a ref’s observers explicitly, with optional recursive triggering."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">trigger</Badge><Badge tone="neutral" variant="surface">Reactivity</Badge></Flex><p>Notify a ref’s observers explicitly, with optional recursive triggering.</p></Panel>
+
+## Overview
+
+The `trigger` function is used to manually trigger observers and update dependent refs. This function is particularly useful when you need to manually control when ref updates and observer notifications occur.
+
+## Try it live
+
+<section class="guide-example" aria-label="trigger example">
+  <div class="guide-example-heading"><strong>Separate stored values from notifications</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-notifications" selectedTab="notifications-preview" ariaLabel="trigger implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="notifications-preview" label="Live preview"><div id="api-demo" data-example="notifications"><ApiNotifications/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="notifications-source" label="notifications.ts"><import-codeblock src="./demos/notifications.ts"/></TabPane>
+    <TabPane id="notifications-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Pause, write, resume, and trigger. Compare the stored value with what the observer last received.</p>
+</section>
+
+## Usage
+
+### Manually Triggering Observers
+
+To manually trigger observers for a specific ref, call the `trigger` function with the ref as the `source` argument. This will notify all observers of the ref and update any dependent refs.
+
+```ts
+import { trigger, ref, observe } from 'regor'
+
+const myRef = ref(5)
+
+observe(myRef, () => {
+  console.log('Observer triggered:', myRef.value)
+})
+
+myRef.value = 10 // The observer is automatically triggered
+
+// Manually trigger the observer
+trigger(myRef)
+
+// Outputs:
+// Observer triggered: 10
+```
+
+### Recursive Triggering
+
+By default, the `trigger` function only notifies observers of the specified ref. If you want to trigger observers recursively for nested refs within arrays, sets, maps, or objects, you can set the `isRecursive` argument to `true`. This will trigger observers for all nested refs.
+
+```ts
+import { trigger, ref, observe } from 'regor'
+
+const myRef = ref([1, 2, 3])
+
+observe(myRef, () => {
+  console.log('Observer triggered:', myRef.value)
+})
+
+myRef.value.push(4) // The observer is automatically triggered
+
+// Manually trigger the observer recursively
+trigger(myRef, undefined, true)
+
+// Outputs:
+// Observer triggered: [1, 2, 3, 4]
+```
+
+## Parameters
+
+- `source`: The ref for which you want to manually trigger observers.
+- `eventSource` (optional): An optional event source that can be provided to identify the source of the trigger. This can be useful for debugging and tracking trigger events.
+- `isRecursive` (optional): A boolean flag that, when set to `true`, triggers observers recursively for nested refs within arrays, sets, maps, and objects. By default, this is set to `false`.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Manual notification is an explicit choice"><p>Use trigger when a change needs notification beyond the normal setter behavior. Keep recursive triggering scoped to the data that needs it.</p></AlertBox>
+
+## Notes
+
+- The `trigger` function is typically used for advanced scenarios where manual control over observer notifications is required. In most cases, observers are automatically notified when a ref's value changes.
+
+- Recursive triggering can be resource-intensive if there are deep and complex nested structures. Use it judiciously to avoid unnecessary performance overhead.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to trigger." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/computed"><code>computed</code></a></li>
+    <li><a href="/api/watchEffect"><code>watchEffect</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

@@ -1,0 +1,121 @@
+---
+title: sref
+description: "Hold shallow writable state and replace plain object values to notify bindings."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">sref</Badge><Badge tone="neutral" variant="surface">Reactivity</Badge></Flex><p>Hold shallow writable state and replace plain object values to notify bindings.</p></Panel>
+
+## Overview
+
+The `sref` function converts a given value into an sref (short for "simple ref") object and returns the sref. An sref allows you to both retrieve and update its value.
+
+The nested properties of an sref are not converted to refs.
+
+[**`Try It Online`**](https://stackblitz.com/edit/regor-sample-ref?file=index.ts)
+
+## Try it live
+
+<section class="guide-example" aria-label="sref example">
+  <div class="guide-example-heading"><strong>Compare deep, copied, and shallow state</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-state" selectedTab="state-preview" ariaLabel="sref implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="state-preview" label="Live preview"><div id="api-demo" data-example="state"><ApiState/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="state-source" label="state.ts"><import-codeblock src="./demos/state.ts"/></TabPane>
+    <TabPane id="state-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Change the name and apply it. Inspect the nested values, ref checks, and flattened snapshot.</p>
+</section>
+
+## Usage
+
+### Getting the SRef Value
+
+You can access the value of the sref object using two methods:
+
+1. `srefObj.value`: Accesses the value directly.
+2. `srefObj()`: Invokes the sref object to retrieve its value.
+
+### Setting the SRef Value
+
+To update the value of an sref object, you have two options:
+
+1. `srefObj.value = newValue`: Sets the value directly.
+2. `srefObj(newValue)`: Invokes the sref object with the new value to update it.
+
+## Parameters
+
+- `value` (optional): Any value that you want to convert into an sref object. The function supports several input types:
+
+  - Basic types such as numbers, strings, booleans, Date etc.
+  - sref objects.
+  - objects
+  - Array, Map, Set.
+  - `null` or `undefined`.
+
+## Return Value
+
+The `sref` function returns an sref object representing the input value. The specific type of the returned sref object depends on the input value's type.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Plain nested fields remain plain"><p>For ordinary objects, mutating a nested field does not notify by itself. Replace the object or trigger intentionally.</p></AlertBox>
+
+## Notes
+
+- `sref` modifies prototype of arrays, maps, and sets to make them reactive.
+
+- Observers can be attached to the sref object to be notified of changes to its value.
+
+- The function also supports batch collecting changes and pausing/resuming auto-triggering of observers.
+- Every `ref` is an `sref`, but not every `sref` is a `ref`.
+
+## Example
+
+```ts
+import { sref } from 'regor'
+
+const initialValue = {
+  name: 'John',
+  age: 30,
+  hobbies: ['reading', 'swimming'],
+}
+
+const mySRef = sref(initialValue)
+
+// Accessing the sref value using function call
+console.log(mySRef()) // Outputs the initial value
+
+// Accessing the sref value using value getter
+console.log(mySRef.value) // Outputs the initial value
+
+// Updating the sref value
+mySRef().name = 'Alice' // Directly modifying the sref value
+console.log(mySRef().name) // Outputs 'Alice'
+
+mySRef({
+  name: 'Alice',
+  age: 35,
+  hobbies: ['reading', 'swimming'],
+}) // Invoking the sref with a new value
+console.log(mySRef().age) // Outputs 35
+```
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to sref." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/cref"><code>cref</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

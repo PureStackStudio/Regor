@@ -2,9 +2,7 @@
 title: Regor Documentation
 ---
 
-The documentation has moved to [docs-site/src/content/docs/index.md](../docs-site/src/content/docs/index.md).
+The documentation lives at [regor.purestack.studio](https://regor.purestack.studio/). Its PureStack source is in [docs-site/content/index.mdx](../docs-site/content/index.mdx).
 Please update your bookmarks.
-
-You can also read it online at [https://tenray.io//regor](https://tenray.io//regor).
 
 [Back to GitHub Repository](https://github.com/koculu/Regor)

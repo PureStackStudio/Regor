@@ -1,0 +1,82 @@
+---
+title: cref
+description: "Copy a structure before deep conversion so the original data remains unchanged."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">cref</Badge><Badge tone="neutral" variant="surface">Reactivity</Badge></Flex><p>Copy a structure before deep conversion so the original data remains unchanged.</p></Panel>
+
+## Overview
+
+The `cref` function creates a deep ref from a flattened copy of the given value.
+
+It is equivalent to calling `ref(flatten(value))`: nested refs are unwrapped into plain values first, then the copied structure is converted into deep refs.
+
+Use `cref` when you want deep ref behavior without mutating the original object graph during initial conversion.
+
+## Try it live
+
+<section class="guide-example" aria-label="cref example">
+  <div class="guide-example-heading"><strong>Compare deep, copied, and shallow state</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-state" selectedTab="state-preview" ariaLabel="cref implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="state-preview" label="Live preview"><div id="api-demo" data-example="state"><ApiState/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="state-source" label="state.ts"><import-codeblock src="./demos/state.ts"/></TabPane>
+    <TabPane id="state-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Change the name and apply it. Inspect the nested values, ref checks, and flattened snapshot.</p>
+</section>
+
+## Usage
+
+```ts
+import { cref } from 'regor'
+
+const source = {
+  user: {
+    name: 'Ada',
+  },
+}
+
+const state = cref(source)
+
+state().user().name('Grace')
+
+console.log(source.user.name)
+// Outputs: Ada
+
+console.log(state().user().name())
+// Outputs: Grace
+```
+
+## Parameters
+
+- `value` (optional): Any value that you want to copy and convert into a deep ref.
+
+## Return Value
+
+The `cref` function returns the same kind of deep ref as `ref`.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Copy first, then make it reactive"><p>Use cref for plain source data whose original structure should remain intact.</p></AlertBox>
+
+## Notes
+
+- `cref(value)` is equivalent to `ref(flatten(value))`.
+- `cref` does not mutate the original object graph during initial conversion.
+- `cref` does extra work compared with `ref`, so use `ref` for performance-critical paths where in-place conversion is acceptable.
+- `cref` follows `flatten` behavior for nested refs, arrays, sets, maps, and circular references.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to cref." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

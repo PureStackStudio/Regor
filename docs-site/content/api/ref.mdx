@@ -1,0 +1,140 @@
+---
+title: ref
+description: "Create writable state and recursively convert nested object and array fields to refs."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">ref</Badge><Badge tone="neutral" variant="surface">Reactivity</Badge></Flex><p>Create writable state and recursively convert nested object and array fields to refs.</p></Panel>
+
+## Overview
+
+The `ref` function converts a given value and its nested properties into ref objects recursively, returning a ref object that reflects the structure of the input value.
+
+[**`Try It Online`**](https://stackblitz.com/edit/regor-sample-ref?file=index.ts)
+
+## Try it live
+
+<section class="guide-example" aria-label="ref example">
+  <div class="guide-example-heading"><strong>Compare deep, copied, and shallow state</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-state" selectedTab="state-preview" ariaLabel="ref implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="state-preview" label="Live preview"><div id="api-demo" data-example="state"><ApiState/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="state-source" label="state.ts"><import-codeblock src="./demos/state.ts"/></TabPane>
+    <TabPane id="state-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Change the name and apply it. Inspect the nested values, ref checks, and flattened snapshot.</p>
+</section>
+
+## Usage
+
+### Getting the Ref Value
+
+You can access the value of the ref object using two methods:
+
+1. `refObj.value`: Accesses the value directly.
+2. `refObj()`: Invokes the ref object to retrieve its value.
+
+### Setting the Ref Value
+
+To update the value of a ref object, you have two options:
+
+1. `refObj.value = newValue`: Sets the value directly.
+2. `refObj(newValue)`: Invokes the ref object with the new value to update it.
+
+## Parameters
+
+- `value` (optional): Any value that you want to convert into a ref object. The function supports several input types:
+
+  - Basic types such as numbers, strings, booleans, Date etc.
+  - ref objects.
+  - objects
+  - Array, Map, Set.
+  - `null` or `undefined`.
+
+## Return Value
+
+The `ref` function returns a ref object representing the input value and its nested properties. The specific type of the returned ref object depends on the input value's type.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Deep conversion changes the input"><p>ref converts the supplied structure in place. Choose cref when you need a copied structure.</p></AlertBox>
+
+## Notes
+
+- Certain types such as Node, Date, RegExp, Promise, and Error are not recursively converted into ref objects. They are treated as-is and returned as the value of the ref object.
+- Arrays and objects are recursively traversed to convert their nested properties into ref objects.
+- Arrays and objects are converted in place. Use [`cref`](/api/cref) when you need a copied deep ref without mutating the original object graph during initial conversion.
+- Symbols are not converted into ref objects, and the original symbols are preserved in the resulting ref object.
+- Observers can be attached to the ref object to be notified of changes to its value.
+- Every `ref` is an `sref`, but not every `sref` is a `ref`.
+
+## Example
+
+```ts
+import { ref } from 'regor'
+
+interface Address {
+  city: string
+  state: string
+}
+
+interface User {
+  name: string
+  age: number
+  address?: Address
+}
+
+const initialValue: User = {
+  name: 'John',
+  age: 30,
+  address: {
+    city: 'New York',
+    state: 'NY',
+  },
+}
+
+// create ref from initialValue.
+// ref call replaces initial value's nested properties with ref objects recursively in place.
+const myRef = ref<User>(initialValue) // returned type is Ref<User>
+
+// Accessing the ref value using function call
+console.log(myRef()) // Outputs the initial value
+
+// Accessing the ref value using value getter
+console.log(myRef.value) // Outputs the initial value
+
+// Updating the ref value
+myRef().name('Alice') // Modifying the ref value using function call
+console.log(myRef().name()) // Outputs 'Alice'
+
+// Updating the ref value using value using setter
+myRef().name.value = 'Alice' // Modifying the ref value
+console.log(myRef().name.value) // Outputs 'Alice'
+
+myRef(
+  ref({
+    name: 'Alice',
+    age: 35,
+  }),
+) // Invoking the ref with a new value
+console.log(myRef().age()) // Outputs 35
+```
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to ref." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/cref"><code>cref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

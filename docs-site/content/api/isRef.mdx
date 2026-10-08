@@ -1,0 +1,86 @@
+---
+title: isRef
+description: "Check whether a value is a Regor reactive reference."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">isRef</Badge><Badge tone="neutral" variant="surface">Reactivity</Badge></Flex><p>Check whether a value is a Regor reactive reference.</p></Panel>
+
+## Overview
+
+The `isRef` function determines whether a given value is a ref object, indicating that it has been converted into a ref using the `ref`, `sref` or `computed` functions.
+
+## Try it live
+
+<section class="guide-example" aria-label="isRef example">
+  <div class="guide-example-heading"><strong>Compare deep, copied, and shallow state</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-state" selectedTab="state-preview" ariaLabel="isRef implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="state-preview" label="Live preview"><div id="api-demo" data-example="state"><ApiState/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="state-source" label="state.ts"><import-codeblock src="./demos/state.ts"/></TabPane>
+    <TabPane id="state-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Change the name and apply it. Inspect the nested values, ref checks, and flattened snapshot.</p>
+</section>
+
+## Usage
+
+### Checking for Ref
+
+To check if a value is a ref, you can use the `isRef` function.
+
+```ts
+import { isRef } from 'regor'
+
+const myValue = /* Your value here */
+
+if (isRef(myValue)) {
+  console.log('The value is a ref.')
+} else {
+  console.log('The value is not a ref.')
+}
+```
+
+## Parameters
+
+- `value`: The value you want to check for being a ref object.
+
+## Return Value
+
+- The `isRef` function returns `true` if the provided `value` is a ref object, and `false` otherwise.
+
+## Example
+
+```ts
+import { isRef } from 'regor'
+
+const refValue = /* A ref value created using the ref or sref function */
+
+if (isRef(refValue)) {
+  console.log('This value is a ref object.')
+} else {
+  console.log('This value is not a ref object.')
+}
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="A ref check is not a deep-conversion check"><p>isRef recognizes deep, shallow, and computed refs. Use isDeepRef for the deep-conversion distinction.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to isRef." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

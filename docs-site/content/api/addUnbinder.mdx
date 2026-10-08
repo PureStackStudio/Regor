@@ -1,0 +1,82 @@
+---
+title: addUnbinder
+description: "Associate a cleanup callback with a DOM node’s binding lifetime."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">addUnbinder</Badge><Badge tone="neutral" variant="surface">Cleanup and Unbind</Badge></Flex><p>Associate a cleanup callback with a DOM node’s binding lifetime.</p></Panel>
+
+## Overview
+
+The `addUnbinder` function is used to associate an unbinder function with a DOM node in Regor. An unbinder function is used to remove bound data and associated logic from the DOM node when necessary.
+
+## Try it live
+
+<section class="guide-example" aria-label="addUnbinder example">
+  <div class="guide-example-heading"><strong>Own a node through its full lifetime</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-cleanup" selectedTab="cleanup-preview" ariaLabel="addUnbinder implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="cleanup-preview" label="Live preview"><div id="api-demo" data-example="cleanup"><ApiCleanup/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="cleanup-source" label="cleanup.ts"><import-codeblock src="./demos/cleanup.ts"/></TabPane>
+    <TabPane id="cleanup-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Mount, write, unbind, or remove and drain. Watch the DOM, observer count, and registered cleanup.</p>
+</section>
+
+## Usage
+
+### Associating an Unbinder Function
+
+To associate an unbinder function with a DOM node, call the `addUnbinder` function with the following parameters:
+
+- `node`: The DOM node to which you want to associate the unbinder function.
+
+- `unbinder`: A function that can be executed later to remove bound data and associated logic from the DOM node.
+
+### Example
+
+```javascript
+import { addUnbinder } from 'regor'
+
+// Create an unbinder function
+const myUnbinder = () => {
+  // Remove bound data and associated logic
+  // ...
+}
+
+// Associate the unbinder function with a DOM node
+const someElement = document.getElementById('example')
+addUnbinder(someElement, myUnbinder)
+```
+
+## Parameters
+
+- `node`: The DOM node to which you want to associate the unbinder function.
+
+- `unbinder`: A function that can be executed later to remove bound data and associated logic from the DOM node.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Associate cleanup with the node it belongs to"><p>The callback should release resources owned by that node. The preview counts custom cleanup calls.</p></AlertBox>
+
+## Notes
+
+- The `addUnbinder` function is typically used internally within Regor to manage unbinder functions associated with DOM nodes.
+
+- It provides a way to associate an unbinder function with a specific DOM element, allowing for the clean removal of bound data and logic when needed.
+
+- Unbinder functions are typically created and associated with DOM nodes as part of the data binding process in Regor.
+
+- The unbinder function, when executed, should perform any necessary cleanup or removal of data bindings and associated logic from the DOM node.
+
+- This function is primarily intended for use in advanced scenarios where direct access to Regor's internal data management is required.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to addUnbinder." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/removeNode">removeNode</a></li>
+    <li><a href="/api/unbind">unbind</a></li>
+    <li><a href="/api/getBindData">getBindData</a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

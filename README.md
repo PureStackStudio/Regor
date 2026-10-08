@@ -33,7 +33,7 @@ Its template syntax is familiar to Vue users (`r-if`, `r-model`, `r-for`, `r-bin
 
 Discover the capabilities of Regor by diving into our comprehensive documentation. Whether you're new to Regor or an experienced user, our documentation provides in-depth insights into its features, API, directives, and more.
 
-Start exploring the [Regor Documentation](https://tenray.io//regor) now to harness the full potential of this powerful UI framework. The documentation sources are located in [docs-site](docs-site/).
+Start exploring the [Regor Documentation](https://regor.purestack.studio/) now to harness the full potential of this powerful UI framework. The documentation sources are located in [docs-site](docs-site/), built with PureStack.
 
 ## Requirements
 

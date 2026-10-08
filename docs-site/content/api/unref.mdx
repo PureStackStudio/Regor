@@ -1,0 +1,86 @@
+---
+title: unref
+description: "Read one ref layer, or return a non-ref value unchanged."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">unref</Badge><Badge tone="neutral" variant="surface">Reactivity</Badge></Flex><p>Read one ref layer, or return a non-ref value unchanged.</p></Panel>
+
+## Overview
+
+The `unref` function allows you to safely retrieve the original value from a ref object if the given value is a ref, or it simply returns the value itself if it's not a ref.
+
+## Try it live
+
+<section class="guide-example" aria-label="unref example">
+  <div class="guide-example-heading"><strong>Compare deep, copied, and shallow state</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-state" selectedTab="state-preview" ariaLabel="unref implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="state-preview" label="Live preview"><div id="api-demo" data-example="state"><ApiState/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="state-source" label="state.ts"><import-codeblock src="./demos/state.ts"/></TabPane>
+    <TabPane id="state-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Change the name and apply it. Inspect the nested values, ref checks, and flattened snapshot.</p>
+</section>
+
+## Usage
+
+### Unwrapping a Ref
+
+To safely retrieve the original value from a ref or non-ref value, you can use the `unref` function.
+
+```ts
+import { unref } from 'regor'
+
+const myValue = /* Your ref or non-ref value here */
+
+const unwrappedValue = unref(myValue)
+```
+
+## Parameters
+
+- `value`: The value you want to unwrap. It can be a ref object or a non-ref value.
+
+## Return Value
+
+- The `unref` function returns the original value if the provided `value` is a ref. If `value` is not a ref, it returns the same `value` itself.
+
+## Example
+
+```ts
+import { ref, unref } from 'regor'
+
+const myRef = ref('Hello, Regor!')
+
+// Unwrapping a ref value
+const unwrappedValue = unref(myRef)
+console.log(unwrappedValue) // Outputs 'Hello, Regor!'
+
+const nonRefValue = 'This is not a ref.'
+
+// Unwrapping a non-ref value (no change)
+const sameValue = unref(nonRefValue)
+console.log(sameValue) // Outputs 'This is not a ref.'
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Unwrap one layer deliberately"><p>unref is useful for a value-or-ref input. Use flatten when you need to unwrap a whole nested structure.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to unref." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

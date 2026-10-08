@@ -1,0 +1,89 @@
+---
+title: observerCount
+description: "Inspect how many observer callbacks are registered on a ref."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">observerCount</Badge><Badge tone="neutral" variant="surface">Observation and Batch</Badge></Flex><p>Inspect how many observer callbacks are registered on a ref.</p></Panel>
+
+## Overview
+
+The `observerCount` function allows you to determine the number of observers (callbacks) currently registered on a ref object. This can be useful for debugging and understanding how many entities are actively reacting to changes in the ref object.
+
+## Try it live
+
+<section class="guide-example" aria-label="observerCount example">
+  <div class="guide-example-heading"><strong>Watch subscriptions start and stop</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-observation" selectedTab="observation-preview" ariaLabel="observerCount implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="observation-preview" label="Live preview"><div id="api-demo" data-example="observation"><ApiObservation/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="observation-source" label="observation.ts"><import-codeblock src="./demos/observation.ts"/></TabPane>
+    <TabPane id="observation-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Update either source, then stop the observers. Their callback counts stop while source values keep changing.</p>
+</section>
+
+## Usage
+
+### Getting the Observer Count
+
+To get the number of observers for a ref object, you can use the `observerCount` function.
+
+```ts
+import { observerCount, ref } from 'regor'
+
+const myRef = ref('Hello, Regor!')
+
+// Get the observer count
+const count = observerCount(myRef)
+console.log('Observer count:', count)
+```
+
+## Parameters
+
+- `source`: The ref object for which you want to retrieve the observer count.
+
+## Return Value
+
+- The `observerCount` function returns the number of observers (callbacks) currently registered on the provided ref object.
+
+## Example
+
+```ts
+import { observerCount, ref, observe } from 'regor'
+
+const myRef = ref('Hello, Regor!')
+
+// Create an observer for the ref
+observe(myRef, () => {
+  console.log('Ref value changed.')
+})
+
+// Get the observer count
+const count = observerCount(myRef)
+console.log('Observer count:', count) // Outputs 'Observer count: 1'
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Count the observers you mean to measure"><p>Template bindings and computed values can also observe a ref. The preview keeps its source refs outside the template to isolate explicit subscriptions.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to observerCount." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/observeMany"><code>observeMany</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

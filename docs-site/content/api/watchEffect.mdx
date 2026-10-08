@@ -1,0 +1,93 @@
+---
+title: watchEffect
+description: "Run an effect immediately, then rerun it when the refs it reads change."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">watchEffect</Badge><Badge tone="neutral" variant="surface">Computed and Effects</Badge></Flex><p>Run an effect immediately, then rerun it when the refs it reads change.</p></Panel>
+
+## Overview
+
+The `watchEffect` function allows you to create an "effect" that automatically reacts to changes in reactive data, such as ref objects or other observables. This effect is useful for handling side effects, such as updating the UI, in a reactive and efficient manner.
+
+## Try it live
+
+<section class="guide-example" aria-label="watchEffect example">
+  <div class="guide-example-heading"><strong>See which reads become dependencies</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-effects" selectedTab="effects-preview" ariaLabel="watchEffect implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="effects-preview" label="Live preview"><div id="api-demo" data-example="effects"><ApiEffects/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="effects-source" label="effects.ts"><import-codeblock src="./demos/effects.ts"/></TabPane>
+    <TabPane id="effects-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Change the tracked and silenced values separately. Collect the reads to inspect the dependency count and returned result.</p>
+</section>
+
+## Usage
+
+### Creating Effects
+
+To create an effect using `watchEffect`, you provide a function that defines the effect. This function will be called immediately and then re-called whenever the reactive data it depends on changes.
+
+```ts
+import { watchEffect, ref } from 'regor'
+
+const myRef = ref('Hello, Regor!')
+
+// Create a watch effect
+const stopWatching = watchEffect(() => {
+  console.log('Value:', myRef.value)
+})
+
+// Later, when the effect is no longer needed, stop it
+stopWatching()
+```
+
+## Parameters
+
+- `effect`: A function that defines the effect you want to create. This function may optionally receive a callback function (`onCleanup`) as an argument.
+
+## Return Value
+
+- The `watchEffect` function returns a `stopWatching` function that allows you to stop the effect when it's no longer needed. Calling `stopWatching` will unsubscribe the effect from the reactive data.
+
+## Example
+
+```ts
+import { watchEffect, ref } from 'regor'
+
+const myRef = ref('Hello, Regor!')
+
+// Create a watch effect that updates the UI
+const stopWatching = watchEffect(() => {
+  console.log('Value:', myRef.value)
+})
+
+// Later, when the effect is no longer needed, stop it
+stopWatching()
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Track only the reads that should cause a rerun"><p>Keep unrelated reads outside the effect or wrap them with silence. Use the cleanup callback for resources from an effect run.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to watchEffect." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/useScope"><code>useScope</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/observeMany"><code>observeMany</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

@@ -1,0 +1,98 @@
+---
+title: toFragment
+description: "Build a DocumentFragment from a JSON template describing HTML or SVG."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">toFragment</Badge><Badge tone="neutral" variant="surface">App and Components</Badge></Flex><p>Build a DocumentFragment from a JSON template describing HTML or SVG.</p></Panel>
+
+## Overview
+
+The `toFragment` function is used to convert a JSON template, representing HTML or SVG elements, into a DocumentFragment. This can be particularly useful when you want to create a lightweight, in-memory representation of the DOM structure for further manipulation or rendering.
+
+## Try it live
+
+<section class="guide-example" aria-label="toFragment example">
+  <div class="guide-example-heading"><strong>From strings to structured DOM</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-templates" selectedTab="templates-preview" ariaLabel="toFragment implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="templates-preview" label="Live preview"><div id="api-demo" data-example="templates"><ApiTemplates/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="templates-source" label="templates.ts"><import-codeblock src="./demos/templates.ts"/></TabPane>
+    <TabPane id="templates-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Edit the text, then convert a JSON template into a detached fragment and serialize its element back to JSON.</p>
+</section>
+
+## Usage
+
+### Converting a JSON Template to a DocumentFragment
+
+To convert a JSON template to a DocumentFragment, call the `toFragment` function with the JSON template as the parameter. The function will return a DocumentFragment containing the converted elements.
+
+### Example
+
+```javascript
+import { toFragment } from 'regor'
+
+// Define a JSON template representing HTML elements
+const jsonTemplate = {
+  t: 'div',
+  a: { class: 'container' },
+  c: [
+    {
+      t: 'h1',
+      a: { class: 'title' },
+      c: [{ d: 'Hello, Regor!' }],
+    },
+    {
+      t: 'p',
+      c: [{ d: 'Regor is awesome.' }],
+    },
+  ],
+}
+
+// Convert the JSON template to a DocumentFragment
+const fragment = toFragment(jsonTemplate)
+
+// Append the DocumentFragment to the DOM
+const targetElement = document.getElementById('app')
+targetElement.appendChild(fragment)
+```
+
+## Parameters
+
+- `json`: The JSON template to be converted into a DocumentFragment. It can represent one or more HTML or SVG elements. If an array of JSON templates is provided, each template will be converted, and their resulting elements will be added to the DocumentFragment.
+
+- `isSVG` (optional): A boolean flag indicating whether the elements in the JSON template should be treated as SVG elements. If set to `true`, SVG-specific elements and attributes will be correctly created. Default is `false`.
+
+- `config` (optional): An instance of `RegorConfig` that defines configuration options for Regor. This can be used to specify custom attribute handling and other options. If not provided, the default `RegorConfig` will be used.
+
+## Return Value
+
+The `toFragment` function returns a `DocumentFragment` containing the elements created from the provided JSON template(s).
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Creating nodes is separate from binding them"><p>toFragment builds DOM structure. Use createApp when those nodes should also participate in Regor bindings.</p></AlertBox>
+
+## Notes
+
+- The `toFragment` function is useful for creating DocumentFragments that can be used for lightweight rendering and manipulation of DOM structures.
+
+- It can handle both HTML and SVG elements in the JSON template, depending on the `isSVG` flag.
+
+- The resulting `DocumentFragment` can be appended to the DOM or further manipulated using standard DOM methods.
+
+- Use `t` for an element, `a` for its attributes, and `c` for its child nodes. A text node uses `d`; element text belongs in a child such as `c: [{ d: 'Hello' }]`.
+
+- Custom attribute handling and other options can be configured using the `config` parameter.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to toFragment." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/toJsonTemplate"><code>toJsonTemplate</code></a></li>
+    <li><a href="/api/createApp"><code>createApp</code></a></li>
+    <li><a href="/api/defineComponent"><code>defineComponent</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

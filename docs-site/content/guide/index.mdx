@@ -1,0 +1,72 @@
+---
+title: Guide
+description: Learn Regor from live examples, then explore the patterns behind reactive interfaces.
+order: 4
+---
+
+Build your understanding from state to screen. Start with reactivity, templates, and components, then explore the topics your application needs.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Learn by changing something"><p>Four guides include live previews with their actual source: a computed quote, a service board, a profile component, and a ticker with lifecycle cleanup.</p></AlertBox>
+
+## Guide Map
+
+<Grid columns="1" columnsSm="2" class="guide-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="accent" variant="surface">01 / Core concepts</Badge>
+    <h3>Reactivity</h3>
+    <p>Model state with refs, derive values with computed, and coordinate updates.</p>
+    <BtnLink href="/guide/reactivity/" tone="accent" variant="link">Explore reactivity</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="accent" variant="surface">02 / Core concepts</Badge>
+    <h3>Templates and Expressions</h3>
+    <p>Connect HTML to state with expressions, keyed lists, events, and form bindings.</p>
+    <BtnLink href="/guide/templates/" tone="accent" variant="link">Explore templates and expressions</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="accent" variant="surface">03 / Core concepts</Badge>
+    <h3>Components</h3>
+    <p>Compose typed components with reactive props, named slots, and explicit context boundaries.</p>
+    <BtnLink href="/guide/components/" tone="accent" variant="link">Explore components</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="neutral" variant="surface">04 / In practice</Badge>
+    <h3>TypeScript</h3>
+    <p>Type app contexts, component inputs, and runtime contracts without losing reactive behavior.</p>
+    <BtnLink href="/guide/typescript/" tone="accent" variant="link">Explore typescript</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="neutral" variant="surface">05 / In practice</Badge>
+    <h3>Lifecycle and Cleanup</h3>
+    <p>Own timers, listeners, and subscriptions through scoped mount and unmount hooks.</p>
+    <BtnLink href="/guide/lifecycle-and-cleanup/" tone="accent" variant="link">Explore lifecycle and cleanup</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="neutral" variant="surface">06 / In practice</Badge>
+    <h3>Mounting</h3>
+    <p>Enhance existing markup or mount independent reactive islands on a static page.</p>
+    <BtnLink href="/guide/mounting/" tone="accent" variant="link">Explore mounting</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="neutral" variant="surface">07 / In practice</Badge>
+    <h3>Persisted State</h3>
+    <p>Keep selected reactive preferences across reloads with persist and stable storage keys.</p>
+    <BtnLink href="/guide/persisted-state/" tone="accent" variant="link">Explore persisted state</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="neutral" variant="surface">08 / In practice</Badge>
+    <h3>Performance</h3>
+    <p>Measure DOM workloads, investigate bottlenecks, and verify improvements against a baseline.</p>
+    <BtnLink href="/guide/performance/" tone="accent" variant="link">Explore performance</BtnLink>
+  </Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3">
+    <Badge tone="neutral" variant="surface">09 / In practice</Badge>
+    <h3>Troubleshooting</h3>
+    <p>Trace mounting, bindings, component inputs, and cleanup problems from symptom to cause.</p>
+    <BtnLink href="/guide/troubleshooting/" tone="accent" variant="link">Explore troubleshooting</BtnLink>
+  </Panel>
+</Grid>
+
+<ExpandablePanel class="guide-callout" title="New to Regor?" description="A short path from your first mount to reusable components." tone="neutral" variant="flat">
+  <ol><li>Follow <a href="/getting-started/">Getting started</a> to mount your first app.</li><li>Try the <a href="/guide/reactivity/">reactivity</a> and <a href="/guide/templates/">template</a> previews.</li><li>Compose your views with <a href="/guide/components/">components</a>, then learn how to <a href="/guide/lifecycle-and-cleanup/">clean up their resources</a>.</li></ol>
+</ExpandablePanel>

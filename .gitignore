@@ -10,9 +10,10 @@ dist/
 .yarn/install-state.gz
 .yarn/sdks/
 
-.astro
 .yarn
 docs-dist
+docs-publish
+.tmp/
 
 # Perf profiling artifacts
 *.cpuprofile

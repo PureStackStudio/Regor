@@ -1,0 +1,61 @@
+---
+title: svg
+description: "Assemble an SVG template string with the same tag behavior as html."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">svg</Badge><Badge tone="neutral" variant="surface">Utilities</Badge></Flex><p>Assemble an SVG template string with the same tag behavior as html.</p></Panel>
+
+## Overview
+
+The `svg` function is an alias-style template tag with the same interpolation behavior as `html`, tailored for authoring SVG markup in TypeScript templates.
+
+## Try it live
+
+<section class="guide-example" aria-label="svg example">
+  <div class="guide-example-heading"><strong>From strings to structured DOM</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-templates" selectedTab="templates-preview" ariaLabel="svg implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="templates-preview" label="Live preview"><div id="api-demo" data-example="templates"><ApiTemplates/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="templates-source" label="templates.ts"><import-codeblock src="./demos/templates.ts"/></TabPane>
+    <TabPane id="templates-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Edit the text, then convert a JSON template into a detached fragment and serialize its element back to JSON.</p>
+</section>
+
+## Usage
+
+```ts
+import { svg } from 'regor'
+
+const radius = 16
+const icon = svg`<svg viewBox="0 0 40 40" role="img">
+  <circle cx="20" cy="20" r="${radius}" />
+</svg>`
+```
+
+## Parameters
+
+- `templates` (`TemplateStringsArray`): Static segments of the template literal.
+- `...args` (`unknown[]`): Interpolated values inserted between template segments.
+
+## Return Value
+
+- Returns a `string` containing the combined SVG markup.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="The tag names the template’s purpose"><p>svg assembles a string. The mounting or fragment options determine how nodes are created and bound.</p></AlertBox>
+
+## Notes
+
+- `svg` behaves exactly like `html` at runtime (string assembly), so you can use it anywhere a template string is accepted.
+- Use `svg` when you want semantic clarity in code and editor hinting for SVG snippets.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to svg." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/html">html</a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

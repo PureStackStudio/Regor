@@ -1,0 +1,104 @@
+---
+title: r-bind Directive
+description: "Bind attributes, DOM properties, and object values to reactive expressions."
+---
+
+`r-bind` is Regor’s generic binding directive.
+
+It maps to attribute binding by default, with property binding available via shorthand/flag.
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3">
+  <Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">r-bind / : / .</Badge><Badge tone="neutral" variant="surface">Binding</Badge></Flex>
+  <p>Bind attributes, DOM properties, and object values to reactive expressions.</p>
+</Panel>
+
+## Try it live
+
+<section class="guide-example" aria-label="Attributes and properties in sync">
+  <div class="guide-example-heading"><strong>Attributes and properties in sync</strong><Badge tone="accent" variant="surface">Live Regor</Badge></div>
+  <Tabs group="directive-bind" selectedTab="bind-preview" ariaLabel="bind directive example" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="bind-preview" label="Live preview"><div id="directive-demo" data-example="bind"><DirectiveBind/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="bind-source" label="bind.ts"><import-codeblock src="./demos/bind.ts"/></TabPane>
+    <TabPane id="bind-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Edit the title or disable the button. Inspect its tooltip, accessible name, and disabled property.</p>
+</section>
+
+## Syntax
+
+```html
+<button r-bind:title="tooltip"></button>
+<button :title="tooltip"></button>
+<input .value="text" />
+<input :value.prop="text" />
+```
+
+1. `:` is shorthand for `r-bind:` and uses attribute binding.
+2. `.` shorthand uses property binding.
+3. `.prop` flag switches `:` binding to property binding.
+4. `.camel` camelizes option key before binding.
+
+## Exact runtime mapping
+
+From `RegorConfig`:
+
+1. `r-bind:*` and `:*` use `attrDirective`.
+2. `.*` and `:*.prop` use `propDirective`.
+3. `:class` / `r-bind:class` are routed to `classDirective`.
+4. `:style` / `r-bind:style` are routed to `styleDirective`.
+
+## Supported value shapes
+
+When an option is present (`:title="x"`), the first resolved value is used.
+
+When binding without an option (`r-bind="expr"`), these forms are supported:
+
+1. Object: `{ key: value, ... }`
+2. Pair array: `['key', value]` (and arrays of pairs)
+3. Flat key/value sequence: `key, value, key2, value2`
+
+Example:
+
+```html
+<div r-bind="{ id: boxId, title: hint }"></div>
+<div r-bind="[dynKey, dynValue]"></div>
+```
+
+## Dynamic key binding
+
+For template-authored dynamic option keys, Regor uses normalized dynamic markers:
+
+```html
+<button r-bind:_d_dynamic-key_d_="value"></button>
+```
+
+When dynamic **attribute** key changes, previous attribute is removed and new attribute is set.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Attributes and properties have different roles"><p>Use :title for an attribute and .disabled for the DOM property. The preview shows both changing from the same context.</p></AlertBox>
+
+## Notes
+
+1. Attribute path handles boolean attributes and `xlink:*` attributes.
+2. For DOM properties (`value`, `checked`, `innerHTML`, etc.), use `.` shorthand or `.prop`.
+3. For component prop-object assignment, use [`:context`](/directives/context), not `r-bind="{...}"`.
+
+## Example
+
+```html
+<a :href="profileUrl" :title="'Open ' + user.name">Profile</a>
+<input .value="query" @input="query = $event.target.value" />
+<div :class="{ active: isActive }" :style="{ color: tone }"></div>
+```
+
+## See Also
+
+1. [r-text](/directives/r-text)
+2. [r-model](/directives/r-model)
+3. [r-on](/directives/r-on)
+4. [r-for](/directives/r-for)
+
+
+
+<ExpandablePanel class="guide-callout" title="Keep exploring" description="Bind form state in two directions." tone="neutral" variant="flat"><p><a href="/directives/r-model/">Bind form state in two directions</a>, or return to the <a href="/directives/">directive map</a>.</p></ExpandablePanel>
+
+<PageScript src="./demos/browser.ts"/>

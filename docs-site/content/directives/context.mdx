@@ -1,0 +1,78 @@
+---
+title: :context Directive
+description: "Pass multiple reactive fields into a component through object-style context input."
+---
+
+`:context` assigns an object into a component instance context, reactively.
+`r-context` is an alias with the same behavior.
+
+Use it when you want to pass multiple values to a component in one place, including fields that are not declared in `props`.
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3">
+  <Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">:context / r-context</Badge><Badge tone="neutral" variant="surface">Composition</Badge></Flex>
+  <p>Pass multiple reactive fields into a component through object-style context input.</p>
+</Panel>
+
+## Try it live
+
+<section class="guide-example" aria-label="An object crosses the boundary">
+  <div class="guide-example-heading"><strong>An object crosses the boundary</strong><Badge tone="accent" variant="surface">Live Regor</Badge></div>
+  <Tabs group="directive-context" selectedTab="context-preview" ariaLabel="context directive example" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="context-preview" label="Live preview"><div id="directive-demo" data-example="context"><DirectiveContext/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="context-source" label="context.ts"><import-codeblock src="./demos/context.ts"/></TabPane>
+    <TabPane id="context-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Edit the parent title and permissions. Object-style input updates the child context.</p>
+</section>
+
+## What it does
+
+```html
+<MyComponent :context="{ title: pageTitle, theme: activeTheme }"></MyComponent>
+<MyComponent r-context="{ title: pageTitle, theme: activeTheme }"></MyComponent>
+```
+
+In the component, `title` and `theme` become available as component context fields (or update existing ref fields when applicable).  
+When `pageTitle` or `activeTheme` changes, the component values are updated.
+
+## When to use `:context`
+
+Use `:context` for object-style component input.
+`r-context` is equivalent and can be used interchangeably.
+
+Use `:prop-name="value"` or `r-bind:prop-name="value"` (same single-prop binding behavior) when the prop is declared in the component `props` list.
+
+Use object-form attribute binding (`r-bind="{...}"` or `:="{...}"`) for normal host attribute fallthrough, not for component context assignment.
+
+## Example
+
+```html
+<UserCard
+  :user-id="selectedUserId"
+  :context="{ badge: userBadge, canEdit: isAdmin }"
+></UserCard>
+```
+
+```ts
+const UserCard = defineComponent('<section>...</section>', {
+  props: ['userId'],
+  context: (head) => ({
+    userId: head.props.userId,
+    badge: head.props.badge,
+    canEdit: head.props.canEdit,
+  }),
+})
+```
+
+In this example:
+
+- `userId` comes from declared prop binding (`:user-id`)
+- `badge` and `canEdit` come from `:context`
+
+[Back to the directives](/directives/)
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Context input differs from host attributes"><p>Use :context for fields in a component context. Object-form r-bind targets host attributes instead.</p></AlertBox>
+
+<ExpandablePanel class="guide-callout" title="Keep exploring" description="Select components dynamically." tone="neutral" variant="flat"><p><a href="/directives/is/">Select components dynamically</a>, or return to the <a href="/directives/">directive map</a>.</p></ExpandablePanel>
+
+<PageScript src="./demos/browser.ts"/>

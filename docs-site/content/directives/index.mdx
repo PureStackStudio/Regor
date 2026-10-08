@@ -1,0 +1,80 @@
+---
+title: Directives
+description: "Explore every Regor directive through focused live examples and syntax references."
+order: 5
+---
+
+Directives are Regor’s runtime template control surface.
+
+By default, directive names start with `r-`. You can customize the prefix with `RegorConfig`.
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">Bindings</Badge><Badge tone="neutral" variant="surface">Control flow</Badge><Badge tone="neutral" variant="surface">Composition</Badge></Flex><p>Choose a directive by the behavior you need. Every topic below has a live preview with its actual source.</p></Panel>
+
+## Core Rules
+
+1. `r-` directives are explicit full-form syntax.
+2. `:` is shorthand for `r-bind`.
+3. `@` is shorthand for `r-on`.
+4. `.` shorthand binds DOM properties (equivalent to `r-bind.prop`).
+
+## Try it live
+
+<section class="guide-example" aria-label="From form controls to state">
+  <div class="guide-example-heading"><strong>From form controls to state</strong><Badge tone="accent" variant="surface">Live Regor</Badge></div>
+  <Tabs group="directive-model" selectedTab="model-preview" ariaLabel="model directive example" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="model-preview" label="Live preview"><div id="directive-demo" data-example="model"><DirectiveModel/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="model-source" label="model.ts"><import-codeblock src="./demos/model.ts"/></TabPane>
+    <TabPane id="model-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">A small form brings r-model, event handling, and text bindings together. Open any directive below for a focused example.</p>
+</section>
+
+## Binding
+
+<Grid columns="1" columnsSm="2" class="guide-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-text</Badge><h3>r-text</h3><p>Bind expressions to textContent and display text without interpreting it as HTML.</p><BtnLink href="/directives/r-text/" tone="accent" variant="link">Explore r-text</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-html</Badge><h3>r-html</h3><p>Render trusted HTML strings and understand the boundary between text and markup.</p><BtnLink href="/directives/r-html/" tone="accent" variant="link">Explore r-html</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-bind / : / .</Badge><h3>r-bind</h3><p>Bind attributes, DOM properties, and object values to reactive expressions.</p><BtnLink href="/directives/r-bind/" tone="accent" variant="link">Explore r-bind</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-model</Badge><h3>r-model</h3><p>Connect form controls and writable refs in both directions, with optional conversion modifiers.</p><BtnLink href="/directives/r-model/" tone="accent" variant="link">Explore r-model</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-on / @</Badge><h3>r-on</h3><p>Handle DOM events with methods, expressions, and modifiers such as .prevent and .stop.</p><BtnLink href="/directives/r-on/" tone="accent" variant="link">Explore r-on</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-show</Badge><h3>r-show</h3><p>Toggle visibility through display while keeping the element and its bindings mounted.</p><BtnLink href="/directives/r-show/" tone="accent" variant="link">Explore r-show</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">:class</Badge><h3>:class</h3><p>Toggle CSS classes with object, array, or string expressions while retaining static classes.</p><BtnLink href="/directives/class/" tone="accent" variant="link">Explore :class</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">:style</Badge><h3>:style</h3><p>Bind inline CSS values to state and computed style objects.</p><BtnLink href="/directives/style/" tone="accent" variant="link">Explore :style</BtnLink></Panel>
+</Grid>
+
+## Control Flow
+
+<Grid columns="1" columnsSm="2" class="guide-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-if / r-else-if / r-else</Badge><h3>r-if</h3><p>Mount one conditional branch at a time and remove the branch that no longer matches.</p><BtnLink href="/directives/r-if/" tone="accent" variant="link">Explore r-if</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-for + :key</Badge><h3>r-for + :key</h3><p>Render reactive collections with stable keys that preserve each item’s identity.</p><BtnLink href="/directives/r-for/" tone="accent" variant="link">Explore r-for + :key</BtnLink></Panel>
+</Grid>
+
+## Component and Utility
+
+<Grid columns="1" columnsSm="2" class="guide-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">:is</Badge><h3>:is</h3><p>Select and mount registered components dynamically from a reactive value.</p><BtnLink href="/directives/is/" tone="accent" variant="link">Explore :is</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">:context / r-context</Badge><h3>:context</h3><p>Pass multiple reactive fields into a component through object-style context input.</p><BtnLink href="/directives/context/" tone="accent" variant="link">Explore :context</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">:ref</Badge><h3>:ref</h3><p>Capture element references to focus controls or integrate directly with DOM APIs.</p><BtnLink href="/directives/ref/" tone="accent" variant="link">Explore :ref</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-pre</Badge><h3>r-pre</h3><p>Leave a subtree uncompiled and preserve literal template syntax.</p><BtnLink href="/directives/r-pre/" tone="accent" variant="link">Explore r-pre</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">r-teleport</Badge><h3>r-teleport</h3><p>Move a subtree to a target selector while preserving its original binding context.</p><BtnLink href="/directives/r-teleport/" tone="accent" variant="link">Explore r-teleport</BtnLink></Panel>
+</Grid>
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="One key identifies one item"><p>Use stable, unique item identities when a collection can reorder, filter, or remove rows.</p></AlertBox>
+
+## Important Keying Note
+
+In `r-for`, both `key="row.id"` and `:key="row.id"` are expression bindings in Regor templates. Both are supported. Nested paths like `a.b.c.d` are supported.
+
+Use stable keys whenever list identity matters.
+
+## Recommendation
+
+Read in this order:
+
+1. [`r-bind`](/directives/r-bind)
+2. [`r-text`](/directives/r-text)
+3. [`r-if`](/directives/r-if)
+4. [`r-for`](/directives/r-for)
+5. [`r-model`](/directives/r-model)
+
+<PageScript src="./demos/browser.ts"/>

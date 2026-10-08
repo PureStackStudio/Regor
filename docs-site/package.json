@@ -3,13 +3,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "serve": "purestack serve --content ./content --port 4400 --clean",
+    "build": "purestack build --content ./content --clean",
+    "publish": "purestack publish --content ./content",
+    "deploy": "pgdeploy deploy --host https://regor.purestack.studio --package ./dist/web --allow-path 'pagefind/*,.ts-ssg/manifest.json'"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.34.3",
-    "astro": "^5.9.2",
-    "glob": "^11.0.3"
-  }
+    "@purestack/ts-components": "1.1.7",
+    "@purestack/ts-css": "1.1.7",
+    "@purestack/ts-html": "1.1.7",
+    "@purestack/ts-style": "1.1.7",
+    "@purestack/ts-util": "1.1.7",
+    "purestack": "1.1.7",
+    "regor": "1.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  },
+  "packageManager": "yarn@4.9.2"
 }

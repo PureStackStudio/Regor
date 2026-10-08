@@ -1,0 +1,95 @@
+---
+title: isRaw
+description: "Check whether an object has been marked to skip deep conversion."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">isRaw</Badge><Badge tone="neutral" variant="surface">Utilities</Badge></Flex><p>Check whether an object has been marked to skip deep conversion.</p></Panel>
+
+## Overview
+
+The `isRaw` function determines whether a given value has been marked as "raw" using the `markRaw` function, indicating that it should not be deeply converted into a deep ref when using the `ref` function.
+
+## Try it live
+
+<section class="guide-example" aria-label="isRaw example">
+  <div class="guide-example-heading"><strong>A deliberate conversion boundary</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-rawState" selectedTab="rawState-preview" ariaLabel="isRaw implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="rawState-preview" label="Live preview"><div id="api-demo" data-example="rawState"><ApiRawState/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="rawState-source" label="raw-state.ts"><import-codeblock src="./demos/raw-state.ts"/></TabPane>
+    <TabPane id="rawState-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Edit the reactive title. The marked resource keeps its object identity and plain nested field.</p>
+</section>
+
+## Usage
+
+### Checking for Raw Value
+
+To check if a value is marked as raw, you can use the `isRaw` function.
+
+```ts
+import { isRaw } from 'regor'
+
+const myValue = /* Your value here */
+
+if (isRaw(myValue)) {
+  console.log('The value is marked as raw.')
+} else {
+  console.log('The value is not marked as raw.')
+}
+```
+
+## Parameters
+
+- `value`: The value you want to check for being marked as raw.
+
+## Return Value
+
+- The `isRaw` function returns `true` if the provided `value` is marked as raw using `markRaw`, and `false` otherwise.
+
+## Implementation Details
+
+- The function checks if the provided value has a property marked with the `rawSymbol` set to `1`, indicating that it is marked as raw.
+
+## Example
+
+```ts
+import { markRaw, isRaw } from 'regor'
+
+const data = {
+  name: 'Alice',
+  age: 30,
+  rawProperty: markRaw({ nested: 'value' }),
+}
+
+// Check if rawProperty is marked as raw
+if (isRaw(data.rawProperty)) {
+  console.log('The rawProperty is marked as raw.')
+} else {
+  console.log('The rawProperty is not marked as raw.')
+}
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Raw and ref describe different things"><p>isRaw checks the conversion boundary marker. isRef checks whether the value is a reactive ref.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to isRaw." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

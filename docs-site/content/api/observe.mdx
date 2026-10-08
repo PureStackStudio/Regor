@@ -1,0 +1,94 @@
+---
+title: observe
+description: "Subscribe to one ref and stop the subscription with the returned function."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">observe</Badge><Badge tone="neutral" variant="surface">Observation and Batch</Badge></Flex><p>Subscribe to one ref and stop the subscription with the returned function.</p></Panel>
+
+## Overview
+
+The `observe` function allows you to create observers that react to changes in ref objects, providing a callback that triggers when the ref's value changes. This is useful for handling side effects or updating UI elements based on reactive data.
+
+[**`Try It Online`**](https://stackblitz.com/edit/regor-sample-ref?file=index.ts)
+
+## Try it live
+
+<section class="guide-example" aria-label="observe example">
+  <div class="guide-example-heading"><strong>Watch subscriptions start and stop</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-observation" selectedTab="observation-preview" ariaLabel="observe implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="observation-preview" label="Live preview"><div id="api-demo" data-example="observation"><ApiObservation/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="observation-source" label="observation.ts"><import-codeblock src="./demos/observation.ts"/></TabPane>
+    <TabPane id="observation-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Update either source, then stop the observers. Their callback counts stop while source values keep changing.</p>
+</section>
+
+## Usage
+
+### Creating Observers
+
+To create an observer, you can use the `observe` function, passing in a ref object and a callback function.
+
+```ts
+import { observe, ref } from 'regor'
+
+const myRef = ref('Hello, Regor!')
+
+// Create an observer
+const stopObserving = observe(myRef, (newValue) => {
+  console.log('Value changed:', newValue)
+})
+```
+
+## Parameters
+
+- `source`: The ref object you want to observe for changes.
+- `observer`: A callback function that will be triggered whenever the ref's value changes.
+- `init` (optional): If `true`, the observer will be immediately invoked with the current value of the ref when it's created.
+
+## Return Value
+
+- The `observe` function returns a `stopObserving` function that allows you to stop the observer when it's no longer needed. Calling `stopObserving` will unsubscribe the observer from the ref object.
+
+## Example
+
+```ts
+import { observe, ref } from 'regor'
+
+const myRef = ref('Hello, Regor!')
+
+// Create an observer with init set to true
+const stopObserving = observe(
+  myRef,
+  (newValue) => {
+    console.log('Value changed:', newValue)
+  },
+  true,
+)
+
+// Later, when the observer is no longer needed, stop it
+stopObserving()
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Stop subscriptions when their owner is done"><p>Keep the returned stop function for explicit teardown. Scoped observers are also associated with their owner’s cleanup.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to observe." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/observeMany"><code>observeMany</code></a></li>
+    <li><a href="/api/observerCount"><code>observerCount</code></a></li>
+    <li><a href="/api/watchEffect"><code>watchEffect</code></a></li>
+    <li><a href="/api/computed"><code>computed</code></a></li>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

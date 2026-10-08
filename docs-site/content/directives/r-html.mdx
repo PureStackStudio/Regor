@@ -1,0 +1,76 @@
+---
+title: r-html Directive
+description: "Render trusted HTML strings and understand the boundary between text and markup."
+---
+
+The `r-html` directive is used to render HTML content within an HTML element based on the result of an expression. It allows you to dynamically insert and update HTML markup inside an element.
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3">
+  <Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">r-html</Badge><Badge tone="neutral" variant="surface">Binding</Badge></Flex>
+  <p>Render trusted HTML strings and understand the boundary between text and markup.</p>
+</Panel>
+
+## Try it live
+
+<section class="guide-example" aria-label="Markup, rendered as markup">
+  <div class="guide-example-heading"><strong>Markup, rendered as markup</strong><Badge tone="accent" variant="surface">Live Regor</Badge></div>
+  <Tabs group="directive-html" selectedTab="html-preview" ariaLabel="html directive example" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="html-preview" label="Live preview"><div id="directive-demo" data-example="html"><DirectiveHtml/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="html-source" label="html.ts"><import-codeblock src="./demos/html.ts"/></TabPane>
+    <TabPane id="html-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Choose a fixed trusted snippet. Strong text, emphasis, and keyboard tags render as HTML.</p>
+</section>
+
+## Syntax
+
+```html
+<element r-html="expression"></element>
+```
+
+- `<element>`: The HTML element to which you want to bind the HTML content.
+- `expression`: An expression that generates HTML content to be rendered within the element.
+
+## Usage
+
+The `r-html` directive is particularly useful when you need to display content with HTML markup or when you want to render dynamic HTML templates.
+
+### Example
+
+```html
+<div>
+  <p r-html="dynamicHtml"></p>
+</div>
+```
+
+In this example, the HTML content inside the `<p>` element will be dynamically updated based on the value of the `dynamicHtml` property in your component's data. Any changes to the `dynamicHtml` property will automatically reflect in the rendered HTML content.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Use trusted or sanitized HTML"><p>r-html writes innerHTML. It does not sanitize content, and inserted markup is not compiled as a Regor template.</p></AlertBox>
+
+## Notes
+
+- The `r-html` directive renders HTML content, including tags and elements. Be cautious when using this directive with user-generated or untrusted content to prevent security vulnerabilities like Cross-Site Scripting (XSS) attacks.
+
+- You can use expressions and variables in the `expression` attribute to generate dynamic HTML content. This allows you to create complex templates that adapt to changing data.
+
+- The `r-html` directive is reactive, meaning that if the value of the `expression` changes, the rendered HTML content will update accordingly in real-time.
+
+- You can combine the `r-html` directive with other directives and HTML attributes to create dynamic and interactive user interfaces.
+
+## Example
+
+```html
+<div>
+  <p r-html="dynamicHtmlContent"></p>
+</div>
+```
+
+In this example, if the `dynamicHtmlContent` property in your component's data is initially set to `<strong>Hello, Regor!</strong>`, the `<p>` element will render the text "Hello, Regor!" in bold. If you later update the `dynamicHtmlContent` property to `<em>Welcome to <strong>Regor</strong>!</em>`, the rendered HTML content will change to display "Welcome to Regor!" in italics with "Regor" in bold.
+
+The `r-html` directive empowers you to create dynamic and interactive user interfaces that incorporate rich HTML content, making your Regor-powered applications more versatile and engaging.
+
+[Back to the directives](/directives/)
+
+<ExpandablePanel class="guide-callout" title="Keep exploring" description="Compare HTML with text." tone="neutral" variant="flat"><p><a href="/directives/r-text/">Compare HTML with text</a>, or return to the <a href="/directives/">directive map</a>.</p></ExpandablePanel>
+
+<PageScript src="./demos/browser.ts"/>

@@ -1,0 +1,128 @@
+---
+title: Overview
+description: "Understand Regor’s reactive state, expressive templates, and direct DOM updates."
+order: 2
+---
+
+Regor is a reactive UI library designed for engineers who want:
+
+1. Direct control over runtime behavior.
+2. A powerful template/directive model.
+3. TypeScript-friendly reactivity primitives.
+4. Freedom to optimize with plain JavaScript and DOM when needed.
+
+Regor is intentionally practical. It does not force one rigid rendering architecture for every use case.
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">Reactive state</Badge><Badge tone="neutral" variant="surface">Expressive templates</Badge><Badge tone="neutral" variant="surface">Direct DOM updates</Badge></Flex><p>Choose your mount boundary, connect state to markup, and compose the interactions your interface needs.</p></Panel>
+
+## Architecture Positioning
+
+Regor is Vue-inspired in directive syntax, but different by architecture.
+
+1. Regor does not rely on a Virtual DOM layer.
+2. Regor can bind existing server-rendered/static markup in place.
+3. Regor supports runtime composition and reentrance across already-mounted regions.
+4. Regor keeps optimization escape hatches close to plain DOM and JavaScript.
+
+<Grid columns="1" columnsSm="3" class="guide-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">01 / State</Badge><h3>Refs and computed</h3><p>Store writable values and derive the values that depend on them.</p></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">02 / Template</Badge><h3>Expressions and directives</h3><p>Declare how state appears in HTML and SVG, and how events update it.</p></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><Badge tone="accent" variant="surface">03 / View</Badge><h3>The actual DOM</h3><p>Regor updates the bound nodes as their reactive dependencies change.</p></Panel>
+</Grid>
+
+## Why Teams Choose Regor
+
+### 1. Runtime flexibility without lock-in
+
+Regor can bind existing markup and progressively enhance real pages. You can adopt it incrementally instead of rewriting everything.
+
+### 2. Reactivity that stays explicit
+
+You get `ref`, `sref`, `computed`, `watchEffect`, `observe`, and batching primitives. State flows are explicit and composable.
+
+Control APIs like `pause`, `resume`, and `entangle` help you shape update behavior intentionally in complex flows.
+
+### 3. Directive model with real depth
+
+Regor supports rich directive workflows:
+
+1. Conditional rendering (`r-if`, `r-else-if`, `r-else`, `r-show`).
+2. List rendering (`r-for` with keys, table use cases, nested structures).
+3. Attribute/property/class/style/event binding (`r-bind`, `.prop`, `.camel`, `:class`, `:style`, `@event`).
+4. Form binding (`r-model`) and dynamic components (`:is`, `:context`).
+
+### 4. Excellent fit for mixed environments
+
+Regor works well when part of your DOM is owned by other systems, or when performance-critical sections need custom handling.
+
+### 5. TypeScript without framework-only indirection
+
+Regor uses plain TypeScript code paths for app and component contexts (`createApp<T>`, `ComponentHead<TProps>`, interfaces/classes). You keep normal TS ergonomics without relying on custom file format compilers.
+
+## See the flow in action
+
+<section class="guide-example" aria-label="State to DOM: a reactive quote">
+  <div class="guide-example-heading"><strong>One state model, a connected view</strong><Badge tone="accent" variant="surface">Live Regor</Badge></div>
+  <Tabs group="overview-flow" selectedTab="overview-preview" ariaLabel="State to DOM example" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="overview-preview" label="Live preview"><div id="guide-quote"><GuideQuote/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This is a static preview.</p></noscript></TabPane>
+    <TabPane id="overview-source" label="quote.ts"><import-codeblock src="./guide/demos/quote.ts"/></TabPane>
+    <TabPane id="overview-mount" label="browser.ts"><import-codeblock src="./guide/demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Inputs update refs. Computed values derive the quote. Template bindings update the displayed totals. Explore <a href="/guide/reactivity/">reactivity</a> and <a href="/guide/templates/">templates</a> to follow the same example in detail.</p>
+</section>
+
+## Core Philosophy
+
+Regor’s philosophy is:
+
+1. Keep defaults productive.
+2. Keep escape hatches available.
+3. Keep internals understandable.
+4. Keep control in developers’ hands.
+
+## What Regor Is Not Trying To Be
+
+Regor is not built around artificial constraints to optimize only one benchmark shape. It is built for real product constraints where integration flexibility matters.
+
+If your app needs:
+
+1. Existing-markup binding.
+2. Runtime composition.
+3. Context flexibility.
+4. Controlled optimization paths.
+
+Regor is a strong fit.
+
+## Regor vs Vue (Practical Lens)
+
+1. Vue is a strong default for framework-owned SPA architecture.
+2. Regor is a strong default for progressive enhancement and static-first plus dynamic-island architectures.
+3. Vue commonly centers build tooling for peak DX/perf in SPA workflows.
+4. Regor keeps build-less and CSP-constrained runtime options first-class.
+5. Both are capable; pick based on rendering ownership and deployment constraints.
+
+## Practical Tradeoffs
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Start with the DOM boundary"><p>Decide which region Regor owns, then measure the interactions that matter there. The mounting and performance guides explore these choices.</p></AlertBox>
+
+Regor favors flexibility and control. In very binding-dense paths, runtime cost can grow with total DOM + binding volume. This is normal for highly dynamic runtime systems.
+
+The upside is that Regor keeps optimization options open:
+
+1. Reduce binding density where it matters.
+2. Use stable keying and list strategies.
+3. Drop to targeted custom logic in hot sections.
+4. Keep the rest of the app high-level and maintainable.
+
+## Recommended Reading Order
+
+<Grid columns="1" columnsSm="2" class="guide-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>Getting Started</h3><p>Install Regor and mount your first view.</p><BtnLink href="/getting-started/" tone="accent" variant="link">Explore getting started</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>Guide</h3><p>Explore state, templates, components, and cleanup.</p><BtnLink href="/guide/" tone="accent" variant="link">Explore guide</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>Directives</h3><p>Try every directive with a focused live preview.</p><BtnLink href="/directives/" tone="accent" variant="link">Explore directives</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>API Reference</h3><p>Look up signatures and practical usage examples.</p><BtnLink href="/api/" tone="accent" variant="link">Explore api reference</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>Performance Guide</h3><p>Measure, profile, and verify changes to your interface.</p><BtnLink href="/guide/performance/" tone="accent" variant="link">Explore performance guide</BtnLink></Panel>
+</Grid>
+
+
+<PageScript src="./guide/demos/browser.ts"/>
