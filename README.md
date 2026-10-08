@@ -1,14 +1,17 @@
-![img](https://raw.githubusercontent.com/PureStackStudio/Regor/main/docs/images/logo1.png)
+[![Regor](https://raw.githubusercontent.com/PureStackStudio/Regor/main/docs/images/logo1.png)](https://regor.purestack.studio/)
 
 # Regor
+
+[![npm version](https://img.shields.io/npm/v/regor?style=flat-square&logo=npm&logoColor=white&labelColor=101211&color=d2fa56)](https://www.npmjs.com/package/regor)
+[![Tests](https://img.shields.io/github/actions/workflow/status/PureStackStudio/Regor/test.yml?branch=main&style=flat-square&logo=github&logoColor=white&label=tests&labelColor=101211)](https://github.com/PureStackStudio/Regor/actions/workflows/test.yml)
+[![MIT license](https://img.shields.io/badge/license-MIT-d2fa56?style=flat-square&labelColor=101211)](LICENSE)
+[![TypeScript types](https://img.shields.io/npm/types/regor?style=flat-square&logo=typescript&logoColor=white&labelColor=101211&color=d2fa56)](https://www.npmjs.com/package/regor)
+
+**[Website & documentation](https://regor.purestack.studio/)** · [Getting started](https://regor.purestack.studio/getting-started/) · [API reference](https://regor.purestack.studio/api/) · [Try it online](https://stackblitz.com/edit/regor-sample-1?file=index.ts)
 
 Regor is a runtime-first UI framework for teams that want direct DOM control, strong TypeScript ergonomics, and precise reactivity behavior without being forced into a Virtual DOM architecture.
 
 Its template syntax is familiar to Vue users (`r-if`, `r-model`, `r-for`, `r-bind`), but its runtime model is intentionally different: Regor is built for progressive enhancement, mixed-rendering environments, and incremental adoption.
-
-### [![Published on npm](https://img.shields.io/npm/v/regor.svg)](https://www.npmjs.com/package/regor)
-
-[**`Try Regor Online`**](https://stackblitz.com/edit/regor-sample-1?file=index.ts)
 
 ## Key Features
 
