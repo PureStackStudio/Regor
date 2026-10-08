@@ -31,7 +31,7 @@ const topBarTemplate = html` <input
           <slot name="actions">
             <a
               class="topbar__icon"
-              href="https://github.com/koculu/regor"
+              href="https://github.com/PureStackStudio/Regor"
               aria-label="Regor on GitHub"
               target="_blank"
               rel="noopener"

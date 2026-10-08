@@ -1,4 +1,4 @@
-![img](https://raw.githubusercontent.com/koculu/regor/main/docs/images/logo1.png)
+![img](https://raw.githubusercontent.com/PureStackStudio/Regor/main/docs/images/logo1.png)
 
 # Regor
 

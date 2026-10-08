@@ -29,15 +29,15 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/koculu/regor.git"
+    "url": "git+https://github.com/PureStackStudio/Regor.git"
   },
   "keywords": [
     "regor"
   ],
   "bugs": {
-    "url": "https://github.com/koculu/regor/issues"
+    "url": "https://github.com/PureStackStudio/Regor/issues"
   },
-  "homepage": "https://github.com/koculu/regor#readme",
+  "homepage": "https://github.com/PureStackStudio/Regor#readme",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@stylistic/eslint-plugin": "^5.7.1",

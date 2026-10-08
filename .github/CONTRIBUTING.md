@@ -19,7 +19,7 @@ If you encounter a bug, inconsistency, or have a feature request, feel free to o
 
 ## Development Setup
 
-1. Clone the repository: `git clone https://github.com/koculu/regor.git`
+1. Clone the repository: `git clone https://github.com/PureStackStudio/Regor.git`
 2. Install dependencies: `yarn install`
 3. Build: `yarn build`
 4. Test: `yarn test`
