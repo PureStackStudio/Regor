@@ -1,7 +1,6 @@
 ---
 title: Components
-sidebar:
-  order: 30
+order: 30
 ---
 
 This guide documents how Regor components work in runtime, based on current implementation and tests.

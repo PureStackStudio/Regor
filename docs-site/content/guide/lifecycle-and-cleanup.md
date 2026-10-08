@@ -1,7 +1,6 @@
 ---
 title: Lifecycle and Cleanup
-sidebar:
-  order: 50
+order: 50
 ---
 
 This page describes Regor lifecycle and teardown behavior from the actual runtime flow.

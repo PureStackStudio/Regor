@@ -1,7 +1,6 @@
 ---
 title: Reactivity
-sidebar:
-  order: 10
+order: 10
 ---
 
 This page describes Regor reactivity based on actual runtime behavior.

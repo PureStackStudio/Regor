@@ -1,7 +1,6 @@
 ---
 title: Performance
-sidebar:
-  order: 80
+order: 80
 ---
 
 This guide shows how to measure Regor performance with stable, repeatable workflows:

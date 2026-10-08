@@ -1,0 +1,41 @@
+{
+  "$schema": "../node_modules/@purestack/ts-ssg/schema/siteConfig.schema.json",
+  "siteTitle": "Regor",
+  "logo": {
+    "brand": "Regor",
+    "imageSrc": "/assets/regor-logo.svg",
+    "href": "/",
+    "ariaLabel": "Regor home"
+  },
+  "style": {
+    "themes": ["light", "dark"],
+    "theme": {
+      "skin": "standard",
+      "presets": ["blue"]
+    }
+  },
+  "navigation": {
+    "mode": "auto",
+    "maxDepth": 3,
+    "includeIndex": true,
+    "sortBy": "order"
+  },
+  "pageToc": { "enabled": true },
+  "pagefind": { "enabled": true },
+  "sitemap": {
+    "enabled": true,
+    "baseUrl": "https://regor.purestack.studio",
+    "robots": {
+      "enabled": true,
+      "host": "regor.purestack.studio"
+    }
+  },
+  "preview": {
+    "title": "Regor",
+    "description": "Direct DOM binding, precise reactivity, and TypeScript-native workflows for real applications.",
+    "siteName": "Regor"
+  },
+  "mdx": { "highlighter": "shiki" },
+  "outDir": "../dist/web-dev",
+  "publishDir": "../dist/web"
+}

@@ -1,7 +1,7 @@
 node_modules
 docs-dist/
+docs-publish/
 *.tgz
-.astro
 .yarn
 
 # Yarn (Berry) artifacts

@@ -1,7 +1,6 @@
 ---
 title: Templates and Expressions
-sidebar:
-  order: 20
+order: 20
 ---
 
 This page describes how Regor turns templates into live bindings, and what expression syntax is supported in runtime.

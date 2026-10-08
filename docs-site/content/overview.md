@@ -1,7 +1,6 @@
 ---
 title: Overview
-sidebar:
-  order: 2
+order: 2
 ---
 
 Regor is a reactive UI library designed for engineers who want:

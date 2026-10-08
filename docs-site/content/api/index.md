@@ -1,7 +1,6 @@
 ---
 title: Regor API
-sidebar:
-  order: 6
+order: 6
 ---
 
 This section contains the function-level reference for Regor.

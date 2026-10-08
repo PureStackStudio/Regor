@@ -1,7 +1,6 @@
 ---
 title: TypeScript
-sidebar:
-  order: 40
+order: 40
 ---
 
 Regor has strong TypeScript support across app context, component context, and component head typing.

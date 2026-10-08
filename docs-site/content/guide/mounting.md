@@ -1,7 +1,6 @@
 ---
 title: Mounting
-sidebar:
-  order: 60
+order: 60
 ---
 
 Regor can mount directly on existing DOM and compose with many rendering/runtime strategies.

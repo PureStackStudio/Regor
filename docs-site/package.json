@@ -3,13 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "serve": "purestack serve --content ./content",
+    "build": "purestack build --content ./content --clean",
+    "release": "purestack publish --content ./content"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.34.3",
-    "astro": "^5.9.2",
-    "glob": "^11.0.3"
-  }
+    "purestack": "1.1.7"
+  },
+  "packageManager": "yarn@4.9.2"
 }

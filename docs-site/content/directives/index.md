@@ -1,7 +1,6 @@
 ---
 title: Directives
-sidebar:
-  order: 5
+order: 5
 ---
 
 Directives are Regor’s runtime template control surface.

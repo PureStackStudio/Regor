@@ -1,7 +1,6 @@
 ---
 title: Persisted State
-sidebar:
-  order: 70
+order: 70
 ---
 
 `persist(...)` is one of Regor’s highest-leverage features:

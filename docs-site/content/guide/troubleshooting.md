@@ -1,7 +1,6 @@
 ---
 title: Troubleshooting
-sidebar:
-  order: 90
+order: 90
 ---
 
 Use this page as a symptom -> cause -> fix reference based on current Regor runtime behavior.

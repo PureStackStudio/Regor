@@ -1,7 +1,6 @@
 ---
 title: Getting Started
-sidebar:
-  order: 3
+order: 3
 ---
 
 Regor binds runtime behavior directly to DOM you already have, or to template
