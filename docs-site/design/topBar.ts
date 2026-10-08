@@ -2,7 +2,7 @@ import { defineTopBarComponents, type TopBar } from '@purestack/ts-components'
 import { defineComponent, html } from 'regor'
 
 // Based on PureStack 1.1.7's TopBar template, with navigation before the icons.
-const topBarTemplate = html` <input
+const topBarTemplate = html`<input
     class="doc-nav-toggle"
     id="doc-nav-toggle"
     type="checkbox"
@@ -37,6 +37,9 @@ const topBarTemplate = html` <input
               rel="noopener"
               ><Icon name="tabler:brand-github"
             /></a>
+            <a class="topbar__icon" href="https://purestack.studio" target="_blank" rel="noopener" aria-label="PureStack Studio website">
+              <Icon name="tabler:stack-2"/>
+            </a>
           </slot>
           <SignIn
             r-if="resolvedSignInEnabled"
