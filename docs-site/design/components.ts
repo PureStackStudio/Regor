@@ -4,6 +4,9 @@ import {
   createChartModel,
 } from '../content/examples/chart-model'
 import { chartTemplate } from '../content/examples/chart-view'
+import { defineGuideComponents } from './guideComponents'
+import { defineDirectiveComponents } from './directiveComponents'
+import { defineApiComponents } from './apiComponents'
 
 export interface RegorFeature {
   number: string
@@ -42,6 +45,9 @@ const resourceTemplate = html`<a :href="href" class="regor-resource">
 
 export function defineRegorComponents() {
   return {
+    ...defineGuideComponents(),
+    ...defineDirectiveComponents(),
+    ...defineApiComponents(),
     SignalChart: defineComponent<ChartModel>(chartTemplate, {
       context: () => createChartModel(),
     }),

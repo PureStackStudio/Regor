@@ -1,0 +1,124 @@
+---
+title: Regor API
+description: "Find the API by purpose, try it live, and inspect the code behind its behavior."
+order: 6
+---
+
+This section contains the function-level reference for Regor.
+
+Use this page as an index, then open each API page for signature details and examples.
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">45 APIs</Badge><Badge tone="neutral" variant="surface">8 categories</Badge><Badge tone="neutral" variant="surface">Live examples</Badge></Flex><p>Start with an app and writable state. Then choose the APIs for derivation, observation, composition, and cleanup.</p></Panel>
+
+<Flex wrap="true" class="api-jumps"><BtnLink href="#app-and-components" tone="neutral" variant="outline">App and Components</BtnLink><BtnLink href="#reactivity" tone="neutral" variant="outline">Reactivity</BtnLink><BtnLink href="#computed-and-effects" tone="neutral" variant="outline">Computed and Effects</BtnLink><BtnLink href="#observation-and-batch" tone="neutral" variant="outline">Observation and Batch</BtnLink><BtnLink href="#lifecycle-and-scope" tone="neutral" variant="outline">Lifecycle and Scope</BtnLink><BtnLink href="#cleanup-and-unbind" tone="neutral" variant="outline">Cleanup and Unbind</BtnLink><BtnLink href="#utilities" tone="neutral" variant="outline">Utilities</BtnLink><BtnLink href="#logging" tone="neutral" variant="outline">Logging</BtnLink></Flex>
+
+## Try it live
+
+<section class="guide-example" aria-label="Reactivity example">
+  <div class="guide-example-heading"><strong>Three ways to derive a value</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-derived" selectedTab="derived-preview" ariaLabel="Reactivity implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="derived-preview" label="Live preview"><div id="api-demo" data-example="derived"><ApiDerived/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="derived-source" label="derived.ts"><import-codeblock src="./demos/derived.ts"/></TabPane>
+    <TabPane id="derived-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Move either slider. The three read-only outputs use computed, computeRef, and computeMany.</p>
+</section>
+
+
+## App and Components
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>createApp</h3><p>Mount a context on existing DOM or supply a template for a reactive island.</p><BtnLink href="/api/createApp/" tone="accent" variant="link">Explore createApp</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>defineComponent</h3><p>Define a reusable template with a context factory, props, and slots.</p><BtnLink href="/api/defineComponent/" tone="accent" variant="link">Explore defineComponent</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>pval</h3><p>Validate component inputs at runtime with composable type and shape validators.</p><BtnLink href="/api/pval/" tone="accent" variant="link">Explore pval</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>toFragment</h3><p>Build a DocumentFragment from a JSON template describing HTML or SVG.</p><BtnLink href="/api/toFragment/" tone="accent" variant="link">Explore toFragment</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>toJsonTemplate</h3><p>Convert DOM elements into JSON templates for inspection or later rendering.</p><BtnLink href="/api/toJsonTemplate/" tone="accent" variant="link">Explore toJsonTemplate</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>RegorConfig</h3><p>Configure an app’s directives, global context, interpolation, and validation policy.</p><BtnLink href="/api/regorConfig/" tone="accent" variant="link">Explore regorConfig</BtnLink></Panel>
+</Grid>
+
+## Reactivity
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>ref</h3><p>Create writable state and recursively convert nested object and array fields to refs.</p><BtnLink href="/api/ref/" tone="accent" variant="link">Explore ref</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>cref</h3><p>Copy a structure before deep conversion so the original data remains unchanged.</p><BtnLink href="/api/cref/" tone="accent" variant="link">Explore cref</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>sref</h3><p>Hold shallow writable state and replace plain object values to notify bindings.</p><BtnLink href="/api/sref/" tone="accent" variant="link">Explore sref</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>isRef</h3><p>Check whether a value is a Regor reactive reference.</p><BtnLink href="/api/isRef/" tone="accent" variant="link">Explore isRef</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>isDeepRef</h3><p>Check whether a value carries Regor’s deep-ref marker.</p><BtnLink href="/api/isDeepRef/" tone="accent" variant="link">Explore isDeepRef</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>unref</h3><p>Read one ref layer, or return a non-ref value unchanged.</p><BtnLink href="/api/unref/" tone="accent" variant="link">Explore unref</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>pause</h3><p>Pause automatic notifications from a ref while retaining its stored value.</p><BtnLink href="/api/pause/" tone="accent" variant="link">Explore pause</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>resume</h3><p>Resume a ref’s notification behavior after a pause.</p><BtnLink href="/api/resume/" tone="accent" variant="link">Explore resume</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>trigger</h3><p>Notify a ref’s observers explicitly, with optional recursive triggering.</p><BtnLink href="/api/trigger/" tone="accent" variant="link">Explore trigger</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>entangle</h3><p>Link two writable refs in both directions and return a function to disconnect them.</p><BtnLink href="/api/entangle/" tone="accent" variant="link">Explore entangle</BtnLink></Panel>
+</Grid>
+
+## Computed and Effects
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>computed</h3><p>Derive a read-only value by tracking the refs read during a computation.</p><BtnLink href="/api/computed/" tone="accent" variant="link">Explore computed</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>computeRef</h3><p>Derive a read-only result from one explicit source ref.</p><BtnLink href="/api/computeRef/" tone="accent" variant="link">Explore computeRef</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>computeMany</h3><p>Derive a read-only result from an explicit list of source refs.</p><BtnLink href="/api/computeMany/" tone="accent" variant="link">Explore computeMany</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>watchEffect</h3><p>Run an effect immediately, then rerun it when the refs it reads change.</p><BtnLink href="/api/watchEffect/" tone="accent" variant="link">Explore watchEffect</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>collectRefs</h3><p>Run an action and return both its result and the refs collected during its reads.</p><BtnLink href="/api/collectRefs/" tone="accent" variant="link">Explore collectRefs</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>silence</h3><p>Exclude an action’s ref reads from active dependency collection.</p><BtnLink href="/api/silence/" tone="accent" variant="link">Explore silence</BtnLink></Panel>
+</Grid>
+
+## Observation and Batch
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>observe</h3><p>Subscribe to one ref and stop the subscription with the returned function.</p><BtnLink href="/api/observe/" tone="accent" variant="link">Explore observe</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>observeMany</h3><p>Subscribe to multiple refs and receive their current values in one callback.</p><BtnLink href="/api/observeMany/" tone="accent" variant="link">Explore observeMany</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>observerCount</h3><p>Inspect how many observer callbacks are registered on a ref.</p><BtnLink href="/api/observerCount/" tone="accent" variant="link">Explore observerCount</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>batch</h3><p>Group synchronous ref writes and flush their notifications after the callback.</p><BtnLink href="/api/batch/" tone="accent" variant="link">Explore batch</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>startBatch</h3><p>Start a manual notification batch to be closed with endBatch.</p><BtnLink href="/api/startBatch/" tone="accent" variant="link">Explore startBatch</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>endBatch</h3><p>Close a manual batch and flush notifications when the outer batch ends.</p><BtnLink href="/api/endBatch/" tone="accent" variant="link">Explore endBatch</BtnLink></Panel>
+</Grid>
+
+## Lifecycle and Scope
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>useScope</h3><p>Create a context with owned effects and lifecycle cleanup.</p><BtnLink href="/api/useScope/" tone="accent" variant="link">Explore useScope</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>onMounted</h3><p>Register setup that runs when its owning app or component mounts.</p><BtnLink href="/api/onMounted/" tone="accent" variant="link">Explore onMounted</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>onUnmounted</h3><p>Register cleanup for resources owned by an app, component, or scope.</p><BtnLink href="/api/onUnmounted/" tone="accent" variant="link">Explore onUnmounted</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>ContextRegistry</h3><p>Register context instances and resolve them by their runtime class.</p><BtnLink href="/api/contextRegistry/" tone="accent" variant="link">Explore contextRegistry</BtnLink></Panel>
+</Grid>
+
+## Cleanup and Unbind
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>addUnbinder</h3><p>Associate a cleanup callback with a DOM node’s binding lifetime.</p><BtnLink href="/api/addUnbinder/" tone="accent" variant="link">Explore addUnbinder</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>getBindData</h3><p>Access or initialize the binding metadata associated with a node.</p><BtnLink href="/api/getBindData/" tone="accent" variant="link">Explore getBindData</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>removeNode</h3><p>Remove a node and schedule cleanup of its bindings.</p><BtnLink href="/api/removeNode/" tone="accent" variant="link">Explore removeNode</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>unbind</h3><p>Stop a node’s bindings and descendant listeners while retaining the DOM.</p><BtnLink href="/api/unbind/" tone="accent" variant="link">Explore unbind</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>drainUnbind</h3><p>Flush the pending unbind queue after nodes have been removed.</p><BtnLink href="/api/drainUnbind/" tone="accent" variant="link">Explore drainUnbind</BtnLink></Panel>
+</Grid>
+
+## Utilities
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>flatten</h3><p>Unwrap a nested reactive structure into plain values.</p><BtnLink href="/api/flatten/" tone="accent" variant="link">Explore flatten</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>markRaw</h3><p>Mark an object so deep conversion keeps its identity and plain fields.</p><BtnLink href="/api/markRaw/" tone="accent" variant="link">Explore markRaw</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>isRaw</h3><p>Check whether an object has been marked to skip deep conversion.</p><BtnLink href="/api/isRaw/" tone="accent" variant="link">Explore isRaw</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>persist</h3><p>Associate a ref with a localStorage key and restore its saved value.</p><BtnLink href="/api/persist/" tone="accent" variant="link">Explore persist</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>html</h3><p>Assemble a template string with a JavaScript tagged template literal.</p><BtnLink href="/api/html/" tone="accent" variant="link">Explore html</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>raw</h3><p>Use the html tag’s string-assembly behavior under its raw alias.</p><BtnLink href="/api/raw/" tone="accent" variant="link">Explore raw</BtnLink></Panel>
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>svg</h3><p>Assemble an SVG template string with the same tag behavior as html.</p><BtnLink href="/api/svg/" tone="accent" variant="link">Explore svg</BtnLink></Panel>
+</Grid>
+
+## Logging
+
+<Grid columns="1" columnsSm="2" columnsXl="3" class="guide-map api-map">
+  <Panel tone="neutral" variant="flat" bodyClass="p-3"><h3>warningHandler</h3><p>Customize Regor’s warning handling and retain a way to restore the previous handler.</p><BtnLink href="/api/warningHandler/" tone="accent" variant="link">Explore warningHandler</BtnLink></Panel>
+</Grid>
+
+## Recommendation
+
+Start with:
+
+1. [`createApp`](/api/createApp)
+2. [`ref`](/api/ref)
+3. [`cref`](/api/cref)
+4. [`sref`](/api/sref)
+5. [`computed`](/api/computed)
+6. [`watchEffect`](/api/watchEffect)
+
+<PageScript src="./demos/browser.ts"/>

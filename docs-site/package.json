@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "serve": "purestack serve --content ./content",
+    "serve": "purestack serve --content ./content --port 4400",
     "build": "purestack build --content ./content --clean",
     "release": "purestack publish --content ./content"
   },

@@ -1,0 +1,71 @@
+---
+title: removeNode
+description: "Remove a node and schedule cleanup of its bindings."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">removeNode</Badge><Badge tone="neutral" variant="surface">Cleanup and Unbind</Badge></Flex><p>Remove a node and schedule cleanup of its bindings.</p></Panel>
+
+## Overview
+
+The `removeNode` function in Regor is responsible for removing a DOM node and initiating the unbinding process to clean up associated data bindings and event listeners. This function ensures that elements are safely removed from the DOM while also releasing any resources associated with them.
+
+## Try it live
+
+<section class="guide-example" aria-label="removeNode example">
+  <div class="guide-example-heading"><strong>Own a node through its full lifetime</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-cleanup" selectedTab="cleanup-preview" ariaLabel="removeNode implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="cleanup-preview" label="Live preview"><div id="api-demo" data-example="cleanup"><ApiCleanup/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="cleanup-source" label="cleanup.ts"><import-codeblock src="./demos/cleanup.ts"/></TabPane>
+    <TabPane id="cleanup-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Mount, write, unbind, or remove and drain. Watch the DOM, observer count, and registered cleanup.</p>
+</section>
+
+## Usage
+
+### Removing a DOM Node and Unbinding
+
+The `removeNode` function takes a single parameter:
+
+- `node`: The DOM node you want to remove from the document. This function will also initiate the unbinding process to clean up associated data bindings and event listeners.
+
+### Example
+
+```javascript
+import { removeNode } from 'regor'
+
+// Remove a DOM node and clean up associated data bindings and event listeners
+const someElement = document.getElementById('example')
+removeNode(someElement)
+```
+
+## Parameters
+
+- `node`: The DOM node you want to remove from the document. This function will also initiate the unbinding process to clean up associated data bindings and event listeners.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Removal and cleanup have different timing"><p>removeNode detaches the node immediately and queues unbinding. drainUnbind flushes the deferred work when you need deterministic cleanup.</p></AlertBox>
+
+## Notes
+
+- The `removeNode` function is used to safely remove a DOM node from the document while ensuring that any bound data and associated logic are properly unbound and cleaned up.
+
+- When called on a specific DOM node, the function also initiates the unbinding process, which includes removing event listeners and cleaning up data bindings associated with the node and its descendants.
+
+- This function is typically used internally within Regor to facilitate the cleanup process when components are unmounted or when elements are removed from the DOM as part of Regor's rendering and lifecycle management.
+
+- It is essential to use the `removeNode` function or Regor's lifecycle management mechanisms when removing elements from the DOM to prevent memory leaks and ensure proper cleanup.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to removeNode." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/addUnbinder">addUnbinder</a></li>
+    <li><a href="/api/unbind">unbind</a></li>
+    <li><a href="/api/drainUnbind">drainUnbind</a></li>
+    <li><a href="/api/getBindData">getBindData</a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

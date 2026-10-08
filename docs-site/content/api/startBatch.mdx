@@ -1,0 +1,74 @@
+---
+title: startBatch
+description: "Start a manual notification batch to be closed with endBatch."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">startBatch</Badge><Badge tone="neutral" variant="surface">Observation and Batch</Badge></Flex><p>Start a manual notification batch to be closed with endBatch.</p></Panel>
+
+## Overview
+
+The `startBatch` function is used in conjunction with the `batch` function to batch multiple updates to refs, optimizing performance by reducing the number of observer notifications and triggers during a series of updates. The `startBatch` function initializes a batch operation, and any ref updates made after calling `startBatch` are batched together until the `endBatch` function is called.
+
+## Try it live
+
+<section class="guide-example" aria-label="startBatch example">
+  <div class="guide-example-heading"><strong>Same writes, different notification counts</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-batching" selectedTab="batching-preview" ariaLabel="startBatch implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="batching-preview" label="Live preview"><div id="api-demo" data-example="batching"><ApiBatching/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="batching-source" label="batching.ts"><import-codeblock src="./demos/batching.ts"/></TabPane>
+    <TabPane id="batching-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Each action adds three to one ref. Compare plain writes, batch, and a manual start/end pair.</p>
+</section>
+
+## Usage
+
+### Starting a Batch
+
+To start a batch of ref updates, call the `startBatch` function. Once a batch is started, any subsequent changes made to refs are considered part of that batch and are not immediately observed or triggered. Instead, observers are notified only once at the end of the batch.
+
+```javascript
+import { batch, startBatch, endBatch, ref } from 'regor'
+
+const myRef1 = ref(5)
+const myRef2 = ref(10)
+
+startBatch() // Start a batch
+
+myRef1.value = 15
+myRef2.value = 20
+
+endBatch() // End the batch
+
+// Observers are notified only once at the end of the batch
+// Outputs:
+// Observer triggered: 20
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Always close a manual batch"><p>Put endBatch in finally so an exception cannot leave later notifications inside an unfinished batch.</p></AlertBox>
+
+## Notes
+
+- The `startBatch` function is used in conjunction with the `endBatch` function to group ref updates together within a batch. After starting a batch with `startBatch`, any subsequent changes to refs are included in that batch until the `endBatch` function is called.
+
+- Batching updates with the `startBatch` and `endBatch` functions can help improve the performance of your application when multiple changes are made to refs in a short period. It reduces the number of observer notifications and triggers, which can be especially beneficial in situations with complex reactivity logic.
+
+- It's essential to call the `endBatch` function to finalize the batch and notify observers of the ref updates made during the batch.
+
+- Important: When using the batch functions, keep in mind that reads of refs within the batch can return potentially stale or outdated values due to pausing auto-updates. Ensure that your code logic accounts for this situation when reading refs within a batch.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to startBatch." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/endBatch"><code>endBatch</code></a></li>
+    <li><a href="/api/batch"><code>batch</code></a></li>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

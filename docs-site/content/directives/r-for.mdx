@@ -1,0 +1,138 @@
+---
+title: r-for Directive
+description: "Render reactive collections with stable keys that preserve each item’s identity."
+---
+
+`r-for` renders repeated template instances from arrays, iterables, and object-like values.
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3">
+  <Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">r-for + :key</Badge><Badge tone="neutral" variant="surface">Control flow</Badge></Flex>
+  <p>Render reactive collections with stable keys that preserve each item’s identity.</p>
+</Panel>
+
+## Try it live
+
+<section class="guide-example" aria-label="A list with stable identity">
+  <div class="guide-example-heading"><strong>A list with stable identity</strong><Badge tone="accent" variant="surface">Live Regor</Badge></div>
+  <Tabs group="directive-for" selectedTab="for-preview" ariaLabel="for directive example" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="for-preview" label="Live preview"><div id="directive-demo" data-example="for"><DirectiveFor/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="for-source" label="for.ts"><import-codeblock src="./demos/for.ts"/></TabPane>
+    <TabPane id="for-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Reverse the list or remove rows. Keys let surviving items keep their DOM elements.</p>
+</section>
+
+## Usage
+
+```html
+<li r-for="item in items">{{ item }}</li>
+```
+
+You can use `in` or `of`:
+
+```html
+<li r-for="item of items">{{ item }}</li>
+```
+
+## Index Variable
+
+Use `#`-prefixed variable for index:
+
+```html
+<li r-for="(item, #i) in items">{{ i }} - {{ item }}</li>
+```
+
+## Iterating Over Objects
+
+Object iteration is supported:
+
+```html
+<li r-for="(key, value) in person">{{ key }}: {{ value }}</li>
+```
+
+## Object Destructuring
+
+Destructuring is supported:
+
+```html
+<li r-for="{ name, age }, #i in users">{{ i }} - {{ name }} ({{ age }})</li>
+```
+
+## Complex Expressions
+
+Any valid expression can provide iterable data:
+
+```html
+<ul>
+  <li r-for="n in numbers.filter((n) => n > 5)">{{ n }}</li>
+</ul>
+```
+
+## Keying (`key` and `:key`)
+
+For stable identity and predictable updates, set a key on repeated nodes.
+
+```html
+<li r-for="row in rows" :key="row.id" r-text="row.name"></li>
+```
+
+Important behavior in Regor templates:
+
+1. `key="row.id"` and `:key="row.id"` are both expression-based for list keying.
+2. Nested key paths are supported, including `a.b.c.d`.
+3. Use stable, unique keys from your domain model.
+
+If keys are unstable, DOM reuse quality degrades and updates become less predictable.
+
+## Table Templates
+
+`r-for` supports native table structures and component-based captions, sections, rows, cells, column groups, and columns.
+
+```html
+<table>
+  <tbody>
+    <TableRow r-for="row in rows" :row="row" />
+  </tbody>
+</table>
+```
+
+```ts
+const tableCell = defineComponent(html`<td><span>{{ value }}</span></td>`, {
+  props: ['value'],
+})
+
+const tableRow = defineComponent(
+  html`<tr>
+    <TableCell :value="row.name" />
+    <TableCell :value="row.age" />
+  </tr>`,
+  { props: ['row'] },
+)
+```
+
+```html
+<table>
+  <colgroup r-for="group in columnGroups">
+    <col r-for="col in group.cols" :data-width="col.width" />
+  </colgroup>
+</table>
+```
+
+## Best Practices
+
+1. Keep row templates minimal.
+2. Use stable keying.
+3. Avoid expensive per-row expressions in large lists.
+4. Prefer pagination/windowing for very large data sets.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Identity comes from the item"><p>Use row.id when it is stable and unique. The row position changes when you reorder a list.</p></AlertBox>
+
+## See Also
+
+1. [r-if](/directives/r-if)
+2. [r-bind](/directives/r-bind)
+3. [r-text](/directives/r-text)
+
+<ExpandablePanel class="guide-callout" title="Keep exploring" description="Add conditional empty states." tone="neutral" variant="flat"><p><a href="/directives/r-if/">Add conditional empty states</a>, or return to the <a href="/directives/">directive map</a>.</p></ExpandablePanel>
+
+<PageScript src="./demos/browser.ts"/>

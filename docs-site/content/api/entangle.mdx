@@ -1,0 +1,105 @@
+---
+title: entangle
+description: "Link two writable refs in both directions and return a function to disconnect them."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">entangle</Badge><Badge tone="neutral" variant="surface">Reactivity</Badge></Flex><p>Link two writable refs in both directions and return a function to disconnect them.</p></Panel>
+
+## Overview
+
+The `entangle` function allows you to create a bidirectional link between two refs, ensuring that changes in one ref are mirrored in the other. This bidirectional linking is particularly useful when you want two refs to always have the same value.
+
+## Try it live
+
+<section class="guide-example" aria-label="entangle example">
+  <div class="guide-example-heading"><strong>Two refs, one shared value</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-entanglement" selectedTab="entanglement-preview" ariaLabel="entangle implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="entanglement-preview" label="Live preview"><div id="api-demo" data-example="entanglement"><ApiEntanglement/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="entanglement-source" label="entanglement.ts"><import-codeblock src="./demos/entanglement.ts"/></TabPane>
+    <TabPane id="entanglement-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Edit either side while the link is active. Disconnect it to make the refs independent.</p>
+</section>
+
+## Usage
+
+### Creating a Bidirectional Link
+
+To create a bidirectional link between two refs, simply call the `entangle` function with the two refs as arguments. After calling `entangle`, any changes made to one ref will be automatically reflected in the other.
+
+```ts
+import { entangle, ref } from 'regor'
+
+const ref1 = ref(5)
+const ref2 = ref(10)
+
+const stopEntangle = entangle(ref1, ref2)
+
+console.log(ref1.value) // Outputs: 5
+console.log(ref2.value) // Outputs: 5
+
+ref1.value = 15 // Both refs are updated
+console.log(ref1.value) // Outputs: 15
+console.log(ref2.value) // Outputs: 15
+
+stopEntangle() // Stop the bidirectional linking
+```
+
+## Parameters
+
+- `r1`: The first ref that you want to entangle.
+- `r2`: The second ref that you want to entangle.
+
+## Return Value
+
+- The `entangle` function returns a function that, when called, stops the bidirectional linking between the two refs.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Own the link’s lifetime"><p>Keep the returned stop function when a two-way link should end before its owner unmounts.</p></AlertBox>
+
+## Notes
+
+- Changes made to either of the entangled refs will be automatically reflected in the other, ensuring that they always have the same value.
+
+- It's important to call the returned function to stop the bidirectional linking when you no longer need it to prevent unintended updates.
+
+- Circular entanglements, where ref1 and ref2 form a circular dependency, should be avoided, as they can lead to infinite loops and unpredictable behavior.
+
+## Example
+
+```ts
+import { entangle, ref } from 'regor'
+
+const ref1 = ref(5)
+const ref2 = ref(10)
+
+const stopEntangle = entangle(ref1, ref2)
+
+console.log(ref1.value) // Outputs: 5
+console.log(ref2.value) // Outputs: 5
+
+ref1.value = 15 // Both refs are updated
+console.log(ref1.value) // Outputs: 15
+console.log(ref2.value) // Outputs: 15
+
+stopEntangle() // Stop the bidirectional linking
+```
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to entangle." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/ref"><code>sref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/observeMany"><code>observeMany</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/computeRef"><code>computeRef</code></a></li>
+    <li><a href="/api/watchEffect"><code>watchEffect</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

@@ -1,0 +1,82 @@
+---
+title: getBindData
+description: "Access or initialize the binding metadata associated with a node."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">getBindData</Badge><Badge tone="neutral" variant="surface">Cleanup and Unbind</Badge></Flex><p>Access or initialize the binding metadata associated with a node.</p></Panel>
+
+## Overview
+
+The `getBindData` function is used to retrieve or create a BindData object associated with a DOM node. The BindData object contains information about bound data and associated unbinders for Regor.
+
+## Try it live
+
+<section class="guide-example" aria-label="getBindData example">
+  <div class="guide-example-heading"><strong>Own a node through its full lifetime</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-cleanup" selectedTab="cleanup-preview" ariaLabel="getBindData implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="cleanup-preview" label="Live preview"><div id="api-demo" data-example="cleanup"><ApiCleanup/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="cleanup-source" label="cleanup.ts"><import-codeblock src="./demos/cleanup.ts"/></TabPane>
+    <TabPane id="cleanup-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Mount, write, unbind, or remove and drain. Watch the DOM, observer count, and registered cleanup.</p>
+</section>
+
+## Usage
+
+### Retrieving or Creating BindData
+
+To retrieve the BindData associated with a DOM node, call the `getBindData` function with the DOM node as the parameter. If a BindData object is already associated with the node, it will be returned. If not, a new BindData object will be created and associated with the node.
+
+### Example
+
+```javascript
+import { getBindData } from 'regor'
+
+// Retrieve or create BindData for a DOM node
+const someElement = document.getElementById('example')
+const bindData = getBindData(someElement)
+
+// Access the BindData properties
+console.log(bindData.data) // Access bound data
+console.log(bindData.unbinders) // Access associated unbinders
+```
+
+## Parameters
+
+- `node`: The DOM node for which you want to retrieve or create the associated BindData object.
+
+## Return Value
+
+The `getBindData` function returns a `BindData` object associated with the provided DOM node. This object contains the following properties:
+
+- `unbinders`: An array of unbinders that can be used to remove bound data and associated logic from the DOM node.
+
+- `data`: A record of bound data, where keys represent data properties, and values represent the associated data.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Treat binding metadata as a low-level API"><p>Inspect metadata deliberately. Prefer app handles and lifecycle hooks for ordinary ownership and cleanup.</p></AlertBox>
+
+## Notes
+
+- The `getBindData` function is typically used internally within Regor to manage bound data and unbinders associated with DOM nodes.
+
+- It provides a way to access and manipulate the bound data and unbinders for a specific DOM element.
+
+- BindData objects are created and associated with DOM nodes as needed when data is bound to elements using Regor.
+
+- The `unbind` function can be used to remove bound data and associated unbinders from a DOM node, effectively cleaning up any Regor-related bindings.
+
+- This function is primarily intended for use in advanced scenarios where direct access to Regor's internal data management is required.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to getBindData." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/addUnbinder">addUnbinder</a></li>
+    <li><a href="/api/removeNode">removeNode</a></li>
+    <li><a href="/api/unbind">unbind</a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

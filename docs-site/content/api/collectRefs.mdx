@@ -1,0 +1,98 @@
+---
+title: collectRefs
+description: "Run an action and return both its result and the refs collected during its reads."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">collectRefs</Badge><Badge tone="neutral" variant="surface">Computed and Effects</Badge></Flex><p>Run an action and return both its result and the refs collected during its reads.</p></Panel>
+
+## Overview
+
+The `collectRefs` function allows you to collect a set of reactive references (refs) within a specific scope and return both the result of an action and the collected refs. This is useful for managing and tracking the refs used within a certain code block.
+
+## Try it live
+
+<section class="guide-example" aria-label="collectRefs example">
+  <div class="guide-example-heading"><strong>See which reads become dependencies</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-effects" selectedTab="effects-preview" ariaLabel="collectRefs implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="effects-preview" label="Live preview"><div id="api-demo" data-example="effects"><ApiEffects/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="effects-source" label="effects.ts"><import-codeblock src="./demos/effects.ts"/></TabPane>
+    <TabPane id="effects-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Change the tracked and silenced values separately. Collect the reads to inspect the dependency count and returned result.</p>
+</section>
+
+## Usage
+
+### Collecting Refs
+
+To collect refs using `collectRefs`, you provide an action function that performs some logic involving refs. The function will execute within a scope where the refs are collected, and you can access the collected refs along with the result of the action.
+
+```ts
+import { collectRefs, ref } from 'regor'
+
+const myRef1 = ref(5)
+const myRef2 = ref('Hello')
+
+const { value, refs } = collectRefs(() => {
+  console.log(myRef1.value)
+  myRef2.value = 'World'
+})
+
+console.log(value) // Outputs undefined (result of the action)
+console.log(refs) // Outputs an array containing myRef1 and myRef2
+```
+
+## Parameters
+
+- `action`: A function that performs some logic and may involve reactive refs. The function is executed within a scope where the refs are collected.
+
+## Return Value
+
+- The `collectRefs` function returns an object with two properties:
+  - `value`: The result of the action function.
+  - `refs`: An array containing the collected refs used within the action function.
+
+## Example
+
+```ts
+import { collectRefs, ref } from 'regor'
+
+const myRef1 = ref(5)
+const myRef2 = ref('Hello')
+
+const { value, refs } = collectRefs(() => {
+  console.log(myRef1.value)
+  myRef2.value = 'World'
+})
+
+console.log(value) // Outputs undefined (result of the action)
+console.log(refs) // Outputs an array containing myRef1 and myRef2
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Collection is a snapshot of an action"><p>collectRefs reports dependencies read during that invocation. It does not create a subscription by itself.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to collectRefs." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/observeMany"><code>observeMany</code></a></li>
+    <li><a href="/api/computed"><code>computed</code></a></li>
+    <li><a href="/api/watchEffect"><code>watchEffect</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

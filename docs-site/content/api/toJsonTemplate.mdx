@@ -1,0 +1,93 @@
+---
+title: toJsonTemplate
+description: "Convert DOM elements into JSON templates for inspection or later rendering."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">toJsonTemplate</Badge><Badge tone="neutral" variant="surface">App and Components</Badge></Flex><p>Convert DOM elements into JSON templates for inspection or later rendering.</p></Panel>
+
+## Overview
+
+The `toJsonTemplate` function is used to convert an HTML element or an array of HTML elements into a JSON structure. This can be useful for:
+
+- Rendering HTML content in strict content security policy (CSP) pages.
+- Improving rendering performance.
+
+## Try it live
+
+<section class="guide-example" aria-label="toJsonTemplate example">
+  <div class="guide-example-heading"><strong>From strings to structured DOM</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-templates" selectedTab="templates-preview" ariaLabel="toJsonTemplate implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="templates-preview" label="Live preview"><div id="api-demo" data-example="templates"><ApiTemplates/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="templates-source" label="templates.ts"><import-codeblock src="./demos/templates.ts"/></TabPane>
+    <TabPane id="templates-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Edit the text, then convert a JSON template into a detached fragment and serialize its element back to JSON.</p>
+</section>
+
+## Usage
+
+### Converting an HTML Element to JSON
+
+To convert an HTML element to a JSON structure, call the `toJsonTemplate` function with the HTML element as the parameter. The function will return a JSON object that represents the structure of the HTML element.
+
+### Converting an Array of HTML Elements to JSON
+
+You can also use the `toJsonTemplate` function to convert an array of HTML elements into an array of JSON structures. This is useful when you have multiple HTML elements that you want to convert to JSON.
+
+### Example
+
+```javascript
+import { toJsonTemplate } from 'regor'
+
+// Convert an HTML element to JSON
+const element = document.querySelector('#myElement')
+const jsonTemplate = toJsonTemplate(element)
+
+// Convert an array of HTML elements to JSON
+const elements = document.querySelectorAll('.myElements')
+const jsonTemplates = toJsonTemplate(Array.from(elements))
+```
+
+## Parameters
+
+- `node`: The HTML element or an array of HTML elements to be converted to JSON. It can be a single `Element` or an array of `Element` objects.
+
+## Return Value
+
+The `toJsonTemplate` function returns a JSON structure that represents the HTML element(s) passed as the parameter. The structure contains the following properties:
+
+- `t` (string): The tag name of the HTML element. This property is present if the HTML element has a tag name (e.g., "div", "p").
+
+- `a` (object): An object representing the attributes of the HTML element. Each attribute is a key-value pair in the object.
+
+- `c` (array): An array of JSON structures representing the child elements of the HTML element. Each child element is converted to a JSON structure and added to this array.
+
+- `d` (string): The content of a text node. Element text is represented by text-node entries inside `c`.
+
+- `n` (number): The node type of the HTML element, specifically for comment nodes. This property is present if the HTML element is a comment node.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Serialize structure, not running behavior"><p>The JSON describes nodes and attributes. Event listeners and app state need their own context and binding step.</p></AlertBox>
+
+## Notes
+
+- The `toJsonTemplate` function can handle both single HTML elements and arrays of HTML elements. When converting an array, it returns an array of JSON structures.
+
+- The resulting JSON structure can be used to render HTML content in strict content security policy (CSP) pages or to improve rendering performance.
+
+- This function is useful when you need to serialize HTML content to JSON or when you want to analyze the structure of HTML elements programmatically.
+
+- The JSON structure closely follows the structure of the HTML elements, including attributes, child elements, and text content.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to toJsonTemplate." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/toFragment"><code>toFragment</code></a></li>
+    <li><a href="/api/createApp"><code>createApp</code></a></li>
+    <li><a href="/api/defineComponent"><code>defineComponent</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

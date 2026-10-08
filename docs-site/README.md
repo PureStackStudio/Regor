@@ -22,7 +22,7 @@ support (`/guide/` serves `/guide/index.html`). No `/regor` base path is needed.
 DNS and the host's TLS certificate must be configured for that domain separately.
 
 Write pages in `content/` as Markdown or Regor MDX. Filenames define routes;
-`index.md` defines a directory's landing page. Keep API filenames and links in
+`index.md` or `index.mdx` defines a directory's landing page. Keep API filenames and links in
 matching case. Use top-level `order` frontmatter to order navigation. Put static
 files in `content/`; they are copied into the output at the same relative path.
 
@@ -97,3 +97,53 @@ Type-check site extensions from the repository root:
 ```sh
 yarn tsc -p docs-site/tsconfig.json --noEmit
 ```
+
+## Interactive guides
+
+The guides use PureStack's `Panel`, `Grid`, `Badge`, `AlertBox`, `ExpandablePanel`,
+and `Tabs` components. Their filenames use `.mdx`; their public URLs are unchanged.
+
+Four pages include live Regor examples with source tabs using `<import-codeblock>`:
+
+- Reactivity: a quote with writable refs, computed totals, and a batched reset.
+- Templates: a filterable service board with keyed rows and conditional empty state.
+- Components: typed reactive props, computed initials, and a parent-context named slot.
+- Lifecycle: a conditional child that starts an interval on mount and clears it on unmount.
+
+Each example in `content/guide/demos/` exports its context factory and shared
+template. `design/guideComponents.ts` renders the static previews; `demos/browser.ts`
+mounts the matching interactive island through `PageScript`. The static controls
+are disabled, and the lifecycle preview creates no timer until the reader mounts
+its child. Scoped visual styles live in `design/guideStyles.ts` and follow both themes.
+
+Getting Started uses the same components, package-manager tabs, and a live counter
+from `content/examples/first-app/`. Overview shows the state-to-DOM flow and reuses
+the guide's computed quote example.
+
+Every directive reference in `content/directives/` has its own live preview and
+imported source. The directive index groups all fifteen topics into cards and
+includes a form preview. `content/directives/demos/examples.ts` shares the preview
+registry between `design/directiveComponents.ts` for static rendering and
+`demos/browser.ts` for browser mounting. Styles in `design/directiveStyles.ts`
+use the existing palette and are scoped to the examples. The HTML example uses
+fixed trusted strings, the form event example submits locally, and the teleport
+example keeps its target within the preview.
+
+## API reference
+
+The API index groups 45 references into eight categories with jump links and
+topic cards. All references use MDX, orientation panels, usage callouts, and
+expandable related links while keeping their existing public URLs.
+
+Sixteen shared labs cover 43 API references, including state conversion,
+derived values, subscriptions, effects, batching, explicit notifications,
+entanglement, raw objects, template conversion, DOM cleanup, context lookup,
+validation, configuration, lifecycle, and components. Their source tabs use
+`<import-codeblock>`. The lifecycle, component, and app labs reuse existing
+examples; the other lab sources live in `content/api/demos/`.
+
+`demos/examples.ts` shares the registry between `design/apiComponents.ts` for
+static previews and `demos/browser.ts` for scoped browser mounting.
+`design/apiStyles.ts` extends the existing documentation styles and palette.
+The `persist` and `warningHandler` pages include source examples for deliberate
+browser setup rather than running storage or shared-handler changes on page load.

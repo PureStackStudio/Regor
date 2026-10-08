@@ -28,7 +28,7 @@
     "maxDepth": 3,
     "includeIndex": true,
     "sortBy": "order",
-    "roots": ["guide", "directives", "api"],
+    "roots": ["api"],
     "variant": "spotlight",
     "class": "spotlight-from-bottom-right"
   },

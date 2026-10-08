@@ -1,0 +1,74 @@
+---
+title: endBatch
+description: "Close a manual batch and flush notifications when the outer batch ends."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">endBatch</Badge><Badge tone="neutral" variant="surface">Observation and Batch</Badge></Flex><p>Close a manual batch and flush notifications when the outer batch ends.</p></Panel>
+
+## Overview
+
+The `endBatch` function is used in conjunction with the `startBatch`function to end a batch of ref updates and notify observers of the changes made during the batch. Batching ref updates using `startBatch` and `endBatch` can improve application performance by reducing the number of observer notifications and triggers during a series of updates.
+
+## Try it live
+
+<section class="guide-example" aria-label="endBatch example">
+  <div class="guide-example-heading"><strong>Same writes, different notification counts</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-batching" selectedTab="batching-preview" ariaLabel="endBatch implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="batching-preview" label="Live preview"><div id="api-demo" data-example="batching"><ApiBatching/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="batching-source" label="batching.ts"><import-codeblock src="./demos/batching.ts"/></TabPane>
+    <TabPane id="batching-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Each action adds three to one ref. Compare plain writes, batch, and a manual start/end pair.</p>
+</section>
+
+## Usage
+
+### Ending a Batch
+
+To end a batch of ref updates, call the `endBatch` function. When a batch is ended, observers are notified of the changes made to refs during the batch, but this notification is performed only once, optimizing performance.
+
+```ts
+import { batch, startBatch, endBatch, ref } from 'regor'
+
+const myRef1 = ref(5)
+const myRef2 = ref(10)
+
+startBatch() // Start a batch
+
+myRef1.value = 15
+myRef2.value = 20
+
+endBatch() // End the batch and notify observers
+
+// Observers are notified only once at the end of the batch
+// Outputs:
+// Observer triggered: 20
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Pair the start and end"><p>Prefer batch for a callback-sized update. Use a manual pair only when it makes ownership clearer.</p></AlertBox>
+
+## Notes
+
+- The `endBatch` function is used in conjunction with the `startBatch` function to finalize a batch of ref updates. It ensures that observers are notified of the ref changes made during the batch in an optimized manner, reducing unnecessary notifications.
+
+- Batching updates with `startBatch` and `endBatch` can significantly improve the performance of your application, especially when multiple changes are made to refs in rapid succession. It minimizes the number of observer notifications and triggers.
+
+- It's important to call the `endBatch` function to conclude a batch and ensure that observers are informed of the changes made during the batch.
+
+- Important: When using the batch functions, keep in mind that reads of refs within the batch can return potentially stale or outdated values due to pausing auto-updates. Ensure that your code logic accounts for this situation when reading refs within a batch.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to endBatch." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/startBatch"><code>startBatch</code></a></li>
+    <li><a href="/api/batch"><code>batch</code></a></li>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

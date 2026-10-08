@@ -1,0 +1,106 @@
+---
+title: computeMany
+description: "Derive a read-only result from an explicit list of source refs."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">computeMany</Badge><Badge tone="neutral" variant="surface">Computed and Effects</Badge></Flex><p>Derive a read-only result from an explicit list of source refs.</p></Panel>
+
+## Overview
+
+The `computeMany` function allows you to create a computed ref object that depends on multiple source ref objects and a computation function. The computed ref automatically updates when any of the source refs change, making it useful for deriving values from multiple reactive data sources.
+
+## Try it live
+
+<section class="guide-example" aria-label="computeMany example">
+  <div class="guide-example-heading"><strong>Three ways to derive a value</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-derived" selectedTab="derived-preview" ariaLabel="computeMany implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="derived-preview" label="Live preview"><div id="api-demo" data-example="derived"><ApiDerived/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="derived-source" label="derived.ts"><import-codeblock src="./demos/derived.ts"/></TabPane>
+    <TabPane id="derived-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Move either slider. The three read-only outputs use computed, computeRef, and computeMany.</p>
+</section>
+
+## Usage
+
+### Creating Computed Refs
+
+To create a computed ref using `computeMany`, you provide an array of source ref objects and a computation function. The computation function calculates the computed value based on the values of the source refs, and the computed ref will automatically update when any of the source refs change.
+
+```ts
+import { computeMany, ref } from 'regor'
+
+const myRef1 = ref(5)
+const myRef2 = ref(10)
+
+// Create a computed ref that depends on both myRef1 and myRef2
+const computedValue = computeMany(
+  [myRef1, myRef2],
+  (value1, value2) => value1 + value2,
+)
+
+console.log(computedValue.value) // Outputs 15
+
+// Later, when myRef1 or myRef2 changes, computedValue will automatically update
+myRef1.value = 7
+console.log(computedValue.value) // Outputs 17
+```
+
+## Parameters
+
+- `sources`: An array of source ref objects that the computed ref depends on. Changes to any of the source refs will trigger the computation.
+- `compute`: A function that calculates the computed value based on the values of the source refs. This function should not have side effects and should only depend on reactive data.
+
+## Return Value
+
+- The `computeMany` function returns a computed ref object that holds the computed value. You can access the computed value using the `.value` property of the computed ref or by invoking it directly.
+
+## Example
+
+```ts
+import { computeMany, ref } from 'regor'
+
+const myRef1 = ref(5)
+const myRef2 = ref(10)
+
+// Create a computed ref that depends on both myRef1 and myRef2
+const computedValue = computeMany(
+  [myRef1, myRef2],
+  (value1, value2) => value1 + value2,
+)
+
+console.log(computedValue.value) // Outputs 15
+
+// Later, when myRef1 or myRef2 changes, computedValue will automatically update
+myRef1.value = 7
+console.log(computedValue.value) // Outputs 17
+```
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="List the dependencies you intend"><p>The callback receives source values in the same order as the source array.</p></AlertBox>
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to computeMany." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/computed"><code>computed</code></a></li>
+    <li><a href="/api/computeRef"><code>computeRef</code></a></li>
+    <li><a href="/api/ref"><code>ref</code></a></li>
+    <li><a href="/api/observe"><code>observe</code></a></li>
+    <li><a href="/api/observeMany"><code>observeMany</code></a></li>
+    <li><a href="/api/watchEffect"><code>watchEffect</code></a></li>
+    <li><a href="/api/isDeepRef"><code>isDeepRef</code></a></li>
+    <li><a href="/api/isRef"><code>isRef</code></a></li>
+    <li><a href="/api/unref"><code>unref</code></a></li>
+    <li><a href="/api/sref"><code>sref</code></a></li>
+    <li><a href="/api/flatten"><code>flatten</code></a></li>
+    <li><a href="/api/isRaw"><code>isRaw</code></a></li>
+    <li><a href="/api/markRaw"><code>markRaw</code></a></li>
+    <li><a href="/api/pause"><code>pause</code></a></li>
+    <li><a href="/api/resume"><code>resume</code></a></li>
+    <li><a href="/api/trigger"><code>trigger</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

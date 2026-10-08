@@ -1,0 +1,81 @@
+---
+title: onUnmounted
+description: "Register cleanup for resources owned by an app, component, or scope."
+---
+
+<Panel class="guide-orientation" tone="neutral" variant="flat" bodyClass="p-3"><Flex wrap="true" class="gap-2"><Badge tone="accent" variant="surface">onUnmounted</Badge><Badge tone="neutral" variant="surface">Lifecycle and Scope</Badge></Flex><p>Register cleanup for resources owned by an app, component, or scope.</p></Panel>
+
+## Overview
+
+The `onUnmounted` function allows you to register a callback function that will be executed when a component or scope is unmounted or cleaned up. This is useful for performing cleanup tasks or removing event listeners when a component becomes inactive.
+
+## Try it live
+
+<section class="guide-example" aria-label="onUnmounted example">
+  <div class="guide-example-heading"><strong>Setup and cleanup with an owner</strong><Badge tone="accent" variant="surface">Live API</Badge></div>
+  <Tabs group="api-lifecycle" selectedTab="lifecycle-preview" ariaLabel="onUnmounted implementation" tone="neutral" variant="none" tabVariant="underline">
+    <TabPane id="lifecycle-preview" label="Live preview"><div id="api-demo" data-example="lifecycle"><ApiLifecycle/></div><noscript><p class="guide-example-note">Enable JavaScript to try the controls. This preview is rendered at build time.</p></noscript></TabPane>
+    <TabPane id="lifecycle-source" label="lifecycle.ts"><import-codeblock src="../guide/demos/lifecycle.ts"/></TabPane>
+    <TabPane id="lifecycle-mount" label="browser.ts"><import-codeblock src="./demos/browser.ts"/></TabPane>
+  </Tabs>
+  <p class="guide-example-note">Mount the child ticker, then unmount it. The parent keeps totals while the child releases its interval.</p>
+</section>
+
+## Usage
+
+### Registering the `onUnmounted` Callback
+
+To register an `onUnmounted` callback, simply call the `onUnmounted` function and pass the desired callback function as an argument. The callback will be executed when the component or scope is unmounted or cleaned up.
+
+```ts
+import { createApp, defineComponent, html, useScope, onUnmounted } from 'regor'
+
+const userRow = defineComponent(html`<div></div>`, {
+  context: () => {
+    // Register an onUnmounted callback
+    onUnmounted(() => {
+      // Perform cleanup  tasks
+      console.log('Component is unmounted!')
+    })
+    return {}
+  },
+})
+
+createApp(
+  useScope(() => {
+    // Register an onUnmounted callback
+    onUnmounted(() => {
+      // Perform cleanup tasks
+      console.log('App is unmounted!')
+    })
+    return {}
+  }),
+)
+```
+
+## Parameters
+
+- `onUnmounted` (required): A callback function that will be executed when the app or component is unmounted or cleaned up.
+
+<AlertBox class="guide-callout" tone="accent" variant="surface" title="Cleanup belongs beside setup"><p>Keep the resource handle near the hook that releases it. The ticker preview shows its interval stopping after unmount.</p></AlertBox>
+
+## Notes
+
+- `onUnmounted` callbacks can be useful for cleaning up resources, removing event listeners, or any other task that should be performed when a component becomes inactive.
+
+- Multiple `onUnmounted` callbacks can be registered, and they will be executed in the order they were registered.
+
+- `onUnmounted` is often used in conjunction with `onMounted` to define initialization and cleanup tasks for components or scopes.
+
+## See Also
+
+<ExpandablePanel class="guide-callout" title="Related APIs and guides" description="Continue with the references connected to onUnmounted." tone="neutral" variant="flat">
+  <ul>
+    <li><a href="/api/useScope"><code>useScope</code></a></li>
+    <li><a href="/api/onMounted"><code>onMounted</code></a></li>
+  </ul>
+</ExpandablePanel>
+
+[Back to the API list](/api/)
+
+<PageScript src="./demos/browser.ts"/>

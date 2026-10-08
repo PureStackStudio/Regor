@@ -1,6 +1,9 @@
 import { styleBuilder, themes } from '@purestack/ts-style'
 import { regorColors } from './skin'
 import { registerChartStyles } from './chartStyles'
+import { registerGuideStyles } from './guideStyles'
+import { registerDirectiveStyles } from './directiveStyles'
+import { registerApiStyles } from './apiStyles'
 
 const mono = "'Cascadia Code', 'SFMono-Regular', Consolas, monospace"
 
@@ -8,6 +11,9 @@ export function registerRegorStyles() {
   themes.forEach((theme, palette) => {
     const root = styleBuilder.get(theme)
     registerChartStyles(root, palette)
+    registerGuideStyles(root, palette)
+    registerDirectiveStyles(root, palette)
+    registerApiStyles(root, palette)
     const t = palette.semanticTone
     const ink = t.neutral.text.default
     const muted = t.neutral.text.subtle
