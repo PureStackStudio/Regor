@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "serve": "purestack serve --content ./content --port 4400",
+    "serve": "purestack serve --content ./content --port 4400 --clean",
     "build": "purestack build --content ./content --clean",
-    "release": "purestack publish --content ./content"
+    "publish": "purestack publish --content ./content",
+    "deploy": "pgdeploy deploy --host https://regor.purestack.studio --package ./dist/web --allow-path 'pagefind/*,.ts-ssg/manifest.json'"
   },
   "dependencies": {
     "@purestack/ts-css": "1.1.7",
