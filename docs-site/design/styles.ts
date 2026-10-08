@@ -79,7 +79,12 @@ export function registerRegorStyles() {
       .select('.regor-topbar .site-logo')
       .css({ fontWeight: '750', letterSpacing: '-1px' })
     root.select('.regor-topbar .site-logo__name').css({ lineHeight: '1.4' })
-    root.select('.regor-topbar .topbar__actions').css({ gap: '18px' })
+    root.select('.regor-topbar .topbar__controls').css({ gap: '18px' })
+    root.select('.regor-topbar .header-nav').css({
+      display: 'flex',
+      alignItems: 'center',
+      gap: '18px',
+    })
     root.select('.regor-topbar :is(.header-guide,.header-api)').css({
       color: muted,
       fontSize: '13px',
@@ -705,12 +710,13 @@ export function registerRegorStyles() {
       .select('.footer-inner')
       .css({ alignItems: 'start', flexDirection: 'column' })
     mobile.select('.regor-topbar .header-guide').css({ display: 'none' })
-    mobile.select('.regor-topbar .topbar__actions').css({ gap: '12px' })
+    mobile.select('.regor-topbar .header-nav').css({ gap: '12px' })
+    mobile.select('.regor-topbar .topbar__controls').css({ gap: '12px' })
     mobile.select('.template-doc .doc-main').css({ paddingTop: '24px' })
     mobile.select('.template-doc .doc-content').css({ fontSize: '15px' })
     root
       .media('max-width: 380px')
-      .select('.regor-topbar .header-api')
+      .select('.regor-topbar .header-nav')
       .css({ display: 'none' })
     root
       .media('max-width: 380px')

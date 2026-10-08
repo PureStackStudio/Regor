@@ -7,6 +7,7 @@ import { chartTemplate } from '../content/examples/chart-view'
 import { defineGuideComponents } from './guideComponents'
 import { defineDirectiveComponents } from './directiveComponents'
 import { defineApiComponents } from './apiComponents'
+import { defineRegorTopBar } from './topBar'
 
 export interface RegorFeature {
   number: string
@@ -45,6 +46,7 @@ const resourceTemplate = html`<a :href="href" class="regor-resource">
 
 export function defineRegorComponents() {
   return {
+    RegorTopBar: defineRegorTopBar(),
     ...defineGuideComponents(),
     ...defineDirectiveComponents(),
     ...defineApiComponents(),

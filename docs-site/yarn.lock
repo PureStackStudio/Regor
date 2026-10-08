@@ -324,7 +324,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@purestack/ts-components@npm:^1.1.7":
+"@purestack/ts-components@npm:1.1.7, @purestack/ts-components@npm:^1.1.7":
   version: 1.1.7
   resolution: "@purestack/ts-components@npm:1.1.7"
   dependencies:
@@ -1922,6 +1922,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "regor-doc-site@workspace:."
   dependencies:
+    "@purestack/ts-components": "npm:1.1.7"
     "@purestack/ts-css": "npm:1.1.7"
     "@purestack/ts-html": "npm:1.1.7"
     "@purestack/ts-style": "npm:1.1.7"

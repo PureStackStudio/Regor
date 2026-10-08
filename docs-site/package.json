@@ -9,6 +9,7 @@
     "deploy": "pgdeploy deploy --host https://regor.purestack.studio --package ./dist/web --allow-path 'pagefind/*,.ts-ssg/manifest.json'"
   },
   "dependencies": {
+    "@purestack/ts-components": "1.1.7",
     "@purestack/ts-css": "1.1.7",
     "@purestack/ts-html": "1.1.7",
     "@purestack/ts-style": "1.1.7",
