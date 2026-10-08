@@ -625,7 +625,16 @@ export function registerRegorStyles() {
       marginTop: '30px',
       fontSize: '10px',
     })
-    root.select('.regor-footer .footer-actions').css({ gap: '16px' })
+    root.select('.regor-footer .footer-actions').css({
+      gap: '16px',
+      flexShrink: '0',
+      flexWrap: 'wrap',
+    })
+    root
+      .select('.footer-actions > a, .footer-actions [data-consent-settings]')
+      .css({
+        whiteSpace: 'nowrap',
+      })
     root.select('.footer-actions .consent-settings-teleport-area').css({
       display: 'inline-flex',
       alignItems: 'center',
@@ -709,6 +718,16 @@ export function registerRegorStyles() {
     mobile
       .select('.footer-inner')
       .css({ alignItems: 'start', flexDirection: 'column' })
+    mobile.select('.footer-colophon').css({
+      alignItems: 'start',
+      flexDirection: 'column',
+      gap: '12px',
+    })
+    mobile.select('.regor-footer .footer-actions').css({
+      width: '100%',
+      justifyContent: 'space-between',
+      gap: '8px 16px',
+    })
     mobile.select('.regor-topbar .header-nav').css({ gap: '12px' })
     mobile.select('.regor-topbar .topbar__controls').css({ gap: '12px' })
     mobile.select('.template-doc .doc-main').css({ paddingTop: '24px' })
