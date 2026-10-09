@@ -2,467 +2,228 @@
 
 # Regor
 
+**Reactive UI for HTML and SVG.**
+
 [![npm version](https://img.shields.io/npm/v/regor?style=flat-square&logo=npm&logoColor=white&labelColor=101211&color=d2fa56)](https://www.npmjs.com/package/regor)
 [![Tests](https://img.shields.io/github/actions/workflow/status/PureStackStudio/Regor/test.yml?branch=main&style=flat-square&logo=github&logoColor=white&label=tests&labelColor=101211)](https://github.com/PureStackStudio/Regor/actions/workflows/test.yml)
 [![MIT license](https://img.shields.io/badge/license-MIT-d2fa56?style=flat-square&labelColor=101211)](LICENSE)
-[![TypeScript types](https://img.shields.io/npm/types/regor?style=flat-square&logo=typescript&logoColor=white&labelColor=101211&color=d2fa56)](https://www.npmjs.com/package/regor)
 
-**[Website & documentation](https://regor.purestack.studio/)** · [Getting started](https://regor.purestack.studio/getting-started/) · [API reference](https://regor.purestack.studio/api/) · [Try it online](https://stackblitz.com/edit/regor-sample-1?file=index.ts)
+Regor connects reactive state to the DOM. Start with existing HTML, add bindings where you need interaction, and compose reusable components as your interface grows. Updates go directly to the bound DOM nodes, without a Virtual DOM.
 
-Regor is a runtime-first UI framework for teams that want direct DOM control, strong TypeScript ergonomics, and precise reactivity behavior without being forced into a Virtual DOM architecture.
+Write your application in ordinary TypeScript or JavaScript. Templates use HTML with Vue-inspired directives such as `r-if`, `r-for`, and `r-model`; components are functions and objects, with no special file format or template compilation step.
 
-Its template syntax is familiar to Vue users (`r-if`, `r-model`, `r-for`, `r-bind`), but its runtime model is intentionally different: Regor is built for progressive enhancement, mixed-rendering environments, and incremental adoption.
+[Documentation](https://regor.purestack.studio/) · [Getting started](https://regor.purestack.studio/getting-started/) · [Guide](https://regor.purestack.studio/guide/) · [API reference](https://regor.purestack.studio/api/)
 
-## Key Features
+## Why Regor?
 
-- **No VDOM Layer:** Bind directly to real DOM for transparent runtime behavior and straightforward debugging.
-- **TypeScript-Native:** Use standard TypeScript interfaces, classes, and generics without framework-specific file formats.
-- **No Build Step Required:** Define components in TypeScript using tagged string templates with npm, CDN ESM, or global build workflows.
-- **Secure Evaluation:** Regor's secure JavaScript VM ensures safe runtime compilation. You can enable security policy in your page without removing runtime compilation support.
+- **Start with the page you have.** Bind existing static or server-rendered markup in place, or supply a template when mounting. Mount independent interactive regions on the same page.
+- **Make state explicit.** Use refs for state, computed refs for derived values, and observers or effects for side effects. Choose deep or shallow reactivity and coordinate updates with batching.
+- **Compose in TypeScript.** Model app and component contexts with interfaces or classes. Components support reactive props, events, slots, and lifecycle hooks.
+- **Choose your tooling.** Install from npm for a bundled application, or import a browser module from a CDN. Regor interprets template expressions at runtime; TypeScript itself still needs to be compiled to JavaScript.
 
-```html
-<meta
-  http-equiv="Content-Security-Policy"
-  content="require-trusted-types-for 'script';"
-/>
+Regor is useful for adding a form, widget, or interactive island to an existing site, as well as building interfaces from components. You choose the DOM region each app binds to.
+
+## Install
+
+```sh
+npm install regor
 ```
 
-- **Flexible Reactivity:** Combine `ref`, `cref`, `sref`, `batch`, `pause`, `resume`, and `entangle` for explicit state orchestration.
-- **Static-First + Islands:** Bind to existing DOM without removing server-rendered HTML, ideal for progressive enhancement.
-- **Reentrance:** Mount multiple times in already-mounted regions with same or different app contexts.
-- **Compatibility:** Rendered pages are designed for seamless integration with other libraries manipulating the DOM.
+Or use `yarn add regor` or `pnpm add regor`. The package includes TypeScript declarations.
 
-## Documentation
+## Your first app
 
-Discover the capabilities of Regor by diving into our comprehensive documentation. Whether you're new to Regor or an experienced user, our documentation provides in-depth insights into its features, API, directives, and more.
+In a project that bundles npm imports, add this markup to your page:
 
-Start exploring the [Regor Documentation](https://regor.purestack.studio/) now to harness the full potential of this powerful UI framework. The documentation sources are located in [docs-site](docs-site/), built with PureStack.
+```html
+<div id="counter">
+  <p>Count: <output>{{ count }}</output></p>
+  <button type="button" @click="count++">Increment</button>
+  <button type="button" @click="count = 0" :disabled="count === 0">
+    Reset
+  </button>
+</div>
+```
 
-## Requirements
-
-Regor is developed using Node.js 18 and Yarn. Ensure you have Node.js 18 or newer installed before running the examples or the documentation site.
-
-## Getting started
-
-Click and count sample source:
+Then add this to your JavaScript or TypeScript entry point, and run it after the root element exists. A module script runs after the HTML has been parsed.
 
 ```ts
 import { createApp, ref } from 'regor'
 
-createApp({
-  count: ref(0),
-})
+const app = createApp({ count: ref(0) }, { selector: '#counter' })
 ```
 
-HTML:
+`createApp` mounts immediately. With only a `selector`, it binds the existing markup. `{{ count }}` displays the current value, `@click` handles events, and `:disabled` keeps the button's disabled state in sync. Refs are automatically unwrapped in template expressions, so `count++` updates the ref.
 
-```html
-<div id="app">
-  <button @click="count++">Count is: {{ count }}</button>
-</div>
-```
-
-Defining component:
+The returned app handle provides teardown when you need it:
 
 ```ts
-import { createApp, defineComponent, ref, html, type Ref } from 'regor'
-
-interface MyComponent {
-  message: Ref<string>
-}
-
-const template = html`<button @click="count++">
-  {{ message }} {{ count }}
-</button>`
-
-const props = ['message']
-
-const myComponent = defineComponent<MyComponent>(template, {
-  context: (head) => ({
-    message: head.props.message,
-    count: ref(0),
-  }),
-  props,
-})
-
-createApp({
-  components: { myComponent },
-  message: ref('Count is:'),
-})
+app.unbind() // Stop bindings and listeners, keeping the DOM in place.
+// Or: app.unmount() // Remove the root element and schedule cleanup.
 ```
 
-HTML:
+### Try it without a build step
+
+Save this as `index.html` and open it in a modern browser with an internet connection:
 
 ```html
-<div id="app">
-  <MyComponent :message="message"></MyComponent>
-  <my-component :message="message"></my-component>
-</div>
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Regor counter</title>
+
+  <div id="counter">
+    <p>Count: <output>{{ count }}</output></p>
+    <button type="button" @click="count++">Increment</button>
+    <button type="button" @click="count = 0" :disabled="count === 0">
+      Reset
+    </button>
+  </div>
+
+  <script type="module">
+    import {
+      createApp,
+      ref,
+    } from 'https://unpkg.com/regor@1.7.3/dist/regor.es2022.esm.prod.js'
+
+    createApp({ count: ref(0) }, { selector: '#counter' })
+  </script>
+</html>
 ```
 
-## Component Props Validation
+The CDN example pins the package version so its behavior stays consistent. See [getting started](https://regor.purestack.studio/getting-started/) for more mounting and installation options.
 
-Regor components can validate incoming props at runtime inside `context(head)`.
+## State and derived values
 
-This is opt-in and local to the component author:
-
-- it does not change `defineComponent(...)`
-- it validates only the keys you list
-- it follows `config.propValidationMode`
-- it does not coerce values
-- it does not mutate `head.props`
-
-Use `head.validateProps(...)` together with `pval`:
+A ref is callable: call it with no arguments to read its value, or with a value to update it. You can also use its `.value` property.
 
 ```ts
-import { defineComponent, html, pval } from 'regor'
+import { computed, ref } from 'regor'
 
-type EditorCard = {
-  title: string
-  count?: number
-  mode: 'create' | 'edit'
-  summary?: string
+const count = ref(0)
+const doubled = computed(() => count() * 2)
+
+count(3)
+console.log(count()) // 3
+console.log(doubled()) // 6
+
+count.value = 4
+console.log(doubled()) // 8
+```
+
+`computed` tracks the refs read by its function and derives a read-only value. In a template, use `count` and `doubled` directly.
+
+For object state, choose the conversion you need:
+
+| API           | Behavior                                                                                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref(value)`  | Converts nested properties to refs recursively, modifying the supplied object in place.                                                                          |
+| `cref(value)` | Creates deep reactive state from a flattened copy, leaving the supplied object unchanged.                                                                        |
+| `sref(value)` | Holds shallow state without converting nested properties to refs. For plain objects, replace the value or call `trigger` to notify bindings after a nested edit. |
+
+Use `watchEffect` or `observe` to react to changes outside templates, and `batch` to group notifications. Create app effects and lifecycle hooks inside `useScope` so they are cleaned up with the app; component context factories already run in a scope. Read the [reactivity guide](https://regor.purestack.studio/guide/reactivity/) and [lifecycle guide](https://regor.purestack.studio/guide/lifecycle-and-cleanup/) for examples.
+
+## Reusable components
+
+Components pair a template with a context factory. This counter receives its label from the parent and keeps its own count.
+
+Add a root to your page:
+
+```html
+<div id="components-app"></div>
+```
+
+Then define and mount the component:
+
+```ts
+import { createApp, defineComponent, html, ref, type Ref } from 'regor'
+
+interface CounterContext {
+  label: Ref<string>
+  count: Ref<number>
 }
 
-const editorCard = defineComponent<EditorCard>(
-  html`<article>{{ summary }}</article>`,
+const CounterButton = defineComponent<CounterContext>(
+  html`<button type="button" @click="count++">
+    {{ label }}: {{ count }}
+  </button>`,
   {
-    props: ['title', 'count', 'mode'],
-    context: (head) => {
-      head.validateProps({
-        title: pval.isString,
-        count: pval.optional(pval.isNumber),
-        mode: pval.oneOf(['create', 'edit'] as const),
-      })
+    props: ['label'],
+    context: (head) => ({
+      label: head.props.label,
+      count: ref(0),
+    }),
+  },
+)
 
-      return {
-        ...head.props,
-        summary: `${head.props.title}:${head.props.mode}:${head.props.count ?? 'none'}`,
-      }
-    },
+createApp(
+  {
+    components: { CounterButton },
+    label: ref('Clicks'),
+  },
+  {
+    selector: '#components-app',
+    template: html`
+      <label>Button label <input r-model="label" /></label>
+      <counter-button :label="label"></counter-button>
+    `,
   },
 )
 ```
 
-### Built-in validators
-
-```ts
-import { pval } from 'regor'
-
-pval.isString
-pval.isNumber
-pval.isBoolean
-pval.isClass(MyClass)
-pval.optional(pval.isString)
-pval.nullable(pval.isNumber)
-pval.or(pval.isString, pval.isNumber)
-pval.oneOf(['create', 'edit'] as const)
-pval.arrayOf(pval.isString)
-pval.shape({ title: pval.isString, count: pval.isNumber })
-pval.refOf(pval.isString)
-pval.describe('value')
-pval.fail('title', 'expected non-empty string, got string ("")')
-```
-
-`pval.or(...)` is useful for union-style runtime contracts:
-
-```ts
-head.validateProps({
-  value: pval.or(pval.isString, pval.refOf(pval.isString)),
-})
-```
-
-### Dynamic bindings and refs
-
-Single-prop dynamic bindings like `:title="titleRef"` flow into component props as refs.
-When validating those runtime values, use `pval.refOf(...)`:
-
-```ts
-type CardProps = {
-  title: Ref<string>
-  summary?: string
-}
-
-const card = defineComponent<CardProps>(html`<h3>{{ summary }}</h3>`, {
-  props: ['title'],
-  context: (head) => {
-    head.validateProps({
-      title: pval.refOf(pval.isString),
-    })
-
-    return {
-      ...head.props,
-      summary: head.props.title(),
-    }
-  },
-})
-```
-
-For object-style `:context="{ ... }"` values, validate the plain runtime shape directly:
-
-```ts
-head.validateProps({
-  meta: pval.shape({
-    slug: pval.isString,
-  }),
-})
-```
-
-### Custom validators
-
-Users can provide their own validators as long as they match the `PropValidator<T>` signature:
-
-```ts
-import { pval, type PropValidator } from 'regor'
-
-const isNonEmptyString: PropValidator<string> = (value, name) => {
-  if (typeof value !== 'string' || value.trim() === '') {
-    pval.fail(name, `expected non-empty string, ${pval.describe(value)}`)
-  }
-}
-
-head.validateProps({
-  title: isNonEmptyString,
-})
-```
-
-Custom validators can also use the third `head` argument:
-
-```ts
-const startsWithPrefix: PropValidator<string> = (value, name, head) => {
-  const ctx = head.requireContext(AppServices)
-  if (typeof value !== 'string' || !value.startsWith(ctx.prefix)) {
-    pval.fail(name, `expected prefixed value, ${pval.describe(value)}`)
-  }
-}
-```
-
-### Validation mode
-
-Validation behavior is controlled through `RegorConfig.propValidationMode`:
-
-```ts
-import { RegorConfig } from 'regor'
-
-const config = new RegorConfig()
-config.propValidationMode = 'warn'
-```
-
-Available modes:
-
-- `'throw'` (default): throw immediately on invalid prop
-- `'warn'`: report through `warningHandler.warning(...)` and continue
-- `'off'`: skip runtime prop validation entirely
-
-Pass the config into `createApp(...)` when you want app-level control:
-
-```ts
-createApp(appContext, template, config)
-```
-
-## Table Templates and Components
-
-Regor preprocesses table-related templates to keep markup valid when using
-components in table structures.
-
-- Supported table containers: `table`, `caption`, `colgroup`, `thead`,
-  `tbody`, `tfoot`.
-- Component tags directly under row containers are normalized to valid hosts.
-- Component tags directly under `<tr>` are normalized to `<td>` hosts (except
-  native `<td>` / `<th>`).
-- Component tags directly under `<colgroup>` are normalized to `<col>` hosts
-  (except native `<col>`).
-- Regor preserves valid table markup while supporting component-based rows and
-  cells, captions, sections, column groups, and columns in table templates.
-
-Example:
-
-```html
-<table>
-  <tbody>
-    <TableRow r-for="row in rows" :row="row" />
-  </tbody>
-</table>
-```
-
-```ts
-const tableRow = defineComponent(
-  html`<tr>
-    <TableCell :value="row.name" />
-    <TableCell :value="row.age" />
-  </tr>`,
-  { props: ['row'] },
-)
-```
-
-Define composables:
-
-```ts
-import { ref, onMounted, onUnmounted, type Ref } from 'regor'
-
-export const useMouse = (): { x: Ref<number>; y: Ref<number> } => {
-  const x = ref(0)
-  const y = ref(0)
-
-  const update = (event: MouseEvent): void => {
-    x(event.pageX)
-    y(event.pageY)
-  }
-
-  onMounted(() => window.addEventListener('mousemove', update))
-  onUnmounted(() => window.removeEventListener('mousemove', update))
-
-  return { x, y }
-}
-```
-
-## Installation
-
-`yarn add regor`
-
-or
-
-`npm install regor`
-
-## Comparison with VueJs
-
-Regor is openly inspired by Vue’s concepts (even adopting a similar directive syntax like r-if / r-model instead of v-if / v-model), but it fundamentally diverges in its implementation. It prioritizes runtime flexibility, build-less environments, and strict TypeScript integration over the Virtual DOM (VDOM) paradigm.
-
-### Architecture and rendering model
-
-- **Vue:** Uses a Virtual DOM. This provides excellent performance for highly dynamic Single Page Applications (SPAs) because Vue calculates diffs in memory before updating the browser. However, it usually requires a compilation step to optimize templates, and hydrating existing server-rendered HTML can be notoriously strict (hydration mismatches).
-- **Regor:** Ditches the VDOM entirely. It binds directly to the actual DOM. Regor explicitly supports Static-first + dynamic islands and "Reentrance." You can mount an application multiple times over already-mounted regions or existing server-rendered HTML without destroying the elements.
-- **Verdict:** Regor is significantly more flexible for integrating into existing applications, multi-page applications (MPAs), or legacy backends.
-
-### Runtime and deployment model
-
-- **Vue:** Commonly paired with a build pipeline for SFCs and tooling depth.
-- **Regor:** Designed to require no build step. You can write standard TypeScript using tagged string templates (e.g., `html` tags for templates) and it will evaluate at runtime. Crucially, Regor features a Secure JavaScript VM for runtime compilation that adheres to strict Content Security Policies (CSP)—a common pain point when using Vue's runtime compiler in enterprise environments.
-- **Verdict:** Regor wins in deployment flexibility and zero-config setups. It respects modern security policies out of the box without demanding a bundler.
-
-### Reactivity control model
-
-- **Vue:** Uses ES6 Proxies for a highly automated, "magical" reactivity system. You update an object, and Vue figures out what to re-render. However, this magic can sometimes abstract away performance bottlenecks, leading to over-rendering if you aren't careful with deep reactivity.
-- **Regor:** Provides fine-tuned, manual control. It offers `ref` (deep in-place reactivity), `cref` (copy-first deep reactivity), and `sref` (simple/shallow reactivity without nested observation). Furthermore, Regor provides advanced control APIs like `pause()` and `resume()` to stop a ref's auto-triggers, `entangle()` to sync two refs effortlessly, and `batch()` for precise state grouping.
-- **Verdict:** Vue's reactivity is easier for beginners.. Regor’s reactivity is more flexible and transparent, giving engineers exact tools to orchestrate update semantics and prevent unwanted DOM paints.
-
-### TypeScript ergonomics
-
-- **Vue:** TypeScript support in Vue has improved massively, but it still relies on heavy IDE plugins (Volar) and specialized compilers (vue-tsc) to understand .vue files. The separation between the `<template>` and `<script>` requires tooling to bridge the gap.
-- **Regor:** Offers native TypeScript support without workarounds. Because components and templates are defined using standard TypeScript functions, class-based contexts, and `ComponentHead<T>`, standard TypeScript compilers and IDEs understand 100% of the code immediately.
-- **Verdict:** Regor offers a purer, higher-quality TypeScript experience. It leverages the language itself rather than relying on framework-specific compiler magic to provide type safety.
-
-## Supported Directives
-
-Regor provides a set of directives that allow you to enhance the behavior and appearance of your applications. Similar to Vue's directives, Regor's directives start with the "r-" prefix.
-
-> **Note:** The directive prefix "r-" can be customized using `RegorConfig.getDefault().setDirectives('v-')` to align with a different naming convention, such as Vue's "v-" prefix.
-
-- **`r-bind`** Binds an element's attribute to a component's data, allowing dynamic updates.
-- **`r-model`** Enables two-way data binding between form inputs.
-- **`r-text`** Sets the element's text content to the result of an expression.
-- **`r-html`** Renders the result of an expression as HTML content within the element.
-- **`r-on`** Attaches event listeners to the element and invokes specified component methods.
-- **`r-show`** Conditionally displays the element based on the truthiness of an expression.
-- **`r-for`** Renders a set of elements based on an array and a template.
-- **`r-if`** Conditionally renders the element based on the truthiness of an expression.
-- **`r-else`** Provides an alternative rendering when used in conjunction with r-if.
-- **`r-else-if`** Conditionally renders the element as an alternative to r-if.
-- **`r-pre`** Excludes HTML element from Regor bindings.
-- **`:class`** Binds one or more class names to an element based on expressions.
-- **`:style`** Binds one or more inline styles to an element based on expressions.
-- **`:ref`** Provides a reference to an element in the template, allowing you to interact with it programmatically.
-- **`:key`** Provides a unique identifier for each item in a list, aiding efficient updates and rendering.
-- **`:is`** Specifies the component to dynamically render based on a value or expression.
-- **`r-teleport`** Teleports the element to anywhere in the DOM. Unlike Vue, teleport is a directive to avoid component overhead.
-- **`:context`** Assigns an object into a component instance context, reactively. Use it for object-style component input, including fields that are not declared in the component `props` list.
-- **`r-context`** Alias of `:context` with the same behavior.
-- **`@`** Shorthand for `r-on` to bind event listeners.
-- **`:`** Shorthand for `r-bind` to bind element attributes.
-- **`.`** Shorthand for `r-bind.prop` to set properties.
-
-These directives empower you to create dynamic and interactive user interfaces, enhancing the user experience of your Regor-powered applications.
-
-## Regor API
-
-**App / Component Template Functions**
-
-- **`createApp`** Similar to Vue's `createApp`, it initializes a Regor application instance.
-- **`defineComponent`** Creates a Regor component instance.
-- **`pval`** Built-in component prop validators used with `head.validateProps(...)`.
-- **`toFragment`** Converts a JSON template to a document fragment.
-- **`toJsonTemplate`** Converts a DOM element to a JSON template.
-
-**Cleanup Functions**
-
-- **`addUnbinder`** Adds an unbinder to a DOM element.
-- **`getBindData`** Retrieves bind data associated with a DOM element.
-- **`removeNode`** Removes a node while properly disposing of associated bind data and observers.
-- **`unbind`** Unbinds a node, disposing of observers and bind data.
-
-**Compute Functions**
-
-- **`computed`** Similar to Vue's `computed`, it creates a computed property.
-- **`computed`** Computes the value observing a single ref, more efficient than observing any.
-- **`computeMany`** Computes the value observing given refs, more efficient than observing any.
-- **`watchEffect`** Similar to Vue's `watchEffect`, it watches for reactive changes.
-- **`collectRefs`** Like `watchEffect`, but runs once and returns all refs used in the evaluated action.
-- **`silence`** Silences the ref collection in a `watchEffect` or `collectRefs`.
-
-**Misc Functions**
-
-- **`flatten`** Flattens a given ref object into a raw object recursively.
-- **`isRaw`** Checks if a given ref is marked as raw.
-- **`markRaw`** Marks a ref as raw.
-- **`persist`** Persists a given ref in local storage reactively.
-- **`html`** A tag to produce HTML string using template literals. Recommended to use with the VS-Code [`lit-html`](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) extension for formatting and highlighting.
-- **`raw`** A tag to produce HTML string, similar to `html`, but it is excluded from formatting when [`lit-html`](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) extension is installed.
-- **`svg`** A tag to produce SVG template strings with the same interpolation behavior as `html`.
-
-**Observe Functions**
-
-- **`observe`** Observes changes in a single ref.
-- **`observeMany`** Observes changes in multiple refs.
-- **`observerCount`** Retrieves the active observer count of a ref.
-- **`batch`** Performs batch updates, triggering changes at the end. Use with caution due to possible dirty reads.
-- **`startBatch`** Starts a batch update.
-- **`endBatch`** Ends a started batch update and triggers affected refs.
-
-**Reactivity Functions**
-
-- **`ref`** Creates a deep ref object recursively, modifying the source object in place.
-- **`cref`** Creates a deep ref object recursively from a flattened copy of the source object.
-- **`sref`** Creates a simple ref object from a given value, without nested ref creation.
-- **`isDeepRef`** Returns true if a given ref is created with `ref()` function.
-- **`isRef`** Returns true for any ref, false for non-refs.
-- **`pause`** Pauses a ref's auto-trigger on value change.
-- **`resume`** Resumes a ref's auto-trigger on value change.
-- **`trigger`** Manually triggers a ref to inform its observers.
-- **`unref`** Unwraps a ref, returning the raw value.
-- **`entangle`** Entangles two refs to sync their value changes.
-
-**Composition Functions**
-
-- **`useScope`** In a scope, you can use `onMounted` and `onUnmounted` functions. Components are always created in scope. Use the useScope for apps created by createApp. Similar to Vue's `effectScope`, useScope provides efficient cleanup of watchEffects, computed refs, observers and enables the `onMounted` and `onUnmounted` calls in the scope.
-- **`onMounted`** Similar to Vue's `onMounted`, it executes when the component is mounted.
-- **`onUnmounted`** Similar to Vue's `onUnmounted`, it executes when the component is unmounted.
-
-**Log Configuration**
-
-- **`warningHandler`** Customize or turn off console warnings.
+The `html` tag produces a template string. Supplying `template` to `createApp` replaces the root's content before binding it. Here, `:label="label"` passes a reactive ref into the component; editing the input updates its label, while each component instance owns a separate count.
+
+TypeScript checks the context code; template expressions are evaluated at runtime. For optional runtime prop checks, use `head.validateProps` with [`pval`](https://regor.purestack.studio/api/pval/). The [component guide](https://regor.purestack.studio/guide/components/) covers props, slots, events, and shared context.
+
+## Template essentials
+
+| Purpose                | Syntax                                              |
+| ---------------------- | --------------------------------------------------- |
+| Display text           | `{{ message }}` or `r-text="message"`               |
+| Bind an attribute      | `:title="message"` or `r-bind:title="message"`      |
+| Bind a DOM property    | `.value="message"` or `r-bind:value.prop="message"` |
+| Handle an event        | `@click="save"` or `r-on:click="save"`              |
+| Bind a form value      | `r-model="name"`                                    |
+| Render conditionally   | `r-if="visible"`, `r-else-if`, `r-else`             |
+| Toggle visibility      | `r-show="visible"`                                  |
+| Render a keyed list    | `r-for="item in items"` with `:key="item.id"`       |
+| Bind classes or styles | `:class="{ active: selected }"`, `:style="styles"`  |
+
+Explore the [directive reference](https://regor.purestack.studio/directives/) for modifiers, dynamic components, teleporting, element refs, and more.
+
+## Documentation and examples
+
+The documentation includes live examples and their source code.
+
+| Resource                                                           | Start here for…                                      |
+| ------------------------------------------------------------------ | ---------------------------------------------------- |
+| [Getting started](https://regor.purestack.studio/getting-started/) | Installation and your first reactive view.           |
+| [Guide](https://regor.purestack.studio/guide/)                     | Reactivity, templates, components, and lifecycle.    |
+| [Mounting](https://regor.purestack.studio/guide/mounting/)         | Existing markup, templates, and independent islands. |
+| [Directives](https://regor.purestack.studio/directives/)           | Binding syntax, modifiers, and examples.             |
+| [API reference](https://regor.purestack.studio/api/)               | Public functions, types, and configuration.          |
+| [Performance](https://regor.purestack.studio/guide/performance/)   | Measuring and profiling your interface.              |
+
+Regor powers interactive UI in [PureStack](https://purestack.studio/), which in turn builds Regor's documentation site. The site's source and examples live in [`docs-site/`](docs-site/); see its [README](docs-site/README.md) to run it locally.
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Please follow [CONTRIBUTING.md](.github/CONTRIBUTING.md) instructions.
+Bug reports, documentation improvements, and code contributions are welcome. Read the [contribution guide](.github/CONTRIBUTING.md) and [code of conduct](.github/CODE_OF_CONDUCT.md), or [open an issue](https://github.com/PureStackStudio/Regor/issues) with a reproducible example.
 
-## Acknowledgments
+To work on the library, install Node.js and use the Yarn version pinned in `package.json`. From a clone of this repository:
 
-Regor is built upon the shoulders of giants, drawing inspiration from Vue and its vibrant community of contributors. The well-defined concepts and principles from Vue have played a pivotal role in shaping Regor's foundation. We extend our heartfelt gratitude to the Vue project and its dedicated contributors for their pioneering work in the realm of UI frameworks.
+```sh
+corepack enable
+yarn install --immutable
+yarn tsc --noEmit
+yarn vitest run
+yarn lint
+yarn build
+```
 
-Special thanks to the Vue team and its community for creating a thriving ecosystem that continues to inspire innovation in the field of web development.
+Run `yarn test` for watch mode. The [benchmark suite](benchmarks/README.md) documents performance comparisons and local measurement tools.
 
-Regor also utilizes [**Jsep**](https://github.com/EricSmekens/jsep), a fast and lightweight JavaScript expression parser. Jsep's contribution to Regor's functionality is greatly appreciated.
+## License
 
-We also extend a warm welcome to any future contributors who join the Regor project. Your contributions will play a vital role in shaping the framework's growth and evolution.
-
-Thank you to everyone who has contributed, inspired, and supported Regor's development journey. Your dedication and passion are invaluable.
+Regor is [MIT licensed](LICENSE).
