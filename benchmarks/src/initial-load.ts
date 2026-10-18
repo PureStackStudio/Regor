@@ -1,10 +1,18 @@
 import { createApp as createRegorApp, html, RegorConfig, sref } from '../../src'
 import {
+  createRegorComponentWorkload,
+  createVueComponentWorkload,
+  REGOR_COMPONENT_TEMPLATE,
+  verifyComponentWorkload,
+  type VueBenchmarkComponent,
+} from './component-workload'
+import {
   clearRoot,
   formatMs,
   getRowCount,
   getSampleRuns,
   getWarmupRuns,
+  isComponentWorkload,
   loadVueModule,
   nextFrame,
   percentile,
@@ -36,7 +44,9 @@ type BenchSummary = {
 }
 
 type VueRuntime = {
-  createApp: (options: { data: () => { rows: Row[] }; template: string }) => {
+  createApp: (
+    options: VueBenchmarkComponent & { data: () => { rows: Row[] } },
+  ) => {
     mount: (root: HTMLElement) => void
     unmount: () => void
   }
@@ -76,28 +86,39 @@ const runRegor = async (root: HTMLElement): Promise<BenchResult> => {
   clearRoot(root)
 
   const rows = makeRows(getRowCount())
+  const componentWorkload = isComponentWorkload()
+    ? createRegorComponentWorkload()
+    : undefined
   await nextFrame()
 
   const t0 = performance.now()
   const app = createRegorApp(
-    { rows: sref(rows) },
+    { rows: sref(rows), components: componentWorkload?.components },
     {
       element: root,
-      template: html`<div>
-        <div r-for="row in rows" :key="row.id" :class="{ active: row.active }">
-          <span>{{ row.id }}</span><span>{{ row.label }}</span
-          ><span>{{ row.value }}</span>
-        </div>
-      </div>`,
+      template: componentWorkload
+        ? REGOR_COMPONENT_TEMPLATE
+        : html`<div>
+            <div
+              r-for="row in rows"
+              :key="row.id"
+              :class="{ active: row.active }"
+            >
+              <span>{{ row.id }}</span><span>{{ row.label }}</span
+              ><span>{{ row.value }}</span>
+            </div>
+          </div>`,
     },
-    createRegorBenchConfig(),
+    componentWorkload?.config ?? createRegorBenchConfig(),
   )
   lastRegorApp = app
 
   await nextFrame()
+  const mountMs = performance.now() - t0
+  if (componentWorkload) verifyComponentWorkload(root, rows)
   return {
     framework: getRegorLabel(),
-    mountMs: performance.now() - t0,
+    mountMs,
     rowsFinal: app.context.rows().length,
   }
 }
@@ -112,12 +133,16 @@ const runVue = async (root: HTMLElement): Promise<BenchResult> => {
   const vue = (await loadVueModule()) as VueRuntime
   const { createApp, reactive } = vue
   const state = reactive({ rows: makeRows(getRowCount()) })
+  const componentWorkload = isComponentWorkload()
+    ? createVueComponentWorkload()
+    : undefined
 
   await nextFrame()
   const t0 = performance.now()
   const app = createApp({
     data: () => state,
-    template: `
+    ...(componentWorkload ?? {
+      template: `
       <div>
         <div v-for="row in rows" :key="row.id" :class="{ active: row.active }">
           <span>{{ row.id }}</span>
@@ -126,14 +151,17 @@ const runVue = async (root: HTMLElement): Promise<BenchResult> => {
         </div>
       </div>
     `,
+    }),
   })
   app.mount(root)
   lastVueApp = app
 
   await nextFrame()
+  const mountMs = performance.now() - t0
+  if (componentWorkload) verifyComponentWorkload(root, state.rows)
   return {
     framework: 'Vue@latest',
-    mountMs: performance.now() - t0,
+    mountMs,
     rowsFinal: state.rows.length,
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "regor",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "description": "A reactive UI library for TypeScript and JavaScript. Connect state to HTML and SVG with direct DOM updates.",
   "author": "Ahmed Yasin Koculu",
   "license": "MIT",
@@ -41,7 +41,7 @@
   "bugs": {
     "url": "https://github.com/PureStackStudio/Regor/issues"
   },
-  "homepage": "https://github.com/PureStackStudio/Regor#readme",
+  "homepage": "https://regor.purestack.studio/",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@stylistic/eslint-plugin": "^5.7.1",

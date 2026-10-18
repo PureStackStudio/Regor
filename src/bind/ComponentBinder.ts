@@ -25,6 +25,31 @@ import { isRef } from '../reactivity/isRef'
 import { type Binder } from './Binder'
 import { addSwitch, refSwitch, removeSwitch, rswitch } from './switch'
 
+interface ComponentHostMatcher {
+  selector: string
+  matches: (element: Element) => boolean
+}
+
+const plainComponentNameRE = /^[A-Za-z][A-Za-z0-9_-]*$/
+
+/**
+ * Component names are CSS type selectors. Plain names match by tag name in
+ * constant time; anything else keeps full selector matching.
+ */
+const createComponentHostMatcher = (names: string[]): ComponentHostMatcher => {
+  const selector = names.join(',')
+  if (isNullOrWhitespace(selector)) return { selector, matches: () => false }
+  if (!names.every((name) => plainComponentNameRE.test(name)))
+    return { selector, matches: (element) => !!element.matches?.(selector) }
+  const tagNames = new Set(names.map((name) => name.toLowerCase()))
+  return {
+    selector,
+    matches: (element) =>
+      typeof element.tagName === 'string' &&
+      tagNames.has(element.tagName.toLowerCase()),
+  }
+}
+
 /**
  * @internal
  */
@@ -32,8 +57,9 @@ export class ComponentBinder {
   __binder: Binder
 
   __inherit: string
-  __registeredComponentSelector = ''
-  __registeredComponentSize = -1
+  __hostMatcher: ComponentHostMatcher | undefined
+  __hostMatcherContexts: Record<string, unknown>[] | undefined
+  __hostMatcherSize = -1
 
   constructor(binder: Binder) {
     this.__binder = binder
@@ -42,20 +68,6 @@ export class ComponentBinder {
 
   __bindAll(element: Element): void {
     this.__unwrapComponents(element)
-  }
-
-  __getRegisteredComponentSelector(
-    registeredComponents: Map<string, Component>,
-  ): string {
-    if (this.__registeredComponentSize !== registeredComponents.size) {
-      const names = [...registeredComponents.keys()]
-      this.__registeredComponentSelector = [
-        ...names,
-        ...names.map(hyphenate),
-      ].join(',')
-      this.__registeredComponentSize = registeredComponents.size
-    }
-    return this.__registeredComponentSelector
   }
 
   __hasContextComponents(contexts: any[]): boolean {
@@ -95,9 +107,8 @@ export class ComponentBinder {
     }
 
     const contextComponents = parser.__getComponents()
-    const selector = this.__getComponentSelector()
-    if (isNullOrWhitespace(selector)) return
-    const components = this.__collectTopLevelComponentHosts(element, selector)
+    const host = this.__getComponentHostMatcher()
+    const components = this.__collectTopLevelComponentHosts(element, host)
     for (const component of components) {
       if (component.hasAttribute(binder.__pre)) continue
       const parent = component.parentNode
@@ -479,37 +490,51 @@ export class ComponentBinder {
     }
   }
 
-  __getComponentSelector(): string {
+  /**
+   * Cache by context-array identity and global registry size. Parser scope
+   * changes replace the array. Local component names are assumed to stay fixed
+   * for each context.
+   */
+  __getComponentHostMatcher(): ComponentHostMatcher {
     const binder = this.__binder
     const parser = binder.__parser
     const registeredComponents = binder.__config.__components
-    const contextComponentSelectors = parser.__getComponentSelectors()
-    const registeredSelector =
-      this.__getRegisteredComponentSelector(registeredComponents)
-    return [
-      ...(registeredSelector ? [registeredSelector] : []),
-      ...contextComponentSelectors,
-      ...contextComponentSelectors.map(hyphenate),
-    ].join(',')
+    const contexts = parser.__contexts
+    if (
+      this.__hostMatcher &&
+      this.__hostMatcherContexts === contexts &&
+      this.__hostMatcherSize === registeredComponents.size
+    )
+      return this.__hostMatcher
+    const names = [
+      ...registeredComponents.keys(),
+      ...parser.__getComponentSelectors(),
+    ]
+    this.__hostMatcher = createComponentHostMatcher([
+      ...names,
+      ...names.map(hyphenate),
+    ])
+    this.__hostMatcherContexts = contexts
+    this.__hostMatcherSize = registeredComponents.size
+    return this.__hostMatcher
   }
 
   __isComponentHost(element: Element): boolean {
-    const selector = this.__getComponentSelector()
-    return !isNullOrWhitespace(selector) && element.matches?.(selector)
+    return this.__getComponentHostMatcher().matches(element)
   }
 
   __collectTopLevelComponentHosts(
     root: Element,
-    selector: string,
+    host: ComponentHostMatcher,
   ): HTMLElement[] {
     const result: HTMLElement[] = []
-    if (isNullOrWhitespace(selector)) return result
-    if (root.matches?.(selector)) return [root as HTMLElement]
+    if (isNullOrWhitespace(host.selector)) return result
+    if (host.matches(root)) return [root as HTMLElement]
     const stack = this.__getChildElements(root).reverse()
     while (stack.length > 0) {
       const current = stack.pop() as HTMLElement
       if (current.hasAttribute(this.__binder.__pre)) continue
-      if (current.matches(selector)) {
+      if (host.matches(current)) {
         result.push(current)
         continue
       }
@@ -523,14 +548,15 @@ export class ComponentBinder {
     action: (element: HTMLElement) => void,
   ): void {
     const binder = this.__binder
-    const selector = this.__getComponentSelector()
+    // Nested binding can change parser contexts; keep this traversal's matcher.
+    const host = this.__getComponentHostMatcher()
     const isName = binder.__config.__builtInNames.is
     const stack = this.__getChildElements(root).reverse()
     while (stack.length > 0) {
       const current = stack.pop() as HTMLElement
       if (current.hasAttribute(binder.__pre)) continue
       action(current)
-      if (!isNullOrWhitespace(selector) && current.matches(selector)) continue
+      if (host.matches(current)) continue
       if (current.hasAttribute(isName) || current.hasAttribute('is')) continue
       stack.push(...this.__getChildElements(current).reverse())
     }
