@@ -138,3 +138,61 @@ test('component binder ignores :context/r-context during attribute fallthrough t
   expect(inner.hasAttribute(':context')).toBe(false)
   expect(inner.hasAttribute('r-context')).toBe(false)
 })
+
+test('component host matcher matches names by tag and refreshes when components change', () => {
+  const cfg = new RegorConfig()
+  cfg.addComponent(defineComponent('<div></div>', { defaultName: 'HostCard' }))
+  const binder = createBinder(
+    [{ components: { innerPanel: defineComponent('<div></div>') } }],
+    cfg,
+  )
+  const componentBinder = (binder as any).__componentBinder
+  const isHost = (tagName: string) =>
+    componentBinder.__isComponentHost(document.createElement(tagName))
+
+  expect(isHost('host-card')).toBe(true)
+  expect(isHost('HOSTCARD')).toBe(true)
+  expect(isHost('inner-panel')).toBe(true)
+  expect(isHost('innerpanel')).toBe(true)
+  expect(isHost('div')).toBe(false)
+  expect(isHost('late-comp')).toBe(false)
+
+  cfg.addComponent(defineComponent('<div></div>', { defaultName: 'LateComp' }))
+  expect(isHost('late-comp')).toBe(true)
+  ;(binder as any).__parser.__push({
+    components: { pushedItem: defineComponent('<div></div>') },
+  })
+  expect(isHost('pushed-item')).toBe(true)
+})
+
+test('component host matcher matches nothing without components', () => {
+  const componentBinder = createBinder([{}]).__componentBinder
+  expect(componentBinder.__getComponentHostMatcher().selector).toBe('')
+  expect(componentBinder.__isComponentHost(document.createElement('div'))).toBe(
+    false,
+  )
+})
+
+test('component host matcher excludes child-local names after restoring the parent scope', () => {
+  const binder = createBinder([
+    { components: { ParentPanel: defineComponent('<div></div>') } },
+  ])
+  const parser = binder.__parser
+  const componentBinder = binder.__componentBinder
+  const parentHost = document.createElement('parent-panel')
+  const childHost = document.createElement('child-panel')
+
+  expect(componentBinder.__isComponentHost(parentHost)).toBe(true)
+  expect(componentBinder.__isComponentHost(childHost)).toBe(false)
+
+  parser.__scoped(parser.__capture(), () => {
+    parser.__push({
+      components: { ChildPanel: defineComponent('<div></div>') },
+    })
+    expect(componentBinder.__isComponentHost(parentHost)).toBe(true)
+    expect(componentBinder.__isComponentHost(childHost)).toBe(true)
+  })
+
+  expect(componentBinder.__isComponentHost(parentHost)).toBe(true)
+  expect(componentBinder.__isComponentHost(childHost)).toBe(false)
+})

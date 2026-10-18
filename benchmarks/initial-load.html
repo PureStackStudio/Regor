@@ -95,6 +95,13 @@
         <button id="run-vue">Run Vue</button>
         <button id="run">Run Both</button>
         <label style="margin-left: 12px; color: var(--muted)">
+          Workload
+          <select id="workload">
+            <option value="list" selected>Bound list</option>
+            <option value="components">Nested components (3 per row)</option>
+          </select>
+        </label>
+        <label style="margin-left: 12px; color: var(--muted)">
           Row count
           <select id="row-count">
             <option value="500" selected>500</option>

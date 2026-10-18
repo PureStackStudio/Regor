@@ -1,4 +1,5 @@
 import {
+  batch,
   createApp as createRegorApp,
   html,
   Ref,
@@ -6,11 +7,19 @@ import {
   RegorConfig,
 } from '../../src'
 import {
+  createRegorComponentWorkload,
+  createVueComponentWorkload,
+  REGOR_COMPONENT_TEMPLATE,
+  verifyComponentWorkload,
+  type VueBenchmarkComponent,
+} from './component-workload'
+import {
   clearRoot,
   formatMs,
   getRowCount,
   getSampleRuns,
   getWarmupRuns,
+  isComponentWorkload,
   loadVueModule,
   nextFrame,
   percentile,
@@ -78,7 +87,9 @@ const SCENARIOS = [
 type ScenarioName = (typeof SCENARIOS)[number]
 
 type VueRuntime = {
-  createApp: (options: { data: () => { rows: Row[] }; template: string }) => {
+  createApp: (
+    options: VueBenchmarkComponent & { data: () => { rows: Row[] } },
+  ) => {
     mount: (root: HTMLElement) => void
     unmount: () => void
   }
@@ -138,8 +149,10 @@ const SCENARIO_DEFINITIONS: readonly PairedScenarioDefinition[] = [
       const rows = getRows()
       if (rows.length < 3) return
       const tmp = rows[1]
-      rows[1] = rows[rows.length - 1]
-      rows[rows.length - 1] = tmp
+      batch(() => {
+        rows.splice(1, 1, rows[rows.length - 1])
+        rows.splice(rows.length - 1, 1, tmp)
+      })
     },
     vue: ({ getRows }) => {
       const rows = getRows()
@@ -251,7 +264,9 @@ const SCENARIO_DEFINITIONS: readonly PairedScenarioDefinition[] = [
     name: 'shuffle_deterministic',
     regor: ({ getRows }) => {
       const rows = getRows()
-      shuffleDeterministic(rows)
+      const shuffled = [...rows]
+      shuffleDeterministic(shuffled)
+      rows.splice(0, rows.length, ...shuffled)
     },
     vue: ({ getRows }) => {
       const rows = getRows()
@@ -272,7 +287,7 @@ const SCENARIO_DEFINITIONS: readonly PairedScenarioDefinition[] = [
         }
       })
       for (let i = 0; i < rows.length; i++) {
-        rows[i] = ref(replacements[i])
+        rows[i](ref(replacements[i]))
       }
     },
     vue: ({ getRows }) => {
@@ -322,6 +337,7 @@ const timeScenario = async (
 const measureScenarioDurations = async (
   resetRows: () => void,
   mutateForScenario: (scenario: PairedScenarioDefinition) => void,
+  verify?: (scenario: ScenarioName) => void,
 ): Promise<Record<string, number>> => {
   const scenarioMs: Record<string, number> = {}
   for (const scenario of SCENARIO_DEFINITIONS) {
@@ -329,6 +345,7 @@ const measureScenarioDurations = async (
       mutateForScenario(scenario),
     )
     scenarioMs[name] = ms
+    verify?.(name)
   }
   return scenarioMs
 }
@@ -344,20 +361,32 @@ const runRegor = async (root: HTMLElement): Promise<BenchResult> => {
   clearRoot(root)
 
   const rowCount = getRowCount()
-  const config = new RegorConfig()
+  const componentWorkload = isComponentWorkload()
+    ? createRegorComponentWorkload()
+    : undefined
+  const config = componentWorkload?.config ?? new RegorConfig()
 
   await nextFrame()
   const mountT0 = performance.now()
   const app = createRegorApp(
-    { rows: ref(makeRows(rowCount)) },
+    {
+      rows: ref(makeRows(rowCount)),
+      components: componentWorkload?.components,
+    },
     {
       element: root,
-      template: html`<div>
-        <div r-for="row in rows" :key="row.id" :class="{ active: row.active }">
-          <span>{{ row.id }}</span><span>{{ row.label }}</span
-          ><span>{{ row.value }}</span>
-        </div>
-      </div>`,
+      template: componentWorkload
+        ? REGOR_COMPONENT_TEMPLATE
+        : html`<div>
+            <div
+              r-for="row in rows"
+              :key="row.id"
+              :class="{ active: row.active }"
+            >
+              <span>{{ row.id }}</span><span>{{ row.label }}</span
+              ><span>{{ row.value }}</span>
+            </div>
+          </div>`,
     },
     config,
   )
@@ -365,6 +394,23 @@ const runRegor = async (root: HTMLElement): Promise<BenchResult> => {
 
   await nextFrame()
   const mountMs = performance.now() - mountT0
+  const verify = componentWorkload
+    ? (scenario = 'mount') =>
+        verifyComponentWorkload(
+          root,
+          app.context.rows().map((row) => {
+            const value = row()
+            return {
+              id: value.id(),
+              label: value.label(),
+              value: value.value(),
+              active: value.active(),
+            }
+          }),
+          scenario,
+        )
+    : undefined
+  verify?.()
 
   let nextScenarioId = rowCount * 10
   const scenarioMs = await measureScenarioDurations(
@@ -380,6 +426,7 @@ const runRegor = async (root: HTMLElement): Promise<BenchResult> => {
           return inserts
         },
       }),
+    verify,
   )
 
   const mutateMs = sumScenarioDurations(scenarioMs)
@@ -404,12 +451,16 @@ const runVue = async (root: HTMLElement): Promise<BenchResult> => {
   const { createApp, reactive } = vue
   const rowCount = getRowCount()
   const state = reactive({ rows: makeRows(rowCount) })
+  const componentWorkload = isComponentWorkload()
+    ? createVueComponentWorkload()
+    : undefined
 
   await nextFrame()
   const mountT0 = performance.now()
   const app = createApp({
     data: () => state,
-    template: `
+    ...(componentWorkload ?? {
+      template: `
       <div>
         <div v-for="row in rows" :key="row.id" :class="{ active: row.active }">
           <span>{{ row.id }}</span>
@@ -418,12 +469,18 @@ const runVue = async (root: HTMLElement): Promise<BenchResult> => {
         </div>
       </div>
     `,
+    }),
   })
   app.mount(root)
   lastVueApp = app
 
   await nextFrame()
   const mountMs = performance.now() - mountT0
+  const verify = componentWorkload
+    ? (scenario = 'mount') =>
+        verifyComponentWorkload(root, state.rows, scenario)
+    : undefined
+  verify?.()
 
   let nextScenarioId = rowCount * 10
   const scenarioMs = await measureScenarioDurations(
@@ -439,6 +496,7 @@ const runVue = async (root: HTMLElement): Promise<BenchResult> => {
           return inserts
         },
       }),
+    verify,
   )
 
   const mutateMs = sumScenarioDurations(scenarioMs)

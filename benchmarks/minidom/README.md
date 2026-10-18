@@ -2,6 +2,28 @@
 
 Regor performance suite running on `tests/minidom`, with baseline comparison and optional regression gate.
 
+## Component Workloads
+
+The suite includes three component-heavy scenarios in addition to the original
+list and branch scenarios:
+
+- `mount_nested_components`: mount a keyed list of row cards, each containing
+  a local label component, a globally registered value component, and slot content.
+- `mutate_component_props`: mount that list, then update every row's label,
+  value, and active class through reactive props.
+- `remount_component_tree`: mount that list, then hide and show the entire
+  subtree three times using `r-if`.
+
+Each tree has three component instances per row: 1,500 at the default 500 rows,
+or 6,000 at 2,000 rows. Component definitions and data setup are excluded from
+timing. As in the original scenarios, the primary time includes initial mount
+plus the scenario's operations; unmount and cleanup are reported separately.
+Output checks verify every row's props, classes, order, and slot content outside
+both timed sections. A mismatch fails the run.
+
+These measurements use minidom's selector and DOM implementations. Use the
+browser benchmark's **Nested components** workload to measure browser DOM costs.
+
 ## Quick Start
 
 Run with default row count (`500`):
@@ -62,6 +84,7 @@ What this does:
   - `perf-<rows>-<timestamp>.summary.txt`
 
 Tip:
+
 - Use `PERF_SAMPLES` and `PERF_WARMUPS` to tune profile stability.
 - Example:
   - `PERF_SAMPLES=30 PERF_WARMUPS=8 yarn perf:profile 2000`
@@ -92,6 +115,11 @@ If a baseline does not exist, create it first:
 ```bash
 yarn perf:record 500
 ```
+
+When adding scenarios, existing baselines report them as missing and skip their
+regression checks. Run `yarn perf:record <rows>` on the version you want to compare
+against before evaluating subsequent changes. Recording replaces the baseline
+for every scenario at that row count.
 
 ## Environment Variables
 

@@ -15,7 +15,7 @@
       }
       body {
         margin: 0;
-        font-family: Consolas, "Courier New", monospace;
+        font-family: Consolas, 'Courier New', monospace;
         background: radial-gradient(circle at 0% 0%, #1e293b 0, var(--bg) 45%);
         color: var(--fg);
       }
@@ -98,12 +98,20 @@
       <section class="panel">
         <h1>DOM Benchmark: Regor vs Vue (latest)</h1>
         <p>
-          Workload: mount a bound list, then run repeated list/data manipulations
-          (`for` binding updates, splices, push/shift, property updates).
+          Workload: mount a bound list, then run repeated list/data
+          manipulations (`for` binding updates, splices, push/shift, property
+          updates).
         </p>
         <button id="run-regor">Run Regor</button>
         <button id="run-vue">Run Vue</button>
         <button id="run">Run Both</button>
+        <label style="margin-left: 12px; color: var(--muted)">
+          Workload
+          <select id="workload">
+            <option value="list" selected>Bound list</option>
+            <option value="components">Nested components (3 per row)</option>
+          </select>
+        </label>
         <label style="margin-left: 12px; color: var(--muted)">
           Row count
           <select id="row-count">
@@ -173,7 +181,8 @@
           </div>
         </div>
         <div class="note">
-          Tip: run a few times and compare medians in devtools Performance panel.
+          Tip: run a few times and compare medians in devtools Performance
+          panel.
         </div>
       </section>
     </main>

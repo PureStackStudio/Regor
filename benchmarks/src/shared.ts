@@ -22,6 +22,10 @@ export const getRowCount = (): number => {
   return Number.isFinite(value) && value > 0 ? value : DEFAULT_ROW_COUNT
 }
 
+export const isComponentWorkload = (): boolean =>
+  (document.getElementById('workload') as HTMLSelectElement | null)?.value ===
+  'components'
+
 const getIntFromSelect = (
   id: string,
   min: number,
@@ -69,6 +73,7 @@ export const setButtonsDisabled = (disabled: boolean): void => {
     'row-count',
     'warmup-runs',
     'sample-runs',
+    'workload',
   ]
   for (const id of ids) {
     const button = document.getElementById(id) as

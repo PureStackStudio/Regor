@@ -5,9 +5,14 @@ import { performance } from 'node:perf_hooks'
 import process from 'node:process'
 import readline from 'node:readline'
 
-import { createApp, drainUnbind, html, ref, sref } from '../../src'
+import { createApp, drainUnbind, html, ref, RegorConfig, sref } from '../../src'
 import { App } from '../../src/api/types'
 import { createDom } from '../../tests/minidom/createDom'
+import {
+  createRegorComponentWorkload,
+  REGOR_COMPONENT_TEMPLATE,
+  verifyComponentWorkload,
+} from '../src/component-workload'
 
 type Stats = {
   median: number
@@ -98,29 +103,39 @@ const stats = (data: number[]): Stats => {
   }
 }
 
-const withApp = async (
+const withApp = async <TContext extends object>(
   template: string,
-  contextFactory: () => Record<string, unknown>,
-  run: (app: App<Record<string, unknown>>) => void,
+  contextFactory: () => { context: TContext; config?: RegorConfig },
+  run: (app: App<TContext>) => void,
+  verify?: (app: App<TContext>, root: HTMLElement) => void,
 ): Promise<{ runMs: number; unmountMs: number }> => {
   const cleanup = createDom('<html><body><div id="app"></div></body></html>')
+  let app: App<TContext> | undefined
   try {
-    const context = contextFactory()
+    const { context, config } = contextFactory()
     const t0 = performance.now()
-    const app = createApp(context, {
-      selector: '#app',
-      template: html`${template}`,
-    })
+    app = createApp(
+      context,
+      {
+        selector: '#app',
+        template: html`${template}`,
+      },
+      config,
+    )
     run(app)
     const t1 = performance.now()
+    verify?.(app, document.querySelector('#app') as HTMLElement)
+    const unmountStart = performance.now()
     app.unmount()
+    app = undefined
     await drainUnbind()
     const t2 = performance.now()
     return {
       runMs: t1 - t0,
-      unmountMs: t2 - t1,
+      unmountMs: t2 - unmountStart,
     }
   } finally {
+    app?.unmount()
     await drainUnbind()
     cleanup()
   }
@@ -135,6 +150,45 @@ const createRows = (count: number) =>
     }),
   )
 
+const createComponentContext = () => {
+  const { config, components } = createRegorComponentWorkload()
+  return {
+    config,
+    context: {
+      components,
+      visible: sref(true),
+      rows: ref(
+        Array.from({ length: rowCount }, (_, i) => ({
+          id: i,
+          label: `row-${i}`,
+          value: i * 2,
+          active: (i & 1) === 0,
+        })),
+      ),
+    },
+  }
+}
+
+type ComponentContext = ReturnType<typeof createComponentContext>['context']
+
+const verifyComponents = (
+  app: App<ComponentContext>,
+  root: HTMLElement,
+): void => {
+  verifyComponentWorkload(
+    root,
+    app.context.rows().map((row) => {
+      const value = row()
+      return {
+        id: value.id(),
+        label: value.label(),
+        value: value.value(),
+        active: value.active(),
+      }
+    }),
+  )
+}
+
 const scenarios: Scenario[] = [
   {
     name: 'mount_rfor_rtext',
@@ -147,7 +201,7 @@ const scenarios: Scenario[] = [
             <span r-text="row.value"></span>
           </p>
         </div>`,
-        () => ({ rows: sref(createRows(rowCount)) }),
+        () => ({ context: { rows: sref(createRows(rowCount)) } }),
         () => {},
       ),
   },
@@ -162,7 +216,7 @@ const scenarios: Scenario[] = [
             <span r-text="row.value"></span>
           </p>
         </div>`,
-        () => ({ rows: sref(createRows(rowCount)) }),
+        () => ({ context: { rows: sref(createRows(rowCount)) } }),
         (app) => {
           const rows = app.context.rows as ReturnType<typeof sref<any[]>>
           const list = rows()
@@ -182,13 +236,56 @@ const scenarios: Scenario[] = [
           <p r-if="visible">a</p>
           <p r-else>b</p>
         </div>`,
-        () => ({ visible: sref(true) }),
+        () => ({ context: { visible: sref(true) } }),
         (app) => {
           const visible = app.context.visible as ReturnType<
             typeof sref<boolean>
           >
           for (let i = 0; i < rowCount; ++i) visible(i % 2 === 0)
         },
+      ),
+  },
+  {
+    name: 'mount_nested_components',
+    run: () =>
+      withApp(
+        REGOR_COMPONENT_TEMPLATE,
+        createComponentContext,
+        () => {},
+        verifyComponents,
+      ),
+  },
+  {
+    name: 'mutate_component_props',
+    run: () =>
+      withApp(
+        REGOR_COMPONENT_TEMPLATE,
+        createComponentContext,
+        (app) => {
+          const rows = app.context.rows()
+          for (let i = 0; i < rows.length; ++i) {
+            const row = rows[i]()
+            row.label(`next-${i}`)
+            row.value(i + 1000)
+            row.active(!row.active())
+          }
+        },
+        verifyComponents,
+      ),
+  },
+  {
+    name: 'remount_component_tree',
+    run: () =>
+      withApp(
+        `<div r-if="visible">${REGOR_COMPONENT_TEMPLATE}</div>`,
+        createComponentContext,
+        (app) => {
+          for (let i = 0; i < 3; ++i) {
+            app.context.visible(false)
+            app.context.visible(true)
+          }
+        },
+        verifyComponents,
       ),
   },
 ]
