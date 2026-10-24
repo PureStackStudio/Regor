@@ -236,6 +236,12 @@ export class IfBinder {
     const capturedContext = parser.__capture()
 
     const refresh = (): void => {
+      // Removal detaches the region before deferred unbind stops this observer.
+      if (
+        commentBegin.parentNode !== parent ||
+        commentEnd.parentNode !== parent
+      )
+        return
       parser.__scoped(capturedContext, () => {
         if (toBoolean(value()[0])) {
           if (!isIfMounted) {
