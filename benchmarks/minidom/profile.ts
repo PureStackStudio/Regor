@@ -62,8 +62,8 @@ const isRegorFrame = (url: string): boolean => {
   return (
     normalized.includes('/src/') ||
     normalized.includes('\\src\\') ||
-    normalized.includes('/tests/minidom/') ||
-    normalized.includes('\\tests\\minidom\\')
+    normalized.includes('/node_modules/@purestack/ts-minidom/') ||
+    normalized.includes('\\node_modules\\@purestack\\ts-minidom\\')
   )
 }
 

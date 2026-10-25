@@ -1,7 +1,5 @@
+import { ensureDomGlobals, resetMiniDomCaches } from '@purestack/ts-minidom'
 import { afterAll, afterEach, beforeEach } from 'vitest'
-
-import { ensureDomGlobals } from './minidom/createDom'
-import { resetMiniDomCaches } from './minidom/minidom'
 
 const restoreDomGlobals = ensureDomGlobals()
 

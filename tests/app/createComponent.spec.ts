@@ -1,3 +1,4 @@
+import { createDom } from '@purestack/ts-minidom'
 import { expect, test } from 'vitest'
 
 import {
@@ -13,7 +14,6 @@ import { Binder } from '../../src/bind/Binder'
 import { hasSwitch } from '../../src/bind/switch'
 import { Parser } from '../../src/parser/Parser'
 import { htmlEqual } from '../common/html-equal'
-import { createDom } from '../minidom/createDom'
 
 test('should render components with reactive properties', () => {
   const root = document.createElement('div')

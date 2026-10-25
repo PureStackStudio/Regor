@@ -812,6 +812,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@purestack/ts-minidom@npm:^1.1.25":
+  version: 1.1.25
+  resolution: "@purestack/ts-minidom@npm:1.1.25"
+  checksum: 10c0/a666d393bd7e0907dfb8c7dfbbb3edd20b2c40cdf1bb2e826babd59c07fd886f7e6dcd34db98946d547c2dc5d28da4d704b5be003adf7fe8f9ee8c5cd8f556f8
+  languageName: node
+  linkType: hard
+
 "@rollup/rollup-android-arm-eabi@npm:4.43.0":
   version: 4.43.0
   resolution: "@rollup/rollup-android-arm-eabi@npm:4.43.0"
@@ -3164,6 +3171,7 @@ __metadata:
   resolution: "regor@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.39.2"
+    "@purestack/ts-minidom": "npm:^1.1.25"
     "@stylistic/eslint-plugin": "npm:^5.7.1"
     "@types/node": "npm:^25.2.1"
     "@vitest/coverage-istanbul": "npm:3.2.3"

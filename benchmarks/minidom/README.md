@@ -1,6 +1,6 @@
 # Minidom Perf Suite
 
-Regor performance suite running on `tests/minidom`, with baseline comparison and optional regression gate.
+Regor performance suite running on `@purestack/ts-minidom`, with baseline comparison and optional regression gate.
 
 ## Component Workloads
 

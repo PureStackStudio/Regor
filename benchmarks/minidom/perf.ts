@@ -5,9 +5,10 @@ import { performance } from 'node:perf_hooks'
 import process from 'node:process'
 import readline from 'node:readline'
 
+import { createDom } from '@purestack/ts-minidom'
+
 import { createApp, drainUnbind, html, ref, RegorConfig, sref } from '../../src'
 import { App } from '../../src/api/types'
-import { createDom } from '../../tests/minidom/createDom'
 import {
   createRegorComponentWorkload,
   REGOR_COMPONENT_TEMPLATE,
