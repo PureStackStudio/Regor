@@ -11,6 +11,7 @@ import { isRef } from '../reactivity/isRef'
 import { pause } from '../reactivity/pause'
 import { resume } from '../reactivity/resume'
 import { trigger } from '../reactivity/trigger'
+import { unref } from '../reactivity/unref'
 
 /**
  * @internal
@@ -98,10 +99,10 @@ const getFlags = (flag: any): ModelFlags => {
     }
   }
   return {
-    trim: !!flag.trim,
-    lazy: !!flag.lazy,
-    number: !!flag.number,
-    int: !!flag.int,
+    trim: !!unref(flag.trim),
+    lazy: !!unref(flag.lazy),
+    number: !!unref(flag.number),
+    int: !!unref(flag.int),
   }
 }
 
@@ -130,13 +131,16 @@ const attachDOMChangeListener = (
   directiveFlags?: string[],
 ): Unbinder => {
   const parsedValue = parseResult.value
-  const f1 = getFlags(directiveFlags?.join(','))
-  const f2 = getFlags(parsedValue()[1])
-  const flags: ModelFlags = {
-    int: f1.int || f2.int,
-    lazy: f1.lazy || f2.lazy,
-    number: f1.number || f2.number,
-    trim: f1.trim || f2.trim,
+  const modifierFlags = getFlags(directiveFlags?.join(','))
+  const getModelFlags = (): ModelFlags => {
+    // Expression options can change after mounting; dot modifiers stay enabled.
+    const expressionFlags = getFlags(parsedValue()[1])
+    return {
+      int: modifierFlags.int || expressionFlags.int,
+      lazy: modifierFlags.lazy || expressionFlags.lazy,
+      number: modifierFlags.number || expressionFlags.number,
+      trim: modifierFlags.trim || expressionFlags.trim,
+    }
   }
   if (!parseResult.refs[0]) {
     warning(WarningType.ModelRequiresRef, el)
@@ -149,9 +153,9 @@ const attachDOMChangeListener = (
   } else if (isAnInput && isRadio(el)) {
     return handleRadio(el, getModelRef)
   } else if (isAnInput || isTextArea(el)) {
-    return handleInputAndTextArea(el, flags, getModelRef, parsedValue)
+    return handleInputAndTextArea(el, getModelFlags, getModelRef)
   } else if (isSelect(el)) {
-    return handleSelect(el, getModelRef, parsedValue)
+    return handleSelect(el, getModelRef, parsedValue, getModelFlags)
   } else {
     warning(WarningType.ModelNotSupportOnElement, el)
     return () => {}
@@ -162,15 +166,14 @@ const decimalSeparators = /[.,' ·٫]/
 
 const handleInputAndTextArea = (
   el: HTMLInputElement | HTMLTextAreaElement,
-  flags: ModelFlags,
+  getModelFlags: () => ModelFlags,
   getModelRef: () => AnyRef | undefined,
-  parsedValue: () => unknown[],
 ): Unbinder => {
-  const isLazy = flags.lazy
+  const isLazy = getModelFlags().lazy
   const eventType = isLazy ? 'change' : 'input'
   const isNumber = isNumberInput(el)
   const trimmer = (): void => {
-    if (!flags.trim && !getFlags(parsedValue()[1]).trim) return
+    if (!getModelFlags().trim) return
     el.value = el.value.trim()
   }
   const onCompositionStart = (e: Event): void => {
@@ -200,21 +203,17 @@ const handleInputAndTextArea = (
     const target = event.target as any
     if (!target || target.composing) return
     let value = target.value
-    const flags = getFlags(parsedValue()[1])
+    const flags = getModelFlags()
     if (isNumber || flags.number || flags.int) {
       if (flags.int) {
         value = parseInt(value)
       } else {
+        const numberValue = parseFloat(value)
         const endsWithDecimalSeparator =
           decimalSeparators.test(value[value.length - 1]) &&
           value.split(decimalSeparators).length === 2
-        if (endsWithDecimalSeparator) {
-          value += '0'
-          value = parseFloat(value)
-          if (isNaN(value)) value = ''
-          else if (modelRef() === value) return
-        }
-        value = parseFloat(value)
+        if (endsWithDecimalSeparator && modelRef() === numberValue) return
+        value = numberValue
       }
       if (isNaN(value)) value = ''
       el.value = value
@@ -336,6 +335,7 @@ const handleSelect = (
   el: HTMLSelectElement,
   getModelRef: () => AnyRef | undefined,
   parsedValue: () => unknown[],
+  getModelFlags: () => ModelFlags,
 ): Unbinder => {
   const eventType = 'change'
   const stopObservingOptions = observeSelectOptions(el, parsedValue)
@@ -346,7 +346,7 @@ const handleSelect = (
   const listener = (): void => {
     const modelRef = getModelRef()
     if (!modelRef) return
-    const flags = getFlags(parsedValue()[1])
+    const flags = getModelFlags()
     const number = flags.number
     const selectedValue = Array.prototype.filter
       .call(el.options, (o: HTMLOptionElement) => o.selected)

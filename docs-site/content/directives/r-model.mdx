@@ -110,7 +110,7 @@ In this example, the `r-model` directive is used with a multi-select dropdown. T
 
 ## Modifiers
 
-The live preview passes the trim option explicitly as a second expression: `r-model="name, { trim: true }"`. This trims the value written to the ref as you type.
+The live preview passes the trim option explicitly as a second expression: `r-model="name, { trim: true }"`. This is equivalent to `r-model.trim="name"` and trims the value written to the ref as you type.
 
 The `r-model` directive supports modifiers to enable additional behavior on the bound element. Modifiers are added to the directive with a dot notation.
 
@@ -123,16 +123,28 @@ The `r-model` directive supports modifiers to enable additional behavior on the 
 </div>
 ```
 
-The `.trim` modifier trims the text control when it emits `change`. The live preview uses the explicit `trim` option to trim the bound state as you type.
+The `.trim` modifier trims the bound state as you type and trims the text control when it emits `change`.
 
 #### Available Modifiers
 
-- `.trim`: Removes leading and trailing whitespace from the text control on `change`. Use the explicit `trim` option above to trim the bound value during input.
-- `.lazy`: Updates the component's data property only when the input element emits the `change` event (useful for input fields that have debounced input events).
-- `.number`: Converts the input's value to a numeric type (e.g., `Number`) before binding it to the data property.
-- `.int`: Converts the input's value to an integer type (e.g., `parseInt`) before binding it to the data property.
+- `.trim`: Removes leading and trailing whitespace from the bound text value during input and from the text control on `change`.
+- `.lazy`: Updates the component's data property on `change` instead of `input`. The event type is chosen when the control is mounted.
+- `.number`: Converts input and textarea values with `parseFloat`. Number and range inputs apply this conversion automatically. On selects, numeric option values are converted while nonnumeric values are preserved.
+- `.int`: Converts input and textarea values with `parseInt`, truncating fractional digits. It takes precedence over `.number`, including on number and range inputs.
 
 You can use these modifiers individually or combine them to achieve the desired behavior for your form elements.
+
+Modifiers can also be supplied as a second expression, using a string or an options object:
+
+```html
+<input r-model="amount, 'number'" />
+<input r-model="count, { int: true }" />
+<input r-model.lazy="count, { int: true }" />
+```
+
+Dot modifiers and expression options are combined. A false expression option does not disable a dot modifier. Conversion and trim options are read on each event, so reactive expression options can be enabled or disabled after mounting. Options objects can contain refs, including the fields created by `ref({ number: false })`. Changes take effect on the next input or change event; changing an option does not convert the existing model value.
+
+With numeric conversion enabled on inputs and textareas, empty values and values that cannot be parsed become `''`. Conversion follows JavaScript's parsing rules: `7.8` becomes `7` with `.int`, and `12px` becomes `12` with either numeric modifier.
 
 <AlertBox class="guide-callout" tone="accent" variant="surface" title="Bind to writable state"><p>Computed values are read-only. Bind r-model to a writable ref, then derive summaries from that state.</p></AlertBox>
 
