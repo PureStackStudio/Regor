@@ -1,10 +1,10 @@
 import { h } from '@purestack/ts-html'
-import { definePlugin, resolvePageTemplate } from 'purestack'
+import { defaultTemplates, definePlugin } from 'purestack'
 import { defineRegorComponents } from './components'
 import { regorSkin } from './skin'
 import { registerRegorStyles } from './styles'
 
-const defaultDoc = resolvePageTemplate('doc').pageTemplate
+const defaultDoc = defaultTemplates.doc
 
 export const regorPlugin = definePlugin({
   name: 'regor-site',

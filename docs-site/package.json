@@ -6,16 +6,16 @@
     "serve": "purestack serve --content ./content --port 4400 --clean",
     "build": "purestack build --content ./content --clean",
     "publish": "purestack publish --content ./content",
-    "deploy": "pgdeploy deploy --host https://regor.purestack.studio --package ./dist/web --allow-path 'pagefind/*,.ts-ssg/manifest.json'"
+    "deploy": "pgdeploy deploy --host https://regor.purestack.studio --package ./dist/web --allow-path 'pagefind/*,.ts-ssg/manifest.json' --skip-path '.purestack-output'"
   },
   "dependencies": {
-    "@purestack/ts-components": "1.1.7",
-    "@purestack/ts-css": "1.1.7",
-    "@purestack/ts-html": "1.1.7",
-    "@purestack/ts-style": "1.1.7",
-    "@purestack/ts-util": "1.1.7",
-    "purestack": "^1.1.8",
-    "regor": "1.7.3"
+    "@purestack/ts-components": "latest",
+    "@purestack/ts-css": "latest",
+    "@purestack/ts-html": "latest",
+    "@purestack/ts-style": "latest",
+    "@purestack/ts-util": "latest",
+    "purestack": "latest",
+    "regor": "latest"
   },
   "devDependencies": {
     "@types/node": "^22.0.0"

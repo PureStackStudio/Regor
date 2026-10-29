@@ -7,6 +7,7 @@ import { createNotifications, notificationsTemplate } from './notifications'
 import { createEntanglement, entanglementTemplate } from './entanglement'
 import { createRawState, rawStateTemplate } from './raw-state'
 import { createTemplates, templatesTemplate } from './templates'
+import { createBattery, batteryTemplate } from './battery-app'
 import { createCleanup, cleanupTemplate } from './cleanup'
 import { createRegistry, registryTemplate } from './registry'
 import { createValidation, validationTemplate } from './validation'
@@ -31,6 +32,7 @@ export const apiExamples = {
   entanglement: { create: createEntanglement, template: entanglementTemplate },
   rawState: { create: createRawState, template: rawStateTemplate },
   templates: { create: createTemplates, template: templatesTemplate },
+  battery: { create: createBattery, template: batteryTemplate },
   cleanup: { create: createCleanup, template: cleanupTemplate },
   registry: { create: createRegistry, template: registryTemplate },
   validation: { create: createValidation, template: validationTemplate },

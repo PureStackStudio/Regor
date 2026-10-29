@@ -29,6 +29,23 @@ export function registerApiStyles(root: Style, palette: ThemePalette) {
     maxWidth: '100%',
   })
   root.select('.api-actions').css({ marginTop: '20px' })
+  root.select('.battery').css({
+    display: 'block',
+    width: '100%',
+    maxWidth: '320px',
+    height: 'auto',
+    margin: 'auto',
+    color: t.neutral.text.default,
+  })
+  root.select('.battery-outline').css({
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: '2',
+  })
+  root.select('.battery text').css({
+    fontSize: '16px',
+    fontWeight: '600',
+  })
   root.select('.guide-metrics.api-metrics-pair').css({
     gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
   })
